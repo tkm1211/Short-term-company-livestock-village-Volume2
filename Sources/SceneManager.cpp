@@ -1,22 +1,15 @@
 #include <Audio.h>
 #include "SceneManager.h"
-//#include "GamePad.h"
 #include "Production.h"
-#include "Sound.h"
+#include "Resource.h"
 #include <input_device.h>
 
 SceneTitle sceneTitle;
-//PlayStyleSelect playStyleSelect;
-//CharacterSelect characterSelect;
-//DifficultySelect difficltySelect;
 SceneSelect sceneSelect;
 SceneGame sceneGame;
 
 BaseScene* scene_tbl[] = {
 	&sceneTitle,
-	//&playStyleSelect,
-	//&characterSelect,
-	//&difficltySelect,
 	&sceneSelect,
 	&sceneGame,
 };
@@ -26,7 +19,7 @@ void SceneManager::Init()
 {
 	//InitControllers();
 	pAudio->Initialize();
-	SOUND->Load();
+	RESOURCE->Init();
 	PRODUCTION->Init();
 	SetScene(SCENE::TITLE);
 }
@@ -54,7 +47,7 @@ void SceneManager::Update()
 
 void SceneManager::Render()
 {
-	nowScene->Render();
+	nowScene->Draw();
 }
 
 void SceneManager::Uninit()
@@ -72,7 +65,6 @@ void SceneManager::Uninit()
 	nowScene = nullptr;
 	nextScene = nullptr;
 
-	SOUND->Uninit();
 	pAudio->Uninitialize();
 }
 

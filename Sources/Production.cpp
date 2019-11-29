@@ -7,7 +7,6 @@
 #include"Production.h"
 #include "SceneManager.h"
 #include "Audio.h"
-#include "Sound.h"
 #include <input_device.h>
 #include <Blender.h>
 /*------------------------------------------------------*/
@@ -159,7 +158,6 @@ void Production::CSOH(int _setStageNum, bool _isDisplayTutorial)
 					{
 						tutorialState++;
 						tutorialTime = 0;
-						pAudio->Play(SOUND->seHandle[SOUND->OK]);
 					}
 				}
 				break;
