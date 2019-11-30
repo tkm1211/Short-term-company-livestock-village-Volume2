@@ -28,6 +28,7 @@ void SceneSelect::Update()
 	if (PRODUCTION->CheckFlag(GO_PLAYERSTILE))
 		PRODUCTION->CSOH(SCENE_MANAGER->SCENE_SELECT);
 
+	if (PRODUCTION->CheckFlag(GO_PLAYERSTILE) || PRODUCTION->CheckFlag(GO_SINGLEGAME)) return;
 
 	if (GetAsyncKeyState('N') & 1 || pad[0].bAt)
 	{

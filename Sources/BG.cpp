@@ -18,6 +18,11 @@ void BG::Init()
 	sprGrid = RESOURCE->GetSpriteData(Resource::Texture::Grid);
 }
 
+void BG::Uninit()
+{
+
+}
+
 void BG::Update()
 {
 
@@ -41,7 +46,3 @@ void BG::Draw()
 	sprGrid->End();
 }
 
-void BG::Uninit()
-{
-
-}
