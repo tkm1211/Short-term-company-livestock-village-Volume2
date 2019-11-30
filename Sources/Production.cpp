@@ -3,12 +3,15 @@
 /*includeÉ]Å[Éì*/
 
 /*------------------------------------------------------*/
-#include"easing.h"
 #include"Production.h"
-#include "SceneManager.h"
-#include "Audio.h"
+
 #include <input_device.h>
 #include <Blender.h>
+
+#include"easing.h"
+#include "SceneManager.h"
+#include "Audio.h"
+#include "Resource.h"
 /*------------------------------------------------------*/
 
 /*íËã`*/
@@ -27,9 +30,11 @@
 void Production::Init()
 {
 //	sprBlackCurtain = std::make_unique<SpriteBatch>(L"Data/change.png", 2, DirectX::XMFLOAT2(0, 0));
-	sprBlackCurtainL = std::make_unique<SpriteBatch>(L"Data/scenechangeL.png", 2, DirectX::XMFLOAT2(0, 0));
-	sprBlackCurtainR = std::make_unique<SpriteBatch>(L"Data/scenechangeR.png", 2, DirectX::XMFLOAT2(0, 0));
-	sprRule = std::make_unique<SpriteBatch>(L"Data/rule.png",5);
+//	sprBlackCurtainL = std::make_unique<SpriteBatch>(L"Data/scenechangeL.png", 2, DirectX::XMFLOAT2(0, 0));
+//	sprBlackCurtainR = std::make_unique<SpriteBatch>(L"Data/scenechangeR.png", 2, DirectX::XMFLOAT2(0, 0));
+//	sprRule = std::make_unique<SpriteBatch>(L"Data/rule.png",5);
+	sprCurtain = RESOURCE->GetSpriteData(Resource::Texture::Curtain);
+	sprDescriptionRule = RESOURCE->GetSpriteData(Resource::Texture::DescriptionRule);
 }
 
 /********************************/
@@ -64,23 +69,24 @@ void Production::End()
 void Production::Draw()
 {
 	SetDrawBlendMode(BLEND_MODE::ALPHA);
-	//DrawBox(0, 0, SCREEN_WIDTH, static_cast<int>(easingPosY1), 0x000000, true);
-	//DrawBox(0, SCREEN_HEIGHT, SCREEN_WIDTH, static_cast<int>(easingPosY2), 0x000000, true);
-	sprBlackCurtainL->Begin();
-	sprBlackCurtainL->Draw(easingPosX1,0,960,1080,0.0f);
-	sprBlackCurtainL->End();
-	sprBlackCurtainL->Begin();
-	sprBlackCurtainL->Draw(easingPosX2, 0, 960, 1080, 0.0f);
-	sprBlackCurtainL->End();
 
-	sprRule->Begin();
-	sprRule->Draw(288, tutorialPosY, 1344, 756, 0, 0, 1344, 756, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, tutorialAlpha);
+	// Draw Curtain
+	sprCurtain->Begin();
+	sprCurtain->Draw(easingPosX1,0,960,1080,0.0f);
+	sprCurtain->End();
+	sprCurtain->Begin();
+	sprCurtain->Draw(easingPosX2, 0, 960, 1080, 0.0f);
+	sprCurtain->End();
+
+	// Draw Rule
+	sprDescriptionRule->Begin();
+	sprDescriptionRule->Draw(288, tutorialPosY, 1344, 756, 0, 0, 1344, 756, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, tutorialAlpha);
 
 	if (tutorialNext)
 	{
-		sprRule->Draw(1632, 918, 288, 162, 0, 756, 288, 162, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, tutorialAlpha);
+		sprDescriptionRule->Draw(1632, 918, 288, 162, 0, 756, 288, 162, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, tutorialAlpha);
 	}
-	sprRule->End();
+	sprDescriptionRule->End();
 }
 
 /*********************************************************/

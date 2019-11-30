@@ -6,12 +6,12 @@
 
 SceneTitle sceneTitle;
 SceneSelect sceneSelect;
-SceneGame sceneGame;
+SceneSingleGame sceneSingleGame;
 
 BaseScene* scene_tbl[] = {
 	&sceneTitle,
 	&sceneSelect,
-	&sceneGame,
+	& sceneSingleGame,
 };
 
 

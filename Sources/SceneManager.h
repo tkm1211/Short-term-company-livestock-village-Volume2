@@ -9,7 +9,7 @@
 
 extern SceneTitle sceneTitle;
 extern SceneSelect sceneSelect;
-extern SceneGame sceneGame;
+extern SceneSingleGame sceneSingleGame;
 
 
 class SceneManager
@@ -19,7 +19,9 @@ public:
 	{
 		TITLE,
 		SCENE_SELECT,
-		GAME,
+		SINGLE_GAME,
+		CPU_GAME,
+		MULTI_GAME,
 	};
 
 	BaseScene* nowScene;

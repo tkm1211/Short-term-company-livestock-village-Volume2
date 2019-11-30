@@ -10,9 +10,8 @@
 class Production:public Singleton<Production>
 {
 public:
-	std::unique_ptr<SpriteBatch> sprBlackCurtainL;
-	std::unique_ptr<SpriteBatch> sprBlackCurtainR;
-	std::unique_ptr<SpriteBatch> sprRule;
+	std::shared_ptr<SpriteBatch> sprCurtain;
+	std::shared_ptr<SpriteBatch> sprDescriptionRule;
     float           time;           //イージング処理に使う変数
     int             state;          //状態
 	int				tutorialState;	//チュートリアル描画状態
@@ -70,7 +69,9 @@ public:
 //フラグ定数
 #define GO_TITLE		0b00000001		//タイトル画面に以降する
 #define GO_PLAYERSTILE	0b00000010		//シングルかマルチか決める
-#define GO_GAME			0b00000100		//ゲーム画面に以降する
-#define GO_TUTORIAL		0b00001000		//チュートリアル画面に以降する
+#define GO_SINGLEGAME	0b00000100		//ゲーム画面に以降する シングル
+#define GO_CPUGAME		0b00001000		//ゲーム画面に以降する CPU
+#define GO_MULTIGAME	0b00010000		//ゲーム画面に以降する マルチ
+#define GO_TUTORIAL		0b00100000		//チュートリアル画面に以降する
 
 #endif //_PRODUCTION_H_

@@ -100,7 +100,7 @@ void Pause::Update()
 					isOn = false;
 					break;
 				case RETRY:
-					PRODUCTION->SetOn(GO_GAME);
+					PRODUCTION->SetOn(GO_SINGLEGAME);
 					break;
 				case TO_TITLE:
 					PRODUCTION->SetOn(GO_TITLE);
