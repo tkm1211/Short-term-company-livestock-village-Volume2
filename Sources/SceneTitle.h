@@ -8,7 +8,7 @@ class SceneTitle : public BaseScene
 private:
 	std::shared_ptr<SpriteBatch> sprTitle;
 public:
-	SceneTitle() { Init(); }
+	SceneTitle() { /*Init();*/ }
 	void Init();
 	void Uninit();
 	void Update();

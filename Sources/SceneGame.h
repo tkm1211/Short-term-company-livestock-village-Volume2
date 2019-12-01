@@ -7,7 +7,7 @@ class SceneSingleGame : public BaseScene
 {
 
 public:
-	SceneSingleGame() { Init(); }
+	SceneSingleGame() { /*Init();*/ }
 	void Init();
 	void Uninit();
 	void Update();
@@ -19,7 +19,7 @@ public:
 class SceneCPUGame : public BaseScene
 {
 public:
-	SceneCPUGame() { Init(); }
+	SceneCPUGame() { /*Init();*/ }
 	void Init();
 	void Uninit();
 	void Update();
@@ -31,7 +31,7 @@ public:
 class SceneMultiGame : public BaseScene
 {
 public:
-	SceneMultiGame() { Init(); }
+	SceneMultiGame() { /*Init();*/ }
 	void Init();
 	void Uninit();
 	void Update();

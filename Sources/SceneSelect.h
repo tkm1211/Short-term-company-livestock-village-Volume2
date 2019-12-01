@@ -8,7 +8,7 @@ class SceneSelect : public BaseScene
 {
 	std::shared_ptr<SpriteBatch> sprSelect;
 public:
-	SceneSelect() { Init(); }
+	SceneSelect() { /*Init();*/ }
 	void Init();
 	void Uninit();
 	void Update();
