@@ -5,8 +5,8 @@
 class Block
 {
 private:
-	static constexpr int FALL_SPEED = 114 / 6;//  =19 
 	static constexpr int FALL_COUNT = 6;
+	static constexpr int FALL_SPEED = 114 / FALL_COUNT;//  =19 
 	static constexpr int SIZE_X = 114;
 	static constexpr int SIZE_Y = 114;
 
@@ -35,9 +35,11 @@ private:
 
 public:
 	void GenerateMe(int _row, int _column, int _color);
+	void BreakMe();
 
 public:	// Getter and Setter
 	bool	GetIsExist() { return isExist; }
+	bool	GetIsFall() { return isFall; }
 	int		GetColumn() { return column; }
 	int		GetRow() { return row; }
 	int		GetSizeX() { return SIZE_X; }
@@ -46,4 +48,8 @@ public:	// Getter and Setter
 	DirectX::XMFLOAT2 GetPos() { return pos; }
 
 	void SetIsExist(bool _set) { isExist = _set; }
+	void SetIsFall(bool _set) { isFall = _set; }
+	void SetColumn(int _column) { column = _column; }
+	void SetRow(int _row) { row = _row; }
+	void SetColor(int _color) { color = _color; }
 };

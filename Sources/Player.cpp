@@ -3,6 +3,7 @@
 #include <input_device.h>
 
 #include "Resource.h"
+#include "BlockManager.h"
 
 /*--------------------------------------*/
 //	Global area
@@ -33,6 +34,7 @@ void Player::Uninit()
 void Player::Update()
 {
 	OperatePlayer();
+	SetBreakBlock(0);
 }
 
 void Player::Draw()
@@ -241,5 +243,22 @@ void Player::PositionCorreciton()
 	{
 		column = 0;
 		pos.y += Player::MOVING_WIDTH;
+	}
+}
+
+void Player::SetBreakBlock(int _playerNum)
+{
+	if (pad[0].bAt || pad[0].bBt || pad[0].bXt || pad[0].bYt)
+	{
+//		if (pad[0].bAt && !pad[0].isButtomA)
+//		{
+//			pad[0].isButtomA = true;
+
+			// TODO : Correspond Multi Player
+			{
+				provisionalBlockManager.BreakBlock(row, column);
+			}
+			//
+//		}
 	}
 }

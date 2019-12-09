@@ -35,6 +35,8 @@ public:
 	void Draw();
 
 	void OperatePlayer();
+	void SetBreakBlock(int _playerNum);
+
 	void PositionCorreciton();
 };
 

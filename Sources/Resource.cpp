@@ -56,7 +56,7 @@ void Resource::Init()
 	}
 	if (!sprBlock)
 	{
-		sprBlock = std::make_shared<SpriteBatch>(L"Data/block.png", BlockManager::BLOCK_MAX, DirectX::XMFLOAT2(114, 114));
+		sprBlock = std::make_shared<SpriteBatch>(L"Data/block.png", BlockManager::BLOCK_NUM_MAX, DirectX::XMFLOAT2(114, 114));
 		assert(sprBlock && "Misstake load texture data <sprBlock>");
 	}
 }

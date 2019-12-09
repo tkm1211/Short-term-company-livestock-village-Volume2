@@ -48,8 +48,8 @@ void SceneSingleGame::Update()
 void SceneSingleGame::Draw()
 {
 	BG_INSTANCE->Draw();
-	provisionalPlayer.Draw();
 	provisionalBlockManager.Draw();
+	provisionalPlayer.Draw();
 
 	if (PRODUCTION->CheckFlag(GO_SINGLEGAME) || PRODUCTION->CheckFlag(GO_TITLE))
 	{
