@@ -4,6 +4,7 @@
 
 #include "Resource.h"
 #include "BlockManager.h"
+#include "UI.h"
 
 /*--------------------------------------*/
 //	Global area
@@ -40,10 +41,9 @@ void Player::Update()
 void Player::Draw()
 {
 	sprPickel->Begin();
-	sprPickel->Draw(pos.x + ADJUST + SINGLE_CORRECTION_X, pos.y + ADJUST + SINGLE_CORRECTION_Y, 114, 114, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, animFrame);
+	sprPickel->Draw(pos.x + GameUI::ADJUST + GameUI::SINGLE_CORRECTION_X, pos.y + GameUI::ADJUST + GameUI::SINGLE_CORRECTION_Y, 114, 114, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, animFrame);
 	sprPickel->End();
 }
-
 
 
 void Player::OperatePlayer()
@@ -248,17 +248,13 @@ void Player::PositionCorreciton()
 
 void Player::SetBreakBlock(int _playerNum)
 {
+	if (provisionalBlockManager.GetStatus() != BlockManager::State::Wait) return;
+
 	if (pad[0].bAt || pad[0].bBt || pad[0].bXt || pad[0].bYt)
 	{
-//		if (pad[0].bAt && !pad[0].isButtomA)
-//		{
-//			pad[0].isButtomA = true;
-
 			// TODO : Correspond Multi Player
 			{
 				provisionalBlockManager.BreakBlock(row, column);
 			}
-			//
-//		}
 	}
 }

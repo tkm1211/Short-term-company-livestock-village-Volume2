@@ -11,10 +11,6 @@ class Player
 	static constexpr int ACCEL_START = 15;
 	static constexpr int ACCEL_MOVE_PER = 7;
 
-	static constexpr int ADJUST = 3;
-	static constexpr int SINGLE_CORRECTION_X = 615;
-	static constexpr int SINGLE_CORRECTION_Y = 12;
-
 private:
 	std::shared_ptr<SpriteBatch> sprPickel;
 

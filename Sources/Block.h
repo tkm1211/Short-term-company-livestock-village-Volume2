@@ -52,4 +52,7 @@ public:	// Getter and Setter
 	void SetColumn(int _column) { column = _column; }
 	void SetRow(int _row) { row = _row; }
 	void SetColor(int _color) { color = _color; }
+	void SetPosition(DirectX::XMFLOAT2 _pos) { pos = _pos; }
+	void SetPosX(float _x) { pos.x = _x; }
+	void SetPosY(float _y) { pos.y = _y; }
 };

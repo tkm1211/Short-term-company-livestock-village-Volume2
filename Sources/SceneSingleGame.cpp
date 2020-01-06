@@ -1,10 +1,13 @@
 #include "SceneGame.h"
 
+#include <input_device.h>
+
 #include "BG.h"
 #include "Production.h"
 #include "SceneManager.h"
 #include "Player.h"
 #include "BlockManager.h"
+#include "UI.h"
 
 /*--------------------------------------*/
 //	Global area
@@ -21,6 +24,7 @@ void SceneSingleGame::Init()
 	BG_INSTANCE->Init();
 	provisionalPlayer.Init();
 	provisionalBlockManager.Init();
+	provisionalGameUI.Init();
 }
 
 void SceneSingleGame::Uninit()
@@ -28,6 +32,7 @@ void SceneSingleGame::Uninit()
 	BG_INSTANCE->Uninit();
 	provisionalPlayer.Uninit();
 	provisionalBlockManager.Uninit();
+	provisionalGameUI.Uninit();
 }
 
 void SceneSingleGame::Update()
@@ -40,9 +45,17 @@ void SceneSingleGame::Update()
 
 	if (PRODUCTION->CheckFlag(GO_SINGLEGAME) || PRODUCTION->CheckFlag(GO_TITLE)) return;
 
+	if (GetAsyncKeyState('N') & 1 || pad[0].bYt)
+	{
+		PRODUCTION->SetOn(GO_TITLE);
+		PRODUCTION->Start();
+	}
+
+
 	BG_INSTANCE->Update();
 	provisionalPlayer.Update();
 	provisionalBlockManager.Update();
+	provisionalGameUI.Update();
 }
 
 void SceneSingleGame::Draw()
@@ -50,6 +63,7 @@ void SceneSingleGame::Draw()
 	BG_INSTANCE->Draw();
 	provisionalBlockManager.Draw();
 	provisionalPlayer.Draw();
+	provisionalGameUI.Draw();
 
 	if (PRODUCTION->CheckFlag(GO_SINGLEGAME) || PRODUCTION->CheckFlag(GO_TITLE))
 	{
