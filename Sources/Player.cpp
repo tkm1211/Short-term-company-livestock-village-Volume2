@@ -255,6 +255,7 @@ void Player::SetBreakBlock(int _playerNum)
 			// TODO : Correspond Multi Player
 			{
 				provisionalBlockManager.BreakBlock(row, column);
+				provisionalGameUI.SetIsTimerStop(true);
 			}
 	}
 }

@@ -1,6 +1,10 @@
 #include "UI.h"
+
+#include "BlockManager.h"
 #include "Resource.h"
 #include "easing.h"
+#include "ConvenientMath.h"
+#include "Constant.h"
 
 /*--------------------------------------*/
 //	Global area
@@ -15,6 +19,71 @@ GameUI provisionalGameUI;
 void GameUI::Init()
 {
 	sprGameUI = RESOURCE->GetSpriteData(Resource::Texture::UI);
+
+	// セレクトレベルに応じて値を変える
+	{
+		//TODO:仮で置く
+		maxSecond = scast_f(6.5);
+	}
+
+	// 次に出てくるブロックの色
+	{
+		ConvMath::InitializeArray(&nextBlockColors[0], scast_i(nextBlockColors.size()), -1);
+		SetNextBlockColors();
+
+		for (int i = 0; i < BlockManager::ROW_MAX; i++)
+		{
+			using namespace DirectX;
+			auto& it = drawBlockStatus[i];
+			it.pos = XMFLOAT2(3.0f + 615.0f + 114.0f * i, 12.0f + 1032.0f);
+			it.size = XMFLOAT2(114.0f, 228.0f);
+		}
+		for (int i = 0; i < provisionalBlockManager.GetColorMax(); i++)
+		{
+			drawBlockStatus[i].tex = DirectX::XMFLOAT2(114.0f * (i + 1), 228.0f);
+		}
+	}
+
+	// メーター
+	{
+		meterBack.pos = DirectX::XMFLOAT2(1302.0f + ADJUST, 510.0f);
+		meterBack.tex = DirectX::XMFLOAT2(36.0f, 936.0f);
+		meterBack.size = DirectX::XMFLOAT2(36.0f, 570.0f);
+
+		meter.pos = DirectX::XMFLOAT2(1302.0f + ADJUST, 510.0f);
+		meter.tex = DirectX::XMFLOAT2(0.0f, 936.0f);
+		meter.size = DirectX::XMFLOAT2(36.0f, 570.0f);
+
+		gaugeTexPosY = meter.tex.y + (maxSecond - second) / maxSecond * meter.size.y;
+		if (gaugeTexPosY < 951.0f)
+		{
+			gaugeTexPosY = 936.0f + 570.0f;
+			//if (_playerNum == 1) meter.tex.x = 36.0f;
+			meter.tex.y = 936.0f + 570.0f;
+		}
+		else if (maxSecond <= second && gaugeTexPosY <= 936.0f + 570.0f)
+		{
+			gaugeTexPosY = 936.0f + 570.0f;
+		}
+		gaugeTexSizeY = meter.size.y - (gaugeTexPosY - meter.tex.y);
+
+		gaugePosY = meter.pos.y + (meter.size.y - gaugeTexSizeY);
+	}
+
+	// チェイン表示系
+	{
+		showChainNumPos = DirectX::XMFLOAT2(0.0f, 0.0f);
+		showChainNumFirstPos = 0.0f;
+		showChainAlpha = 0.0f;
+		showChainTimer = 0;
+		nowChainNum = 0;
+		isShowChainNum = false;
+	}
+
+	// スコアボード系
+	{
+		totalScore = 0;
+	}
 }
 
 void GameUI::Uninit()
@@ -25,6 +94,8 @@ void GameUI::Uninit()
 void GameUI::Update()
 {
 	ShowChainNumUpdate();
+	SetNextBlockColors();
+	UpdateOfGauge();
 }
 
 void GameUI::Draw()
@@ -36,6 +107,30 @@ void GameUI::Draw()
 
 
 	sprGameUI->Begin();
+
+	// メーター
+	{
+		sprGameUI->Draw(meterBack.pos, meterBack.size, meterBack.tex, meterBack.size,
+			DirectX::XMFLOAT2(0.0f, 0.0f), 0.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
+
+		sprGameUI->Draw(DirectX::XMFLOAT2(meter.pos.x, gaugePosY), DirectX::XMFLOAT2(meter.size.x, gaugeTexSizeY),
+			DirectX::XMFLOAT2(meter.tex.x, gaugeTexPosY), DirectX::XMFLOAT2(meter.size.x, gaugeTexSizeY),
+			DirectX::XMFLOAT2(0.0f, 0.0f), 0.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
+	}
+
+	// 次に出てくるブロック
+	{
+		for (int i = 0; i < scast_i(nextBlockColors.size()); i++)
+		{
+			using namespace DirectX;
+			auto it = drawBlockStatus[i];
+			sprGameUI->Draw(
+				XMFLOAT2(it.pos.x, it.pos.y), it.size,
+				drawBlockStatus[nextBlockColors[i]].tex, it.size,
+				XMFLOAT2(0.0f, 0.0f), 0.0f,
+				XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
+		}
+	}	
 
 	// スコア
 	{
@@ -104,9 +199,13 @@ void GameUI::Draw()
 	}
 
 	sprGameUI->End();
-
 }
 
+
+
+/*------------------------------------------*/
+// 連鎖の始めに通すInitialize処理
+/*------------------------------------------*/
 void GameUI::SetShowChainNumInit(DirectX::XMFLOAT2 _pos)
 {
 	showChainNumPos = _pos;
@@ -118,6 +217,9 @@ void GameUI::SetShowChainNumInit(DirectX::XMFLOAT2 _pos)
 	isShowChainNum = true;
 }
 
+/*------------------------------------------*/
+// 連鎖中に更新する処理
+/*------------------------------------------*/
 void GameUI::ShowChainNumUpdate()
 {
 	if (!isShowChainNum) return;
@@ -148,6 +250,9 @@ void GameUI::ShowChainNumUpdate()
 	}
 }
 
+/*------------------------------------------*/
+// スコア計算関数
+/*------------------------------------------*/
 void GameUI::CalcScore(int _eraseNum, int _chainCount)
 {
 	float nowPlusScore{};
@@ -168,4 +273,83 @@ void GameUI::CalcScore(int _eraseNum, int _chainCount)
 	}
 
 	totalScore += nowPlusScore;
+}
+
+/*------------------------------------------*/
+// 次に来るブロックの色をセットする関数
+/*------------------------------------------*/
+void GameUI::SetNextBlockColors()
+{
+	for (int i = 0; i < BlockManager::BOARD_ROW_MAX; i++)
+	{
+		Block* ans = nullptr;
+		provisionalBlockManager.SearchBlock(i, 9, &ans);
+		if (ans != nullptr)
+		{
+			nextBlockColors[i] = ans->GetColor();
+		}
+	}
+}
+
+/*------------------------------------------*/
+// ゲージをリセットする関数
+/*------------------------------------------*/
+void GameUI::ResetGauge()
+{
+	isTimerStop = false;
+	isGaugeMax = false;
+
+	meter.tex.y = 936.0f;
+}
+
+/*------------------------------------------*/
+// ゲージの更新関数
+/*------------------------------------------*/
+void GameUI::UpdateOfGauge()
+{
+	if (!isTimerStop && !provisionalBlockManager.GetIsPushing())
+	{
+		second = interpolationTimeCnt / 60.0f;
+
+		if (maxSecond + 1 < second)
+		{
+			isTimerStop = true;
+			isGaugeMax = true;
+			second = 0;
+			gaugeDownCnt = 0;
+			interpolationTimeCnt = -1;
+			provisionalBlockManager.SetIsPushUpByGauge(true);
+		}
+		interpolationTimeCnt++;
+	}
+
+	if (isGaugeMax)
+	{
+		if (GAUGE_DOWN_CNT_MAX <= gaugeDownCnt)
+		{
+			second = 0;
+			ResetGauge();
+		}
+		else
+		{
+			second = easing::OutExp(scast_f(gaugeDownCnt), scast_f(GAUGE_DOWN_CNT_MAX), 0.0f, maxSecond);
+		}
+		gaugeDownCnt++;
+	}
+
+	gaugeTexPosY = meter.tex.y + (maxSecond - second) / maxSecond * meter.size.y;
+	if (gaugeTexPosY < 951.0f)
+	{
+		gaugeTexPosY = 936.0f + 570.0f;
+		//if (_playerNum == 1) meter.tex.x = 36.0f;
+		meter.tex.y = 936.0f + 570.0f;
+	}
+	else if (maxSecond <= second && gaugeTexPosY <= 936.0f + 570.0f)
+	{
+		gaugeTexPosY = 936.0f + 570.0f;
+	}
+	gaugeTexSizeY = meter.size.y - (gaugeTexPosY - meter.tex.y);
+
+	gaugePosY = meter.pos.y + (meter.size.y - gaugeTexSizeY);
+
 }

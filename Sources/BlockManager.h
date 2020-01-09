@@ -71,6 +71,7 @@ private:
 
 	bool isChainContinued;
 	bool isPushing;
+	bool isPushUpByGauge;
 
 public:
 	BlockManager(){}
@@ -117,7 +118,11 @@ public:
 	void PushUpProcess();
 
 	// Getter and Setter
-	State GetStatus() { return status; }
+	State	GetStatus() { return status; }
+	int		GetColorMax() { return colorMax; }
+	bool	GetIsPushUpByGauge() { return isPushUpByGauge; }
+	void	SetIsPushUpByGauge(bool _n) { isPushUpByGauge = _n; }
+	bool	GetIsPushing() { return isPushing; }
 
 	/*---------------------------*/
 	// ï÷óòä÷êî

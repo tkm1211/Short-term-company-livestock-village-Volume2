@@ -52,6 +52,10 @@ void BlockManager::Init()
 	GenerateBlock(4, 8, Color::Green);
 	GenerateBlock(5, 8, Color::Red);
 
+	PopRowLineProcess();
+
+	blocks;
+
 	// Member variable initialize.
 	status = State::Wait;
 
@@ -63,6 +67,7 @@ void BlockManager::Init()
 
 	isChainContinued = false;
 	isPushing = false;
+	isPushUpByGauge = false;
 }
 
 void BlockManager::Uninit()
@@ -123,14 +128,20 @@ void BlockManager::ProcessOfSingleGame()
 	case BlockManager::Chain:
 		ChainProcess();
 		break;
-	case BlockManager::PoPRowLine:
-		PopRowLineProcess();
-		break;
 	case BlockManager::PushUp:
 		PushUpProcess();
 		break;
+	case BlockManager::PoPRowLine:
+		PopRowLineProcess();
+		break;
 	default:
 		break;
+	}
+
+	if (isPushUpByGauge && !isPushing)
+	{
+		status = State::PushUp;
+		isPushUpByGauge = false;
 	}
 
 	for (auto& it : blocks)
@@ -278,7 +289,9 @@ void BlockManager::ChainProcess()
 		else
 		{
 			chainCount = 0;
-			status = State::PoPRowLine;
+
+			//provisionalGameUI.SetIsTimerStop(false);
+			status = State::PushUp;
 		}
 	}
 }
@@ -466,7 +479,7 @@ void BlockManager::PopRowLineProcess()
 		GenerateBlock(i, 9, popColor);
 	}
 
-	status = State::PushUp;
+	status = State::Wait;
 }
 
 /*-------------------------------------------*/
@@ -761,9 +774,12 @@ void BlockManager::MovePushUpBoard()
 	if (6 <= pushingCount)
 	{
 		pushingCount = 0;
-		status = State::Wait;
-
+		status = State::PoPRowLine;
 		isPushing = false;
+		if (!provisionalGameUI.GetIsGaugeMax())
+		{
+			provisionalGameUI.SetIsTimerStop(false);
+		}
 	}
 }
 

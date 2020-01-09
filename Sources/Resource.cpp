@@ -51,7 +51,7 @@ void Resource::Init()
 	}
 	if (!sprUI)
 	{
-		sprUI = std::make_shared<SpriteBatch>(L"Data/UI.png", 10, DirectX::XMFLOAT2(114, 114));
+		sprUI = std::make_shared<SpriteBatch>(L"Data/UI.png", 100, DirectX::XMFLOAT2(114, 114));
 		assert(sprUI && "Misstake load texture data <sprUI>");
 	}
 	if (!sprBlock)

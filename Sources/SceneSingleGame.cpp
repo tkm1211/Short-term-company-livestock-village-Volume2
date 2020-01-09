@@ -43,6 +43,7 @@ void SceneSingleGame::Update()
 	if (PRODUCTION->CheckFlag(GO_TITLE))
 		PRODUCTION->CSOH(SCENE_MANAGER->TITLE);
 
+
 	if (PRODUCTION->CheckFlag(GO_SINGLEGAME) || PRODUCTION->CheckFlag(GO_TITLE)) return;
 
 	if (GetAsyncKeyState('N') & 1 || pad[0].bYt)
@@ -54,8 +55,8 @@ void SceneSingleGame::Update()
 
 	BG_INSTANCE->Update();
 	provisionalPlayer.Update();
-	provisionalBlockManager.Update();
 	provisionalGameUI.Update();
+	provisionalBlockManager.Update();
 }
 
 void SceneSingleGame::Draw()
