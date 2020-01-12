@@ -50,6 +50,13 @@ private:
 	bool	isGaugeMax;
 #pragma endregion
 
+#pragma region Speedä÷åW
+	int totalTime;
+	int minTime;
+	int secondTime;
+	int speedUpCount;
+#pragma endregion
+
 
 public:
 	GameUI():
@@ -72,7 +79,11 @@ public:
 		gaugeDownCnt(0),
 		gaugePosY(0.0f),
 		gaugeTexPosY(0.0f),
-		gaugeTexSizeY(0.0f)
+		gaugeTexSizeY(0.0f),
+		totalTime(0),
+		minTime(0),
+		secondTime(0),
+		speedUpCount(0)
 	{}
 	~GameUI() {}
 
@@ -102,6 +113,11 @@ public:
 	void ResetGauge();
 private:
 	void UpdateOfGauge();
+	void UpdateGaugeSpeed();
+#pragma endregion
+
+#pragma region Speedån
+	void UpdateOfTime();
 #pragma endregion
 
 #pragma region Getter and Setter

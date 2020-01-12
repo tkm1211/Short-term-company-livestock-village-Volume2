@@ -47,10 +47,12 @@ public:
 		Wait,
 		Break,
 		Chain,
-		PoPRowLine,
 		PushUp,
+		PopRowLine,
+		CheckUpCombo,
 	};
 	State status;
+	State lastStatus;
 
 private:
 	std::shared_ptr<SpriteBatch> sprBlock;
@@ -69,9 +71,10 @@ private:
 	int colorMax = 5;
 
 
-	bool isChainContinued;
-	bool isPushing;
-	bool isPushUpByGauge;
+	bool isChainContinued;		// チェイン中
+	bool isChainAfterPushUp;	// 上げコン中
+	bool isPushing;				// プッシュアップ中
+	bool isPushUpByGauge;		// ゲージMAXによりプッシュアップ
 
 public:
 	BlockManager(){}
@@ -103,6 +106,7 @@ public:
 
 	// ブロックのコンボ系
 	void RagisterChainBlock();
+	bool RagisterUpComboBlock();
 
 
 	// ブロックのPush Up系
@@ -116,9 +120,11 @@ public:
 	void ChainProcess();
 	void PopRowLineProcess();
 	void PushUpProcess();
+	void CheckUpComboProcess();
 
 	// Getter and Setter
 	State	GetStatus() { return status; }
+	void	SetStatus(State _n) { lastStatus = status; status = _n; }
 	int		GetColorMax() { return colorMax; }
 	bool	GetIsPushUpByGauge() { return isPushUpByGauge; }
 	void	SetIsPushUpByGauge(bool _n) { isPushUpByGauge = _n; }

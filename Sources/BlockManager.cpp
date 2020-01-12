@@ -68,6 +68,7 @@ void BlockManager::Init()
 	isChainContinued = false;
 	isPushing = false;
 	isPushUpByGauge = false;
+	isChainAfterPushUp = false;
 }
 
 void BlockManager::Uninit()
@@ -117,6 +118,7 @@ void BlockManager::ProcessOfSingleGame()
 	SetSortBlocks();
 
 
+
 	switch (status)
 	{
 	case BlockManager::Wait:
@@ -131,8 +133,11 @@ void BlockManager::ProcessOfSingleGame()
 	case BlockManager::PushUp:
 		PushUpProcess();
 		break;
-	case BlockManager::PoPRowLine:
+	case BlockManager::PopRowLine:
 		PopRowLineProcess();
+		break;
+	case BlockManager::CheckUpCombo:
+		CheckUpComboProcess();
 		break;
 	default:
 		break;
@@ -140,7 +145,8 @@ void BlockManager::ProcessOfSingleGame()
 
 	if (isPushUpByGauge && !isPushing)
 	{
-		status = State::PushUp;
+		SetStatus(State::PushUp);
+		//status = State::PushUp;
 		isPushUpByGauge = false;
 	}
 
@@ -182,7 +188,8 @@ void BlockManager::BreakBlock(int _row, int _column)
 	if (SearchBlock(_row, _column, &result))
 	{
 		result->BreakMe();
-		status = State::Break;
+
+		SetStatus(State::Break);
 	}
 }
 
@@ -258,7 +265,7 @@ void BlockManager::BreakProcess()
 	}
 	if (count == 0)
 	{
-		status = State::Chain;
+		SetStatus(State::Chain);
 	}
 }
 
@@ -288,10 +295,18 @@ void BlockManager::ChainProcess()
 		}
 		else
 		{
-			chainCount = 0;
+			//chainCount = 0;
 
-			//provisionalGameUI.SetIsTimerStop(false);
-			status = State::PushUp;
+			if (lastStatus == State::CheckUpCombo)
+			{
+				chainCount = 0;
+				provisionalGameUI.SetIsTimerStop(false);
+				SetStatus(State::Wait);
+			}
+			else
+			{
+				SetStatus(State::PushUp);
+			}
 		}
 	}
 }
@@ -479,7 +494,8 @@ void BlockManager::PopRowLineProcess()
 		GenerateBlock(i, 9, popColor);
 	}
 
-	status = State::Wait;
+
+	SetStatus(State::CheckUpCombo);
 }
 
 /*-------------------------------------------*/
@@ -496,6 +512,30 @@ void BlockManager::PushUpProcess()
 		MovePushUpBoard();
 	}
 }
+
+/*-------------------------------------------*/
+// CheckUpComboの処理
+/*-------------------------------------------*/
+void BlockManager::CheckUpComboProcess()
+{
+	// 現状のブロックの配置を記録
+	SetSortBlocks();
+
+	// 連鎖している所があるか走査
+	if (RagisterUpComboBlock())
+	{
+		SetStatus(State::Chain);
+		provisionalGameUI.SetIsTimerStop(true);
+	}
+	else
+	{
+		chainCount = 0;
+
+		SetStatus(State::Wait);
+	}
+}
+
+
 
 /*-------------------------------------------*/
 // チェイン関係の処理関数
@@ -741,6 +781,206 @@ void BlockManager::RagisterChainBlock()
 	}
 }
 
+bool BlockManager::RagisterUpComboBlock()
+{
+	// Local variable
+	bool currEraseNum[BLOCK_NUM_MAX] = { false };
+
+	// ラムダ式の数々
+	auto CheckUp = [&](int row, int column)
+	{
+		if (sortBlocks[column - 1][row].GetColor() == sortBlocks[column][row].GetColor())
+			return true;
+
+		return false;
+	};
+	auto CheckDown = [&](int row, int column)
+	{
+		if (sortBlocks[column + 1][row].GetColor() == sortBlocks[column][row].GetColor())
+			return true;
+
+		return false;
+	};
+	auto CheckLeft = [&](int row, int column)
+	{
+		if (sortBlocks[column][row - 1].GetColor() == sortBlocks[column][row].GetColor())
+			return true;
+
+		return false;
+	};
+	auto CheckRight = [&](int row, int column)
+	{
+		if (sortBlocks[column][row + 1].GetColor() == sortBlocks[column][row].GetColor())
+			return true;
+
+		return false;
+	};
+
+	auto RasisterNum = [&](int row, int column)
+	{
+		int elementNum = 0;
+		SearchBlockNum(row, column, elementNum);
+		currEraseNum[elementNum] = true;
+	};
+
+
+	// ここから走査開始
+
+	for (int c = 0; c < BOARD_COLUMN_MAX; c++)
+	{
+		for (int r = 0; r < BOARD_ROW_MAX; r++)
+		{
+			if (-1 == sortBlocks[c][r].GetColor()) continue;
+
+			if (r == 0) // 左列
+			{
+				if (c == 0) // 上端
+				{
+					if (CheckRight(r, c))
+					{
+						RasisterNum(r, c);
+					}
+					else if (CheckDown(r, c))
+					{
+						RasisterNum(r, c);
+					}
+				}
+				else if (c == 8) //下端
+				{
+					if (CheckUp(r, c))
+					{
+						RasisterNum(r, c);
+					}
+					else if (CheckRight(r, c))
+					{
+						RasisterNum(r, c);
+					}
+				}
+				else
+				{
+					if (CheckRight(r, c))
+					{
+						RasisterNum(r, c);
+					}
+					else if (CheckUp(r, c))
+					{
+						RasisterNum(r, c);
+					}
+					else if (CheckDown(r, c))
+					{
+						RasisterNum(r, c);
+					}
+				}
+			}
+			else if (r == 5) // 右列
+			{
+				if (c == 0) // 上端
+				{
+					if (CheckLeft(r, c))
+					{
+						RasisterNum(r, c);
+					}
+					else if (CheckDown(r, c))
+					{
+						RasisterNum(r, c);
+					}
+				}
+				else if (c == 8) // 下端
+				{
+					if (CheckUp(r, c))
+					{
+						RasisterNum(r, c);
+					}
+					else if (CheckLeft(r, c))
+					{
+						RasisterNum(r, c);
+					}
+				}
+				else
+				{
+					if (CheckLeft(r, c))
+					{
+						RasisterNum(r, c);
+					}
+					else if (CheckUp(r, c))
+					{
+						RasisterNum(r, c);
+					}
+					else if (CheckDown(r, c))
+					{
+						RasisterNum(r, c);
+					}
+				}
+			}
+			else
+			{
+				if (c == 0)
+				{
+					if (CheckRight(r, c))
+					{
+						RasisterNum(r, c);
+					}
+					else if (CheckDown(r, c))
+					{
+						RasisterNum(r, c);
+					}
+					else if (CheckLeft(r, c))
+					{
+						RasisterNum(r, c);
+					}
+				}
+				else if (c == 8)
+				{
+					if (CheckRight(r, c))
+					{
+						RasisterNum(r, c);
+					}
+					else if (CheckUp(r, c))
+					{
+						RasisterNum(r, c);
+					}
+					else if (CheckLeft(r, c))
+					{
+						RasisterNum(r, c);
+					}
+				}
+				else
+				{
+					if (CheckUp(r, c))
+					{
+						RasisterNum(r, c);
+					}
+					else if (CheckRight(r, c))
+					{
+						RasisterNum(r, c);
+					}
+					else if (CheckDown(r, c))
+					{
+						RasisterNum(r, c);
+					}
+					else if (CheckLeft(r, c))
+					{
+						RasisterNum(r, c);
+					}
+				}
+			}
+		}
+	}
+
+
+	// 走査した結果を反映
+
+	for (int i = 0; i < BLOCK_NUM_MAX; i++)
+	{
+		if (currEraseNum[i])
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
 /*------------------------------------------*/
 // ブロックを上げる前の準備
 /*------------------------------------------*/
@@ -764,6 +1004,7 @@ void BlockManager::PreparationPushUp()
 /*------------------------------------------*/
 void BlockManager::MovePushUpBoard()
 {
+	// 6フレームかけて上にあげていく
 	for (auto& it : blocks)
 	{
 		it.SetPosY(it.GetPos().y - 114.0f / 6.0f);
@@ -771,10 +1012,12 @@ void BlockManager::MovePushUpBoard()
 
 	pushingCount++;
 
+	// 上げ終わる
 	if (6 <= pushingCount)
 	{
 		pushingCount = 0;
-		status = State::PoPRowLine;
+		SetStatus(State::PopRowLine);
+
 		isPushing = false;
 		if (!provisionalGameUI.GetIsGaugeMax())
 		{

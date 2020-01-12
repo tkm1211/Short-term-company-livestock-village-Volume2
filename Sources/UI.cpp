@@ -84,6 +84,14 @@ void GameUI::Init()
 	{
 		totalScore = 0;
 	}
+
+	// Speed関係
+	{
+		minTime = 0;
+		secondTime = 0;
+		totalTime = 0;
+		speedUpCount = 0;
+	}
 }
 
 void GameUI::Uninit()
@@ -96,6 +104,8 @@ void GameUI::Update()
 	ShowChainNumUpdate();
 	SetNextBlockColors();
 	UpdateOfGauge();
+	UpdateOfTime();
+	UpdateGaugeSpeed();
 }
 
 void GameUI::Draw()
@@ -352,4 +362,46 @@ void GameUI::UpdateOfGauge()
 
 	gaugePosY = meter.pos.y + (meter.size.y - gaugeTexSizeY);
 
+}
+
+void GameUI::UpdateGaugeSpeed()
+{
+	if (speedUpCount == 0) // 初回のスピードアップのみ45秒で上げる
+	{
+		if (secondTime >= 45 && secondTime != 0)
+		{
+			maxSecond -= 0.5f;
+			speedUpCount++;
+			secondTime = 0;
+
+		}
+	}
+	else
+	{
+		if (secondTime >= 30 && secondTime != 0)
+		{
+			maxSecond -= 0.5f;
+			speedUpCount++;
+			secondTime = 0;
+		}
+
+		if (maxSecond <= 1.5f)
+		{
+			maxSecond = 1.5f;
+		}
+	}
+}
+
+void GameUI::UpdateOfTime()
+{
+	if (++totalTime >= 60)
+	{
+		secondTime++;
+		totalTime = 0;
+	}
+	if (secondTime >= 60)
+	{
+		minTime++;
+		secondTime = 0;
+	}
 }
