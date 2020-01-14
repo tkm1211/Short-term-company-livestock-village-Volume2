@@ -5,6 +5,7 @@
 #include "easing.h"
 #include "ConvenientMath.h"
 #include "Constant.h"
+#include "Player.h"
 
 /*--------------------------------------*/
 //	Global area
@@ -18,7 +19,28 @@ GameUI provisionalGameUI;
 
 void GameUI::Init()
 {
-	sprGameUI = RESOURCE->GetSpriteData(Resource::Texture::UI);
+	// 画像データのロード
+	{
+		sprGameUI = RESOURCE->GetSpriteData(Resource::Texture::UI);
+		int charNum = 0;// TODO:仮変数
+		switch (charNum)
+		{
+		case 0:
+			sprCharacter = RESOURCE->GetSpriteData(Resource::Texture::Character01);
+			break;
+		case 1:
+			sprCharacter = RESOURCE->GetSpriteData(Resource::Texture::Character02);
+			break;
+		case 2:
+			sprCharacter = RESOURCE->GetSpriteData(Resource::Texture::Character03);
+			break;
+		case 3:
+			sprCharacter = RESOURCE->GetSpriteData(Resource::Texture::Character04);
+			break;
+		default:
+			break;
+		}
+	}
 
 	// セレクトレベルに応じて値を変える
 	{
@@ -92,6 +114,16 @@ void GameUI::Init()
 		totalTime = 0;
 		speedUpCount = 0;
 	}
+
+	// Character関係
+	{
+		charTex.pos = DirectX::XMFLOAT2(150.0f, 327.0f);
+		charTex.tex = DirectX::XMFLOAT2(0.0f, 0.0f);
+		charTex.size = DirectX::XMFLOAT2(320.f, 416.0f);
+		
+		charAnimCount = 0;
+		charAnimFrame = 0;
+	}
 }
 
 void GameUI::Uninit()
@@ -101,19 +133,32 @@ void GameUI::Uninit()
 
 void GameUI::Update()
 {
+	// 連鎖数の表示
 	ShowChainNumUpdate();
+
+	// NextBlockColorsに値をセットする
 	SetNextBlockColors();
+
+	// ゲージの更新
 	UpdateOfGauge();
-	UpdateOfTime();
+
+	// ゲージのスピード更新
 	UpdateGaugeSpeed();
+
+	// Timeの更新
+	UpdateOfTime();
+
+	// キャラアニメーションの更新
+	UpdateOfCharacter();
 }
 
 void GameUI::Draw()
 {
-	DirectX::XMFLOAT2 basicSize(36, 60);
-	DirectX::XMFLOAT2 basicTex(0, 696);
-	DirectX::XMFLOAT2 basicCenter(0.0f, 0.0f);
-	DirectX::XMFLOAT4 basicColor(1.0f, 1.0f, 1.0f, 1.0f);
+	using namespace DirectX;
+	XMFLOAT2 basicSize(36, 60);
+	XMFLOAT2 basicTex(0, 696);
+	XMFLOAT2 basicCenter(0.0f, 0.0f);
+	XMFLOAT4 basicColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 
 	sprGameUI->Begin();
@@ -209,6 +254,17 @@ void GameUI::Draw()
 	}
 
 	sprGameUI->End();
+
+
+	sprCharacter->Begin();
+
+	sprCharacter->Draw(
+		charTex.pos, charTex.size, 
+		charTex.tex, charTex.size, 
+		XMFLOAT2(0.0f, 0.0f), 0.0f, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f)
+	);
+
+	sprCharacter->End();
 }
 
 
@@ -364,6 +420,10 @@ void GameUI::UpdateOfGauge()
 
 }
 
+
+/*------------------------------------------*/
+// スピードの更新関数
+/*------------------------------------------*/
 void GameUI::UpdateGaugeSpeed()
 {
 	if (speedUpCount == 0) // 初回のスピードアップのみ45秒で上げる
@@ -392,6 +452,10 @@ void GameUI::UpdateGaugeSpeed()
 	}
 }
 
+
+/*------------------------------------------*/
+// Timeの更新関数
+/*------------------------------------------*/
 void GameUI::UpdateOfTime()
 {
 	if (++totalTime >= 60)
@@ -403,5 +467,86 @@ void GameUI::UpdateOfTime()
 	{
 		minTime++;
 		secondTime = 0;
+	}
+}
+
+
+/*------------------------------------------*/
+// キャラクターアニメーションの更新関数
+/*------------------------------------------*/
+void GameUI::UpdateOfCharacter()
+{
+	// 状態の示すキャラの変化
+	bool proGameOver = false;//TODO : 仮変数
+	bool proLose = false;
+	bool proAleat = false;
+
+
+	//charTex.tex.y = 0.0f;
+
+
+	if (proGameOver)// 一人プレイ終了 & 二人プレイ勝利
+	{
+		if (charTex.tex.y != charTex.tex.y)
+		{
+			charAnimFrame = 0;
+		}
+		charTex.tex.y = 416.0f * 3.0f;
+	}
+	else if (proLose)// 二人プレイ敗北
+	{
+		if (charTex.tex.y != charTex.tex.y)
+		{
+			charAnimFrame = 0;
+		}
+		charTex.tex.y = 416.0f * 4.0f;
+	}
+	else if (proAleat)// アラート時
+	{
+		if (charTex.tex.y != charTex.tex.y)
+		{
+			charAnimFrame = 0;
+		}
+		charTex.tex.y = 416.0f * 2.0f;
+	}
+	else if (BlockManager::State::Wait != provisionalBlockManager.GetStatus() &&
+			 BlockManager::State::PushUp != provisionalBlockManager.GetStatus() && 
+			 BlockManager::State::PopRowLine != provisionalBlockManager.GetStatus() &&
+			 BlockManager::State::CheckUpCombo != provisionalBlockManager.GetStatus()) // チェイン中
+	{
+		if (charTex.tex.y != charTex.tex.y)
+		{
+			charAnimFrame = 0;
+		}
+		charTex.tex.y = 416.0f * 1.0f;
+	}
+	else // それ以外
+	{
+		if (charTex.tex.y != charTex.tex.y)
+		{
+			charAnimFrame = 0;
+		}
+		charTex.tex.y = 416.0f * 0.0f;
+	}
+
+	// 通常時のアニメーション
+	if (charTex.tex.y != 0.0f)
+	{
+		charAnimFrame = 0;
+		charTex.tex.x = 0.0f;
+	}
+	else
+	{
+		charTex.tex.x = 416.0f * charAnimFrame;
+	}
+
+	// アニメーションループ
+	if (charAnimCount++ % 5 == 0 && charAnimCount != 0)
+	{
+		charAnimFrame++;
+		if (CHARACTER_ANIMATION_MAX <= charAnimFrame)
+		{
+			charAnimFrame = 0;
+		}
 	}
 }

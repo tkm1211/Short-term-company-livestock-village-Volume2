@@ -19,6 +19,10 @@ public:
 		Grid,
 		UI,
 		Block,
+		Character01,
+		Character02,
+		Character03,
+		Character04,
 	};
 
 private:
@@ -31,6 +35,10 @@ private:
 	std::shared_ptr<SpriteBatch> sprGrid;
 	std::shared_ptr<SpriteBatch> sprUI;
 	std::shared_ptr<SpriteBatch> sprBlock;
+	std::shared_ptr<SpriteBatch> sprCharcter01;
+	std::shared_ptr<SpriteBatch> sprCharcter02;
+	std::shared_ptr<SpriteBatch> sprCharcter03;
+	std::shared_ptr<SpriteBatch> sprCharcter04;
 
 public:
 	void Init();

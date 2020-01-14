@@ -12,8 +12,11 @@ public:
 	static constexpr int SINGLE_CORRECTION_Y = 12;
 	static constexpr int GAUGE_DOWN_CNT_MAX = 60;
 
+	static constexpr int CHARACTER_ANIMATION_MAX = 6;
+
 private:
 	std::shared_ptr<SpriteBatch> sprGameUI;
+	std::shared_ptr<SpriteBatch> sprCharacter;
 
 #pragma region Chainä÷åW
 	DirectX::XMFLOAT2 showChainNumPos;
@@ -57,6 +60,13 @@ private:
 	int speedUpCount;
 #pragma endregion
 
+#pragma region Characterä÷åW
+	TexData charTex;
+	int		charAnimCount;
+	int		charAnimFrame;
+#pragma endregion
+
+
 
 public:
 	GameUI():
@@ -83,7 +93,9 @@ public:
 		totalTime(0),
 		minTime(0),
 		secondTime(0),
-		speedUpCount(0)
+		speedUpCount(0),
+		charAnimCount(0),
+		charAnimFrame(0)
 	{}
 	~GameUI() {}
 
@@ -118,6 +130,10 @@ private:
 
 #pragma region Speedån
 	void UpdateOfTime();
+#pragma endregion
+
+#pragma region Characterån
+	void UpdateOfCharacter();
 #pragma endregion
 
 #pragma region Getter and Setter

@@ -59,11 +59,33 @@ void Resource::Init()
 		sprBlock = std::make_shared<SpriteBatch>(L"Data/block.png", BlockManager::BLOCK_NUM_MAX, DirectX::XMFLOAT2(114, 114));
 		assert(sprBlock && "Misstake load texture data <sprBlock>");
 	}
+	if (!sprCharcter01)
+	{
+		sprCharcter01 = std::make_shared<SpriteBatch>(L"Data/character01.png");
+		assert(sprCharcter01 && "Misstake load texture data <sprCharcter01>");
+	}
+	if (!sprCharcter02)
+	{
+		sprCharcter02 = std::make_shared<SpriteBatch>(L"Data/character02.png");
+		assert(sprCharcter02 && "Misstake load texture data <sprCharcter02>");
+	}
+	if (!sprCharcter03)
+	{
+		sprCharcter03 = std::make_shared<SpriteBatch>(L"Data/character03.png");
+		assert(sprCharcter03 && "Misstake load texture data <sprCharcter03>");
+	}
+	if (!sprCharcter04)
+	{
+		sprCharcter04 = std::make_shared<SpriteBatch>(L"Data/character04.png");
+		assert(sprCharcter04 && "Misstake load texture data <sprCharcter04>");
+	}
+
+
 }
 
 std::shared_ptr<SpriteBatch>& Resource::GetSpriteData(Resource::Texture _textureName)
 {
-	std::shared_ptr<SpriteBatch> dummy;
+	std::shared_ptr<SpriteBatch> dummy = nullptr;
 	switch (_textureName)
 	{
 	case Texture::Title:
@@ -84,6 +106,14 @@ std::shared_ptr<SpriteBatch>& Resource::GetSpriteData(Resource::Texture _texture
 		return sprUI;					// break;
 	case Texture::Block:
 		return sprBlock;				// break;
+	case Texture::Character01:
+		return sprCharcter01;			// break;
+	case Texture::Character02:
+		return sprCharcter02;			// break;
+	case Texture::Character03:
+		return sprCharcter03;			// break;
+	case Texture::Character04:
+		return sprCharcter04;			// break;
 	default:
 		return dummy;
 		break;
