@@ -509,10 +509,8 @@ void GameUI::UpdateOfCharacter()
 		}
 		charTex.tex.y = 416.0f * 2.0f;
 	}
-	else if (BlockManager::State::Wait != provisionalBlockManager.GetStatus() &&
-			 BlockManager::State::PushUp != provisionalBlockManager.GetStatus() && 
-			 BlockManager::State::PopRowLine != provisionalBlockManager.GetStatus() &&
-			 BlockManager::State::CheckUpCombo != provisionalBlockManager.GetStatus()) // チェイン中
+	else if (BlockManager::State::Break == provisionalBlockManager.GetStatus() ||
+			 BlockManager::State::Chain == provisionalBlockManager.GetStatus()) // チェイン中
 	{
 		if (charTex.tex.y != charTex.tex.y)
 		{
