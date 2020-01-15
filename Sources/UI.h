@@ -66,7 +66,12 @@ private:
 	int		charAnimFrame;
 #pragma endregion
 
-
+#pragma region Readyä÷åW
+	int		readyState;
+	int		readyTimer;
+	float	readyAlpha;
+	float	readyPosY;
+#pragma endregion
 
 public:
 	GameUI():
@@ -95,7 +100,11 @@ public:
 		secondTime(0),
 		speedUpCount(0),
 		charAnimCount(0),
-		charAnimFrame(0)
+		charAnimFrame(0),
+		readyState(0),
+		readyTimer(0),
+		readyAlpha(0.0f),
+		readyPosY(0.0f)
 	{}
 	~GameUI() {}
 
@@ -134,6 +143,10 @@ private:
 
 #pragma region Characterån
 	void UpdateOfCharacter();
+#pragma endregion
+
+#pragma region Readyån
+	void UpdateOfGameReady();
 #pragma endregion
 
 #pragma region Getter and Setter

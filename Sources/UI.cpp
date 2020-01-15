@@ -1,5 +1,6 @@
 #include "UI.h"
 
+#include "SceneManager.h"
 #include "BlockManager.h"
 #include "Resource.h"
 #include "easing.h"
@@ -124,6 +125,14 @@ void GameUI::Init()
 		charAnimCount = 0;
 		charAnimFrame = 0;
 	}
+
+	// Ready関係
+	{
+		readyState = 0;
+		readyTimer = 0;
+		readyAlpha = 0.0f;
+		readyPosY = 462.0f;
+	}
 }
 
 void GameUI::Uninit()
@@ -133,6 +142,17 @@ void GameUI::Uninit()
 
 void GameUI::Update()
 {
+	/*ゲーム開始前で行う処理*/
+	
+	// 文字を表示する
+	UpdateOfGameReady();
+
+	// キャラアニメーションの更新
+	UpdateOfCharacter();
+
+
+	if (sceneSingleGame.GetIsGameReady())return;
+
 	// 連鎖数の表示
 	ShowChainNumUpdate();
 
@@ -148,13 +168,13 @@ void GameUI::Update()
 	// Timeの更新
 	UpdateOfTime();
 
-	// キャラアニメーションの更新
-	UpdateOfCharacter();
 }
 
 void GameUI::Draw()
 {
 	using namespace DirectX;
+
+	//basic val of drawing UI.
 	XMFLOAT2 basicSize(36, 60);
 	XMFLOAT2 basicTex(0, 696);
 	XMFLOAT2 basicCenter(0.0f, 0.0f);
@@ -253,18 +273,37 @@ void GameUI::Draw()
 		}
 	}
 
+	// ReadyGo
+	{
+		if (sceneSingleGame.GetIsGameReady())
+		{
+			if (provisionalGameUI.readyState < 1)
+			{
+				sprGameUI->Draw(660.0f, provisionalGameUI.readyPosY, 576, 150, 0, 3364, 576, 150, 0, 0, 0.0f, 1.0f, 1.0f, 1.0f, provisionalGameUI.readyAlpha);
+			}
+			else
+			{
+				sprGameUI->Draw(660.0f, provisionalGameUI.readyPosY, 576, 158, 0, 3364 + 158, 576, 158, 0, 0, 0.0, 1.0f, 1.0f, 1.0f, provisionalGameUI.readyAlpha);
+			}
+		}
+
+	}
+
 	sprGameUI->End();
 
 
-	sprCharacter->Begin();
+	// キャラクターの描画
+	{
+		sprCharacter->Begin();
 
-	sprCharacter->Draw(
-		charTex.pos, charTex.size, 
-		charTex.tex, charTex.size, 
-		XMFLOAT2(0.0f, 0.0f), 0.0f, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f)
-	);
+		sprCharacter->Draw(
+			charTex.pos, charTex.size,
+			charTex.tex, charTex.size,
+			XMFLOAT2(0.0f, 0.0f), 0.0f, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f)
+		);
 
-	sprCharacter->End();
+		sprCharacter->End();
+	}
 }
 
 
@@ -484,47 +523,49 @@ void GameUI::UpdateOfCharacter()
 
 	//charTex.tex.y = 0.0f;
 
-
-	if (proGameOver)// 一人プレイ終了 & 二人プレイ勝利
+	// アニメーションの種類変更
 	{
-		if (charTex.tex.y != charTex.tex.y)
+		if (proGameOver)// 一人プレイ終了 & 二人プレイ勝利
 		{
-			charAnimFrame = 0;
+			if (charTex.tex.y != charTex.tex.y)
+			{
+				charAnimFrame = 0;
+			}
+			charTex.tex.y = 416.0f * 3.0f;
 		}
-		charTex.tex.y = 416.0f * 3.0f;
-	}
-	else if (proLose)// 二人プレイ敗北
-	{
-		if (charTex.tex.y != charTex.tex.y)
+		else if (proLose)// 二人プレイ敗北
 		{
-			charAnimFrame = 0;
+			if (charTex.tex.y != charTex.tex.y)
+			{
+				charAnimFrame = 0;
+			}
+			charTex.tex.y = 416.0f * 4.0f;
 		}
-		charTex.tex.y = 416.0f * 4.0f;
-	}
-	else if (proAleat)// アラート時
-	{
-		if (charTex.tex.y != charTex.tex.y)
+		else if (proAleat)// アラート時
 		{
-			charAnimFrame = 0;
+			if (charTex.tex.y != charTex.tex.y)
+			{
+				charAnimFrame = 0;
+			}
+			charTex.tex.y = 416.0f * 2.0f;
 		}
-		charTex.tex.y = 416.0f * 2.0f;
-	}
-	else if (BlockManager::State::Break == provisionalBlockManager.GetStatus() ||
-			 BlockManager::State::Chain == provisionalBlockManager.GetStatus()) // チェイン中
-	{
-		if (charTex.tex.y != charTex.tex.y)
+		else if (BlockManager::State::Break == provisionalBlockManager.GetStatus() ||
+			BlockManager::State::Chain == provisionalBlockManager.GetStatus()) // チェイン中
 		{
-			charAnimFrame = 0;
+			if (charTex.tex.y != charTex.tex.y)
+			{
+				charAnimFrame = 0;
+			}
+			charTex.tex.y = 416.0f * 1.0f;
 		}
-		charTex.tex.y = 416.0f * 1.0f;
-	}
-	else // それ以外
-	{
-		if (charTex.tex.y != charTex.tex.y)
+		else // それ以外
 		{
-			charAnimFrame = 0;
+			if (charTex.tex.y != charTex.tex.y)
+			{
+				charAnimFrame = 0;
+			}
+			charTex.tex.y = 416.0f * 0.0f;
 		}
-		charTex.tex.y = 416.0f * 0.0f;
 	}
 
 	// 通常時のアニメーション
@@ -546,5 +587,63 @@ void GameUI::UpdateOfCharacter()
 		{
 			charAnimFrame = 0;
 		}
+	}
+}
+
+
+/*------------------------------------------*/
+// GameReadyの更新関数
+/*------------------------------------------*/
+void GameUI::UpdateOfGameReady()
+{
+	if (!sceneSingleGame.GetIsGameReady()) return;
+
+	switch (readyState)
+	{
+	case 0:
+		++readyTimer;
+		if (readyTimer == 50)
+		{
+			// play sound.
+		}
+		if (readyTimer <= 60 && readyTimer >= 50)
+		{
+			readyAlpha += 0.1f;
+		}
+		if (readyTimer >= 50)
+		{
+			readyPosY = easing::OutExp(static_cast<float>(readyTimer), 40.0f, 462.0f, 462.0f + 114.0f);
+		}
+		if (readyTimer >= 180)
+		{
+			readyState++;
+			readyTimer = 0;
+			readyAlpha = 0.0f;
+		}
+		break;
+
+	case 1:
+		++readyTimer;
+		if (readyTimer == 1)
+		{
+			// play sound.
+		}
+
+		if (++readyTimer <= 60)
+		{
+			readyAlpha += 0.1f;
+		}
+		if (readyTimer >= 50)
+		{
+			readyPosY = easing::OutExp(static_cast<float>(readyTimer), 40.0f, 462.0f, 462.0f + 114.0f);
+		}
+		if (readyTimer >= 120)
+		{
+			readyState++;
+			readyTimer = 0;
+			readyAlpha = 0.0f;
+			sceneSingleGame.SetIsGameReady(false);
+		}
+		break;
 	}
 }

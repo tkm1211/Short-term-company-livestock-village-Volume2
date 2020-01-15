@@ -2,6 +2,7 @@
 
 #include <input_device.h>
 
+#include "SceneManager.h"
 #include "Resource.h"
 #include "BlockManager.h"
 #include "UI.h"
@@ -34,6 +35,8 @@ void Player::Uninit()
 
 void Player::Update()
 {
+	if (sceneSingleGame.GetIsGameReady()) return;
+
 	OperatePlayer();
 	SetBreakBlock(0);
 }
@@ -253,9 +256,11 @@ void Player::SetBreakBlock(int _playerNum)
 	if (pad[0].bAt || pad[0].bBt || pad[0].bXt || pad[0].bYt)
 	{
 			// TODO : Correspond Multi Player
+		{
+			if (provisionalBlockManager.BreakBlock(row, column))
 			{
-				provisionalBlockManager.BreakBlock(row, column);
 				provisionalGameUI.SetIsTimerStop(true);
 			}
+		}
 	}
 }

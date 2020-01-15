@@ -5,6 +5,10 @@
 #pragma region Single Game
 class SceneSingleGame : public BaseScene
 {
+private:
+	int readyTimer;
+
+	bool isGameReady;
 
 public:
 	SceneSingleGame() { /*Init();*/ }
@@ -12,6 +16,12 @@ public:
 	void Uninit();
 	void Update();
 	void Draw();
+
+	void ProcessOfGameReady();
+
+	// Getter and Setter
+	bool GetIsGameReady() { return isGameReady; }
+	void SetIsGameReady(bool _n) { isGameReady = _n; }
 };
 #pragma endregion
 

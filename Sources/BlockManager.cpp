@@ -182,15 +182,17 @@ void BlockManager::SetStartBlock()
 /*-------------------------------------------*/
 // ƒuƒƒbƒN‚Ì”j‰óŠÖ”
 /*-------------------------------------------*/
-void BlockManager::BreakBlock(int _row, int _column)
+bool BlockManager::BreakBlock(int _row, int _column)
 {
+	bool ret = false;
 	Block* result = nullptr;
 	if (SearchBlock(_row, _column, &result))
 	{
 		result->BreakMe();
-
+		ret = true;
 		SetStatus(State::Break);
 	}
+	return ret;
 }
 
 void BlockManager::BreakBlock(int _elementNum)

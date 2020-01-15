@@ -95,7 +95,7 @@ public:
 
 
 	// ƒuƒƒbƒN‚Ì”j‰óŒn
-	void BreakBlock(int _row, int _column);
+	bool BreakBlock(int _row, int _column);
 	void BreakBlock(int _elementNum);
 	void CheckDownBlock();
 

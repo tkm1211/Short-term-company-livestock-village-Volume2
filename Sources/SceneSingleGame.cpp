@@ -21,6 +21,10 @@ BlockManager provisionalBlockManager;
 /*--------------------------------------*/
 void SceneSingleGame::Init()
 {
+	// Member variable
+	readyTimer = 0;
+	isGameReady = true;
+
 	BG_INSTANCE->Init();
 	provisionalPlayer.Init();
 	provisionalBlockManager.Init();
@@ -44,6 +48,14 @@ void SceneSingleGame::Update()
 		PRODUCTION->CSOH(SCENE_MANAGER->TITLE);
 
 
+	BG_INSTANCE->Update();
+	provisionalPlayer.Update();
+	provisionalGameUI.Update();
+	provisionalBlockManager.Update();
+
+	//ProcessOfGameReady();
+
+
 	if (PRODUCTION->CheckFlag(GO_SINGLEGAME) || PRODUCTION->CheckFlag(GO_TITLE)) return;
 
 	if (GetAsyncKeyState('N') & 1 || pad[0].bYt)
@@ -51,12 +63,6 @@ void SceneSingleGame::Update()
 		PRODUCTION->SetOn(GO_TITLE);
 		PRODUCTION->Start();
 	}
-
-
-	BG_INSTANCE->Update();
-	provisionalPlayer.Update();
-	provisionalGameUI.Update();
-	provisionalBlockManager.Update();
 }
 
 void SceneSingleGame::Draw()
@@ -69,6 +75,17 @@ void SceneSingleGame::Draw()
 	if (PRODUCTION->CheckFlag(GO_SINGLEGAME) || PRODUCTION->CheckFlag(GO_TITLE))
 	{
 		PRODUCTION->Draw();
+	}
+}
+
+void SceneSingleGame::ProcessOfGameReady()
+{
+	if (!isGameReady)return;
+
+	if (++readyTimer >= 180)
+	{
+		readyTimer = 0;
+		isGameReady = false;
 	}
 }
 
