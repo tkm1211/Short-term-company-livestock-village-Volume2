@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <array>
 #include "sprite.h"
 
 class Player
@@ -27,13 +28,16 @@ public:
 	~Player() { Uninit(); }
 	void Init();
 	void Uninit();
-	void Update();
+	void Update(int _pn = 0);
 	void Draw();
+	void DrawOfSingle();
+	void DrawOfMulti(int _pn);
 
-	void OperatePlayer();
-	void SetBreakBlock(int _playerNum);
+	void OperatePlayer(int _pn);
+	void SetBreakBlock(int _pn);
 
 	void PositionCorreciton();
 };
 
 extern Player provisionalPlayer;
+extern std::array<Player, 2> regularPlayer;

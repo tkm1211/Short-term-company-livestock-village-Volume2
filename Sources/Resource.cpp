@@ -46,7 +46,7 @@ void Resource::Init()
 	}
 	if (!sprGrid)
 	{
-		sprGrid = std::make_shared<SpriteBatch>(L"Data/frame.png");
+		sprGrid = std::make_shared<SpriteBatch>(L"Data/frame.png", 2);
 		assert(sprGrid && "Misstake load texture data <sprGrid>");
 	}
 	if (!sprUI)

@@ -79,14 +79,17 @@ private:
 public:
 	BlockManager(){}
 	~BlockManager(){}
-	void Init();
+	void Init(int _pn = 0);
 	void Uninit();
-	void Update();
+	void Update(int _pn = 0);
 	void Draw();
+	void DrawOfSingle();
+	void DrawOfMulti(int _pn);
 
 
 	// 一人プレイ用の更新
 	void ProcessOfSingleGame();
+	void ProcessOfMultiGame();
 
 
 	// ブロックの生成系
@@ -139,3 +142,4 @@ public:
 };
 
 extern BlockManager provisionalBlockManager;
+extern std::array<BlockManager, 2> regularBlockManager;

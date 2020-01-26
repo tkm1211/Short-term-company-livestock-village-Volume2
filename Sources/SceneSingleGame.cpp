@@ -22,21 +22,22 @@ BlockManager provisionalBlockManager;
 void SceneSingleGame::Init()
 {
 	// Member variable
+	gameMode = SceneSelect::SelectGameMode::Single;
 	readyTimer = 0;
 	isGameReady = true;
 
 	BG_INSTANCE->Init();
-	provisionalPlayer.Init();
-	provisionalBlockManager.Init();
-	provisionalGameUI.Init();
+	regularPlayer[0].Init();
+	regularBlockManager[0].Init();
+	regularGameUI[0].Init();
 }
 
 void SceneSingleGame::Uninit()
 {
 	BG_INSTANCE->Uninit();
-	provisionalPlayer.Uninit();
-	provisionalBlockManager.Uninit();
-	provisionalGameUI.Uninit();
+	regularPlayer[0].Uninit();
+	regularBlockManager[0].Uninit();
+	regularGameUI[0].Uninit();
 }
 
 void SceneSingleGame::Update()
@@ -49,9 +50,9 @@ void SceneSingleGame::Update()
 
 
 	BG_INSTANCE->Update();
-	provisionalPlayer.Update();
-	provisionalGameUI.Update();
-	provisionalBlockManager.Update();
+	regularPlayer[0].Update();
+	regularGameUI[0].Update();
+	regularBlockManager[0].Update();
 
 	//ProcessOfGameReady();
 
@@ -67,10 +68,10 @@ void SceneSingleGame::Update()
 
 void SceneSingleGame::Draw()
 {
-	BG_INSTANCE->Draw();
-	provisionalBlockManager.Draw();
-	provisionalPlayer.Draw();
-	provisionalGameUI.Draw();
+	BG_INSTANCE->DrawOfSingle();
+	regularBlockManager[0].DrawOfSingle();
+	regularPlayer[0].DrawOfSingle();
+	regularGameUI[0].DrawOfSingle();
 
 	if (PRODUCTION->CheckFlag(GO_SINGLEGAME) || PRODUCTION->CheckFlag(GO_TITLE))
 	{

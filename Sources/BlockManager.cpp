@@ -2,19 +2,20 @@
 #include "Resource.h"
 
 #include <input_device.h> //TODO:後で消す
+#include "SceneManager.h"
 #include "Production.h"
 #include "UI.h"
 /*--------------------------------------*/
 //	Global area
 /*--------------------------------------*/
 
-// unknown
+std::array<BlockManager, 2> regularBlockManager;
 
 /*--------------------------------------*/
 //	Menber function
 /*--------------------------------------*/
 
-void BlockManager::Init()
+void BlockManager::Init(int _pn)
 {
 	sprBlock = RESOURCE->GetSpriteData(Resource::Texture::Block);
 
@@ -22,7 +23,6 @@ void BlockManager::Init()
 	{
 		it.Init();
 	}
-
 
 	GenerateBlock(0, 5, Color::Green);
 	GenerateBlock(1, 5, Color::Yellow);
@@ -80,11 +80,18 @@ void BlockManager::Uninit()
 
 }
 
-void BlockManager::Update()
+void BlockManager::Update(int _pn)
 {
 
 	// 一人用の更新関数
-	ProcessOfSingleGame();
+	if (sceneSelect.JudgeGameMode(SceneSelect::SelectGameMode::Single))
+	{
+		ProcessOfSingleGame();
+	}
+	else if (sceneSelect.JudgeGameMode(SceneSelect::SelectGameMode::Multi))
+	{
+		ProcessOfMultiGame();
+	}
 
 }
 
@@ -103,6 +110,52 @@ void BlockManager::Draw()
 	sprBlock->End();
 }
 
+void BlockManager::DrawOfSingle()
+{
+	sprBlock->Begin();
+	for (auto& it : blocks)
+	{
+		if (9 <= it.GetColumn() || !it.GetIsExist())
+		{
+			continue;
+		}
+
+		sprBlock->Draw(it.GetPos().x + ADJUST + SINGLE_CORRECTION_X, it.GetPos().y + ADJUST + SINGLE_CORRECTION_Y, static_cast<float>(it.GetSizeX()), static_cast<float>(it.GetSizeY()), 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, it.GetColor());
+	}
+	sprBlock->End();
+}
+
+void BlockManager::DrawOfMulti(int _pn)
+{
+	sprBlock->Begin();
+	switch (_pn)
+	{
+	case 0:
+		for (auto& it : blocks)
+		{
+			if (9 <= it.GetColumn() || !it.GetIsExist())
+			{
+				continue;
+			}
+
+			sprBlock->Draw(it.GetPos().x + ADJUST + GameUI::MULTIPLAY_ONE_ORIJIN_X, it.GetPos().y + ADJUST + GameUI::MULTI_CORRECTION_Y, static_cast<float>(it.GetSizeX()), static_cast<float>(it.GetSizeY()), 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, it.GetColor());
+		}
+		break;
+
+	case 1:
+		for (auto& it : blocks)
+		{
+			if (9 <= it.GetColumn() || !it.GetIsExist())
+			{
+				continue;
+			}
+
+			sprBlock->Draw(it.GetPos().x + ADJUST + GameUI::MULTIPLAY_TWO_ORIJIN_X, it.GetPos().y + ADJUST + GameUI::MULTI_CORRECTION_Y, static_cast<float>(it.GetSizeX()), static_cast<float>(it.GetSizeY()), 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, it.GetColor());
+		}
+		break;
+	}
+	sprBlock->End();
+}
 
 //-----------------------------------------------------------------------
 
@@ -154,6 +207,14 @@ void BlockManager::ProcessOfSingleGame()
 	{
 		it.Update();
 	}
+}
+
+/*-------------------------------------------*/
+// シングルゲームの更新関数
+/*-------------------------------------------*/
+void BlockManager::ProcessOfMultiGame()
+{
+
 }
 
 /*-------------------------------------------*/
@@ -284,7 +345,7 @@ void BlockManager::ChainProcess()
 		RagisterChainBlock();
 		if (eraseBlockCount != 0)
 		{
-			provisionalGameUI.CalcScore(eraseBlockCount, chainCount);
+			regularGameUI[0].CalcScore(eraseBlockCount, chainCount);
 			eraseBlockCount = 0;
 		}
 
@@ -293,7 +354,7 @@ void BlockManager::ChainProcess()
 		if (isChainContinued)
 		{
 			chainCount++;
-			provisionalGameUI.SetNowChainNum(chainCount);
+			regularGameUI[0].SetNowChainNum(chainCount);
 		}
 		else
 		{
@@ -302,7 +363,7 @@ void BlockManager::ChainProcess()
 			if (lastStatus == State::CheckUpCombo)
 			{
 				chainCount = 0;
-				provisionalGameUI.SetIsTimerStop(false);
+				regularGameUI[0].SetIsTimerStop(false);
 				SetStatus(State::Wait);
 			}
 			else
@@ -527,7 +588,7 @@ void BlockManager::CheckUpComboProcess()
 	if (RagisterUpComboBlock())
 	{
 		SetStatus(State::Chain);
-		provisionalGameUI.SetIsTimerStop(true);
+		regularGameUI[0].SetIsTimerStop(true);
 	}
 	else
 	{
@@ -595,7 +656,7 @@ void BlockManager::RagisterChainBlock()
 			SearchBlock(r, c, &ans);
 			//provisionalGameUI.SetShowChainNumPos(ans->GetPos());
 			//provisionalGameUI.SetIsShowChainNum(true);
-			provisionalGameUI.SetShowChainNumInit(ans->GetPos());
+			regularGameUI[0].SetShowChainNumInit(ans->GetPos());
 		}
 	};
 
@@ -1021,9 +1082,9 @@ void BlockManager::MovePushUpBoard()
 		SetStatus(State::PopRowLine);
 
 		isPushing = false;
-		if (!provisionalGameUI.GetIsGaugeMax())
+		if (!regularGameUI[0].GetIsGaugeMax())
 		{
-			provisionalGameUI.SetIsTimerStop(false);
+			regularGameUI[0].SetIsTimerStop(false);
 		}
 	}
 }

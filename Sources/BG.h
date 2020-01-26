@@ -19,6 +19,8 @@ public:
 	void Uninit();
 	void Update();
 	void Draw();
+	void DrawOfSingle();
+	void DrawOfMulti();
 };
 
 #define BG_INSTANCE BG::getInstance()

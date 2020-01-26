@@ -11,7 +11,7 @@
 //	Global area
 /*--------------------------------------*/
 
-// unknown
+std::array<Player, 2> regularPlayer;
 
 
 /*--------------------------------------*/
@@ -33,12 +33,13 @@ void Player::Uninit()
 {
 }
 
-void Player::Update()
+void Player::Update(int _pn)
 {
-	if (sceneSingleGame.GetIsGameReady()) return;
+	if (sceneSelect.gameMode == SceneSelect::SelectGameMode::Single && sceneSingleGame.GetIsGameReady()) return;
+	if (sceneSelect.gameMode == SceneSelect::SelectGameMode::Multi && sceneMultiGame.GetIsGameReady()) return;
 
-	OperatePlayer();
-	SetBreakBlock(0);
+	OperatePlayer(_pn);
+	SetBreakBlock(_pn);
 }
 
 void Player::Draw()
@@ -48,8 +49,33 @@ void Player::Draw()
 	sprPickel->End();
 }
 
+void Player::DrawOfSingle()
+{
+	sprPickel->Begin();
+	sprPickel->Draw(pos.x + GameUI::ADJUST + GameUI::SINGLE_CORRECTION_X, pos.y + GameUI::ADJUST + GameUI::SINGLE_CORRECTION_Y, 114, 114, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, animFrame);
+	sprPickel->End();
+}
 
-void Player::OperatePlayer()
+void Player::DrawOfMulti(int _pn)
+{
+	switch (_pn)
+	{
+	case 0:
+		sprPickel->Begin();
+		sprPickel->Draw(pos.x + GameUI::ADJUST + GameUI::MULTIPLAY_ONE_ORIJIN_X, pos.y + GameUI::ADJUST + GameUI::MULTI_CORRECTION_Y, 114.0f, 114.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, animFrame);
+		sprPickel->End();
+		break;
+
+	case 1:
+		sprPickel->Begin();
+		sprPickel->Draw(pos.x + GameUI::ADJUST + GameUI::MULTIPLAY_TWO_ORIJIN_X, pos.y + GameUI::ADJUST + GameUI::MULTI_CORRECTION_Y, 114.0f, 114.0f, 0.0f + animFrame * 114.0f, 114.0f, 114.0f, 114.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+		sprPickel->End();
+		break;
+	}
+}
+
+
+void Player::OperatePlayer(int _pn)
 {
 	if (pad[0].sY < 0)
 	{
@@ -251,15 +277,15 @@ void Player::PositionCorreciton()
 
 void Player::SetBreakBlock(int _playerNum)
 {
-	if (provisionalBlockManager.GetStatus() != BlockManager::State::Wait) return;
+	if (regularBlockManager[0].GetStatus() != BlockManager::State::Wait) return;
 
 	if (pad[0].bAt || pad[0].bBt || pad[0].bXt || pad[0].bYt)
 	{
 			// TODO : Correspond Multi Player
 		{
-			if (provisionalBlockManager.BreakBlock(row, column))
+			if (regularBlockManager[0].BreakBlock(row, column))
 			{
-				provisionalGameUI.SetIsTimerStop(true);
+				regularGameUI[0].SetIsTimerStop(true);
 			}
 		}
 	}

@@ -10,6 +10,11 @@ public:
 	static constexpr int ADJUST = 3;
 	static constexpr int SINGLE_CORRECTION_X = 615;
 	static constexpr int SINGLE_CORRECTION_Y = 12;
+	static constexpr int MULTI_CORRECTION_Y = 12;
+
+	static constexpr float MULTIPLAY_ONE_ORIJIN_X = 15.0f;
+	static constexpr float MULTIPLAY_TWO_ORIJIN_X = 1215.0f;
+
 	static constexpr int GAUGE_DOWN_CNT_MAX = 60;
 
 	static constexpr int CHARACTER_ANIMATION_MAX = 6;
@@ -28,8 +33,10 @@ private:
 #pragma endregion
 
 #pragma region Scoreä∑éZån
-	const int	baseScore_tbl[6] = { 10, 20, 50, 90, 140, 200 };
-	int			totalScore;
+	const int			baseScore_tbl[6] = { 10, 20, 50, 90, 140, 200 };
+	int					totalScore;
+	DirectX::XMFLOAT2	scorePos;
+	TexData				scoreBoard;
 #pragma endregion
 
 #pragma region NextBlockä÷åW
@@ -82,6 +89,8 @@ public:
 		showChainTimer(0),
 		nowChainNum(0),
 		totalScore(0),
+		scorePos{},
+		scoreBoard{},
 		nextBlockColors{},
 		drawBlockStatus{},
 		meterBack{},
@@ -108,10 +117,12 @@ public:
 	{}
 	~GameUI() {}
 
-	void	Init();
+	void	Init(int _pn = 0);
 	void	Uninit();
-	void	Update();
+	void	Update(int _pn = 0);
 	void	Draw();
+	void	DrawOfSingle();
+	void	DrawOfMulti(int _pn);
 
 #pragma region Chainån
 public:
@@ -166,3 +177,4 @@ public:
 };
 
 extern GameUI provisionalGameUI;
+extern std::array<GameUI, 2> regularGameUI;

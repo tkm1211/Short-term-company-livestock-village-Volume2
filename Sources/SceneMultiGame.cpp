@@ -14,12 +14,36 @@
 /*--------------------------------------*/
 void SceneMultiGame::Init()
 {
+	gameMode = SceneSelect::SelectGameMode::Multi;
+
+
 	BG_INSTANCE->Init();
+	for (int i = 0; i < 2; i++)
+	{
+		regularPlayer[i].Init();
+	}
+	for (int i = 0; i < 2; i++)
+	{
+		regularBlockManager[i].Init(i);
+	}
+	for (int i = 0; i < 2; i++)
+	{
+		regularGameUI[i].Init(i);
+	}
+
+
+	isGameReady = true;
 }
 
 void SceneMultiGame::Uninit()
 {
 	BG_INSTANCE->Uninit();
+	for (int i = 0; i < 2; i++)
+	{
+		regularPlayer[i].Uninit();
+		regularBlockManager[i].Uninit();
+		regularGameUI[i].Uninit();
+	}
 }
 
 void SceneMultiGame::Update()
@@ -32,7 +56,18 @@ void SceneMultiGame::Update()
 
 
 	BG_INSTANCE->Update();
-
+	for (int i = 0; i < 2; i++)
+	{
+		regularPlayer[i].Update(i);
+	}
+	for (int i = 0; i < 2; i++)
+	{
+		regularGameUI[i].Update(i);
+	}
+	for (int i = 0; i < 2; i++)
+	{
+		regularBlockManager[i].Update(i);
+	}
 
 	if (PRODUCTION->CheckFlag(GO_MULTIGAME) || PRODUCTION->CheckFlag(GO_TITLE)) return;
 
@@ -46,11 +81,22 @@ void SceneMultiGame::Update()
 
 void SceneMultiGame::Draw()
 {
-	BG_INSTANCE->Draw();
+	BG_INSTANCE->DrawOfMulti();
+	for (int i = 0; i < 2; i++)
+	{
+		regularBlockManager[i].DrawOfMulti(i);
+	}
+	for (int i = 0; i < 2; i++)
+	{
+		regularPlayer[i].DrawOfMulti(i);
+	}
+	for (int i = 0; i < 2; i++)
+	{
+		regularGameUI[i].DrawOfMulti(i);
+	}
 
 	if (PRODUCTION->CheckFlag(GO_MULTIGAME) || PRODUCTION->CheckFlag(GO_TITLE))
 	{
 		PRODUCTION->Draw();
 	}
-
 }

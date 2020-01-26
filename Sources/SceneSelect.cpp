@@ -19,6 +19,7 @@
 void SceneSelect::Init()
 {
 	sprSelect = RESOURCE->GetSpriteData(Resource::Texture::Select);
+	gameMode = SelectGameMode::Single;
 }
 
 void SceneSelect::Update()
@@ -37,11 +38,13 @@ void SceneSelect::Update()
 	{
 		PRODUCTION->SetOn(GO_SINGLEGAME);
 		PRODUCTION->Start();
+		gameMode = SelectGameMode::Single;
 	}
 	if (GetAsyncKeyState('M') & 1 || pad[0].bYt)
 	{
 		PRODUCTION->SetOn(GO_MULTIGAME);
 		PRODUCTION->Start();
+		gameMode = SelectGameMode::Multi;
 	}
 }
 
@@ -58,7 +61,16 @@ void SceneSelect::Draw()
 
 }
 
+
 void SceneSelect::Uninit()
 {
 
+}
+
+
+bool SceneSelect::JudgeGameMode(SelectGameMode _b)
+{
+	if (gameMode == _b)return true;
+
+	return false;
 }

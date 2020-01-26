@@ -10,6 +10,7 @@
 extern SceneTitle sceneTitle;
 extern SceneSelect sceneSelect;
 extern SceneSingleGame sceneSingleGame;
+extern SceneMultiGame sceneMultiGame;
 
 
 class SceneManager
