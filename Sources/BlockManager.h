@@ -108,22 +108,22 @@ public:
 
 
 	// ブロックのコンボ系
-	void RagisterChainBlock();
+	void RagisterChainBlock(int _pn);
 	bool RagisterUpComboBlock();
 
 
 	// ブロックのPush Up系
 	void PreparationPushUp();
-	void MovePushUpBoard();
+	void MovePushUpBoard(int _pn);
 
 
 	// 各プロセス関数
 	void WaitProcess();
 	void BreakProcess();
-	void ChainProcess();
+	void ChainProcess(int _pn);
 	void PopRowLineProcess();
-	void PushUpProcess();
-	void CheckUpComboProcess();
+	void PushUpProcess(int _pn);
+	void CheckUpComboProcess(int _pn);
 
 	// Getter and Setter
 	State	GetStatus() { return status; }

@@ -171,7 +171,6 @@ void BlockManager::ProcessOfSingleGame()
 	SetSortBlocks();
 
 
-
 	switch (status)
 	{
 	case BlockManager::Wait:
@@ -181,16 +180,16 @@ void BlockManager::ProcessOfSingleGame()
 		BreakProcess();
 		break;
 	case BlockManager::Chain:
-		ChainProcess();
+		ChainProcess(0);
 		break;
 	case BlockManager::PushUp:
-		PushUpProcess();
+		PushUpProcess(0);
 		break;
 	case BlockManager::PopRowLine:
 		PopRowLineProcess();
 		break;
 	case BlockManager::CheckUpCombo:
-		CheckUpComboProcess();
+		CheckUpComboProcess(0);
 		break;
 	default:
 		break;
@@ -335,17 +334,17 @@ void BlockManager::BreakProcess()
 /*-------------------------------------------*/
 // Chainの処理
 /*-------------------------------------------*/
-void BlockManager::ChainProcess()
+void BlockManager::ChainProcess(int _pn)
 {
 	// ブロックが落下するかを判定する
 	CheckDownBlock();
 
 	if (CHAIN_RAG <= waitTime[0]++)
 	{
-		RagisterChainBlock();
+		RagisterChainBlock(_pn);
 		if (eraseBlockCount != 0)
 		{
-			regularGameUI[0].CalcScore(eraseBlockCount, chainCount);
+			regularGameUI[_pn].CalcScore(eraseBlockCount, chainCount);
 			eraseBlockCount = 0;
 		}
 
@@ -354,7 +353,7 @@ void BlockManager::ChainProcess()
 		if (isChainContinued)
 		{
 			chainCount++;
-			regularGameUI[0].SetNowChainNum(chainCount);
+			regularGameUI[_pn].SetNowChainNum(chainCount);
 		}
 		else
 		{
@@ -363,7 +362,7 @@ void BlockManager::ChainProcess()
 			if (lastStatus == State::CheckUpCombo)
 			{
 				chainCount = 0;
-				regularGameUI[0].SetIsTimerStop(false);
+				regularGameUI[_pn].SetIsTimerStop(false);
 				SetStatus(State::Wait);
 			}
 			else
@@ -564,7 +563,7 @@ void BlockManager::PopRowLineProcess()
 /*-------------------------------------------*/
 // PushUpの処理
 /*-------------------------------------------*/
-void BlockManager::PushUpProcess()
+void BlockManager::PushUpProcess(int _pn)
 {
 	if (!isPushing)
 	{
@@ -572,14 +571,14 @@ void BlockManager::PushUpProcess()
 	}
 	else
 	{
-		MovePushUpBoard();
+		MovePushUpBoard(_pn);
 	}
 }
 
 /*-------------------------------------------*/
 // CheckUpComboの処理
 /*-------------------------------------------*/
-void BlockManager::CheckUpComboProcess()
+void BlockManager::CheckUpComboProcess(int _pn)
 {
 	// 現状のブロックの配置を記録
 	SetSortBlocks();
@@ -588,7 +587,7 @@ void BlockManager::CheckUpComboProcess()
 	if (RagisterUpComboBlock())
 	{
 		SetStatus(State::Chain);
-		regularGameUI[0].SetIsTimerStop(true);
+		regularGameUI[_pn].SetIsTimerStop(true);
 	}
 	else
 	{
@@ -603,7 +602,7 @@ void BlockManager::CheckUpComboProcess()
 /*-------------------------------------------*/
 // チェイン関係の処理関数
 /*-------------------------------------------*/
-void BlockManager::RagisterChainBlock()
+void BlockManager::RagisterChainBlock(int _pn)
 {
 	// Local variable
 	bool currEraseNum[BLOCK_NUM_MAX] = { false };
@@ -656,7 +655,7 @@ void BlockManager::RagisterChainBlock()
 			SearchBlock(r, c, &ans);
 			//provisionalGameUI.SetShowChainNumPos(ans->GetPos());
 			//provisionalGameUI.SetIsShowChainNum(true);
-			regularGameUI[0].SetShowChainNumInit(ans->GetPos());
+			regularGameUI[_pn].SetShowChainNumInit(ans->GetPos());
 		}
 	};
 
@@ -1065,7 +1064,7 @@ void BlockManager::PreparationPushUp()
 /*------------------------------------------*/
 // ブロックを一段上げる
 /*------------------------------------------*/
-void BlockManager::MovePushUpBoard()
+void BlockManager::MovePushUpBoard(int _pn)
 {
 	// 6フレームかけて上にあげていく
 	for (auto& it : blocks)
@@ -1082,9 +1081,9 @@ void BlockManager::MovePushUpBoard()
 		SetStatus(State::PopRowLine);
 
 		isPushing = false;
-		if (!regularGameUI[0].GetIsGaugeMax())
+		if (!regularGameUI[_pn].GetIsGaugeMax())
 		{
-			regularGameUI[0].SetIsTimerStop(false);
+			regularGameUI[_pn].SetIsTimerStop(false);
 		}
 	}
 }
