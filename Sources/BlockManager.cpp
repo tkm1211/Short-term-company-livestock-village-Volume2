@@ -64,11 +64,16 @@ void BlockManager::Init(int _pn)
 	chainCount = 0;
 	pushingCount = 0;
 	eraseBlockCount = 0;
+	obstacleNum = 0;
+	obstacleKeepTime = 0;
+	fallObstacleNum = 0;
 
 	isChainContinued = false;
 	isPushing = false;
 	isPushUpByGauge = false;
 	isChainAfterPushUp = false;
+	isObstacleKeeping = false;
+	fallObstacleNow = false;
 }
 
 void BlockManager::Uninit()
@@ -90,7 +95,7 @@ void BlockManager::Update(int _pn)
 	}
 	else if (sceneSelect.JudgeGameMode(SceneSelect::SelectGameMode::Multi))
 	{
-		ProcessOfMultiGame();
+		ProcessOfMultiGame(_pn);
 	}
 
 }
@@ -198,7 +203,6 @@ void BlockManager::ProcessOfSingleGame()
 	if (isPushUpByGauge && !isPushing)
 	{
 		SetStatus(State::PushUp);
-		//status = State::PushUp;
 		isPushUpByGauge = false;
 	}
 
@@ -211,8 +215,46 @@ void BlockManager::ProcessOfSingleGame()
 /*-------------------------------------------*/
 // シングルゲームの更新関数
 /*-------------------------------------------*/
-void BlockManager::ProcessOfMultiGame()
+void BlockManager::ProcessOfMultiGame(int _pn)
 {
+	// ブロックを二次元配列へソートする
+	SetSortBlocks();
+
+
+	switch (status)
+	{
+	case BlockManager::Wait:
+		WaitProcess();
+		break;
+	case BlockManager::Break:
+		BreakProcess();
+		break;
+	case BlockManager::Chain:
+		ChainProcess(_pn);
+		break;
+	case BlockManager::PushUp:
+		PushUpProcess(_pn);
+		break;
+	case BlockManager::PopRowLine:
+		PopRowLineProcess();
+		break;
+	case BlockManager::CheckUpCombo:
+		CheckUpComboProcess(_pn);
+		break;
+	default:
+		break;
+	}
+
+	if (isPushUpByGauge && !isPushing)
+	{
+		SetStatus(State::PushUp);
+		isPushUpByGauge = false;
+	}
+
+	for (auto& it : blocks)
+	{
+		it.Update();
+	}
 
 }
 
@@ -592,7 +634,7 @@ void BlockManager::CheckUpComboProcess(int _pn)
 	else
 	{
 		chainCount = 0;
-
+		regularGameUI[_pn].SetIsTimerStop(false);
 		SetStatus(State::Wait);
 	}
 }
@@ -1085,6 +1127,32 @@ void BlockManager::MovePushUpBoard(int _pn)
 		{
 			regularGameUI[_pn].SetIsTimerStop(false);
 		}
+	}
+}
+
+
+
+void BlockManager::AttackForOppenent(int _pn)
+{
+	switch (_pn)
+	{
+	case 0:
+		if ( chainCount >= 2 )
+		{
+			regularBlockManager[1].obstacleNum++;
+			regularBlockManager[1].obstacleKeepTime = 0;
+			regularBlockManager[1].isObstacleKeeping = true;
+		}
+		break;
+
+	case 1:
+		if ( chainCount >= 2 )
+		{
+			regularBlockManager[0].obstacleNum++;
+			regularBlockManager[0].obstacleKeepTime = 0;
+			regularBlockManager[0].isObstacleKeeping = true;
+		}
+		break;
 	}
 }
 

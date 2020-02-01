@@ -58,11 +58,11 @@ void SceneMultiGame::Update()
 	BG_INSTANCE->Update();
 	for (int i = 0; i < 2; i++)
 	{
-		regularPlayer[i].Update(i);
+		regularGameUI[i].Update(i);
 	}
 	for (int i = 0; i < 2; i++)
 	{
-		regularGameUI[i].Update(i);
+		regularPlayer[i].Update(i);
 	}
 	for (int i = 0; i < 2; i++)
 	{

@@ -57,7 +57,7 @@ void GameUI::Init(int _pn)
 	// 次に出てくるブロックの色
 	{
 		ConvMath::InitializeArray(&nextBlockColors[_pn], scast_i(nextBlockColors.size()), -1);
-		SetNextBlockColors();
+		SetNextBlockColors(_pn);
 
 		for (int i = 0; i < BlockManager::ROW_MAX; i++)
 		{
@@ -83,7 +83,7 @@ void GameUI::Init(int _pn)
 			it.size = XMFLOAT2(114.0f, 228.0f);
 		}
 
-		for (int i = 0; i < regularBlockManager[0].GetColorMax(); i++)
+		for (int i = 0; i < regularBlockManager[_pn].GetColorMax(); i++)
 		{
 			drawBlockStatus[i].tex = DirectX::XMFLOAT2(114.0f * (i + 1), 228.0f);
 		}
@@ -251,7 +251,7 @@ void GameUI::Update(int _pn)
 	}
 
 	// キャラアニメーションの更新
-	UpdateOfCharacter();
+	UpdateOfCharacter(_pn);
 
 
 	if (sceneSingleGame.GetIsGameReady())return;
@@ -261,10 +261,10 @@ void GameUI::Update(int _pn)
 	ShowChainNumUpdate();
 
 	// NextBlockColorsに値をセットする
-	SetNextBlockColors();
+	SetNextBlockColors(_pn);
 
 	// ゲージの更新
-	UpdateOfGauge();
+	UpdateOfGauge(_pn);
 
 	// ゲージのスピード更新
 	UpdateGaugeSpeed();
@@ -790,12 +790,12 @@ void GameUI::CalcScore(int _eraseNum, int _chainCount)
 /*------------------------------------------*/
 // 次に来るブロックの色をセットする関数
 /*------------------------------------------*/
-void GameUI::SetNextBlockColors()
+void GameUI::SetNextBlockColors(int _pn)
 {
 	for (int i = 0; i < BlockManager::BOARD_ROW_MAX; i++)
 	{
 		Block* ans = nullptr;
-		regularBlockManager[0].SearchBlock(i, 9, &ans);
+		regularBlockManager[_pn].SearchBlock(i, 9, &ans);
 		if (ans != nullptr)
 		{
 			nextBlockColors[i] = ans->GetColor();
@@ -817,9 +817,9 @@ void GameUI::ResetGauge()
 /*------------------------------------------*/
 // ゲージの更新関数
 /*------------------------------------------*/
-void GameUI::UpdateOfGauge()
+void GameUI::UpdateOfGauge(int _pn)
 {
-	if (!isTimerStop && !regularBlockManager[0].GetIsPushing())
+	if (!isTimerStop && !regularBlockManager[_pn].GetIsPushing())
 	{
 		second = interpolationTimeCnt / 60.0f;
 
@@ -830,7 +830,7 @@ void GameUI::UpdateOfGauge()
 			second = 0;
 			gaugeDownCnt = 0;
 			interpolationTimeCnt = -1;
-			regularBlockManager[0].SetIsPushUpByGauge(true);
+			regularBlockManager[_pn].SetIsPushUpByGauge(true);
 		}
 		interpolationTimeCnt++;
 	}
@@ -840,7 +840,10 @@ void GameUI::UpdateOfGauge()
 		if (GAUGE_DOWN_CNT_MAX <= gaugeDownCnt)
 		{
 			second = 0;
-			ResetGauge();
+
+			auto state = regularBlockManager[_pn].GetStatus();
+			if (state != BlockManager::State::Chain && state != BlockManager::State::Break)
+				ResetGauge();
 		}
 		else
 		{
@@ -920,7 +923,7 @@ void GameUI::UpdateOfTime()
 /*------------------------------------------*/
 // キャラクターアニメーションの更新関数
 /*------------------------------------------*/
-void GameUI::UpdateOfCharacter()
+void GameUI::UpdateOfCharacter(int _pn)
 {
 	// 状態の示すキャラの変化
 	bool proGameOver = false;//TODO : 仮変数
@@ -956,8 +959,8 @@ void GameUI::UpdateOfCharacter()
 			}
 			charTex.tex.y = 416.0f * 2.0f;
 		}
-		else if (BlockManager::State::Break == regularBlockManager[0].GetStatus() ||
-			BlockManager::State::Chain == regularBlockManager[0].GetStatus()) // チェイン中
+		else if (BlockManager::State::Break == regularBlockManager[_pn].GetStatus() ||
+			BlockManager::State::Chain == regularBlockManager[_pn].GetStatus()) // チェイン中
 		{
 			if (charTex.tex.y != charTex.tex.y)
 			{
@@ -1050,7 +1053,10 @@ void GameUI::UpdateOfGameReady()
 			readyState++;
 			readyTimer = 0;
 			readyAlpha = 0.0f;
-			sceneSingleGame.SetIsGameReady(false);
+			if (sceneSelect.JudgeGameMode(SceneSelect::SelectGameMode::Single))
+				sceneSingleGame.SetIsGameReady(false);
+			else if (sceneSelect.JudgeGameMode(SceneSelect::SelectGameMode::Multi))
+				sceneMultiGame.SetIsGameReady(false);
 		}
 		break;
 	}

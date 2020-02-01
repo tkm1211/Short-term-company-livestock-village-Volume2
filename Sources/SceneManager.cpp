@@ -8,12 +8,13 @@ SceneTitle sceneTitle;
 SceneSelect sceneSelect;
 SceneSingleGame sceneSingleGame;
 SceneMultiGame  sceneMultiGame;
+SceneCPUGame sceneCPUGame;
 
 BaseScene* scene_tbl[] = {
 	&sceneTitle,
 	&sceneSelect,
 	& sceneSingleGame,
-	nullptr,//CPUGAME
+	&sceneCPUGame,
 	&sceneMultiGame,
 };
 

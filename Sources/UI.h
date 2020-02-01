@@ -137,14 +137,14 @@ public:
 
 #pragma region NextBlockån
 private:
-	void	SetNextBlockColors();
+	void	SetNextBlockColors(int _pn);
 #pragma endregion
 
 #pragma region Gaugeån
 public:
 	void ResetGauge();
 private:
-	void UpdateOfGauge();
+	void UpdateOfGauge(int _pn);
 	void UpdateGaugeSpeed();
 #pragma endregion
 
@@ -153,7 +153,7 @@ private:
 #pragma endregion
 
 #pragma region Characterån
-	void UpdateOfCharacter();
+	void UpdateOfCharacter(int _pn);
 #pragma endregion
 
 #pragma region Readyån

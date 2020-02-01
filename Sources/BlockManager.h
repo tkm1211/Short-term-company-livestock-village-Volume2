@@ -50,6 +50,8 @@ public:
 		PushUp,
 		PopRowLine,
 		CheckUpCombo,
+
+		FallObstacle,
 	};
 	State status;
 	State lastStatus;
@@ -70,11 +72,19 @@ private:
 
 	int colorMax = 5;
 
+	// Relation of Obstacle
+	int obstacleNum;		// お邪魔ブロックの数
+	int obstacleKeepTime;	// お邪魔が降るまでのキープ時間
+	int fallObstacleNum;	// 落ちるお邪魔の数
 
 	bool isChainContinued;		// チェイン中
 	bool isChainAfterPushUp;	// 上げコン中
 	bool isPushing;				// プッシュアップ中
 	bool isPushUpByGauge;		// ゲージMAXによりプッシュアップ
+	
+	bool isObstacleKeeping;		// お邪魔をキープ中
+	bool fallObstacleNow;		// お邪魔が降っている最中か
+		
 
 public:
 	BlockManager(){}
@@ -89,7 +99,8 @@ public:
 
 	// 一人プレイ用の更新
 	void ProcessOfSingleGame();
-	void ProcessOfMultiGame();
+	// 二人プレイ用の更新
+	void ProcessOfMultiGame(int _pn);
 
 
 	// ブロックの生成系
@@ -115,6 +126,10 @@ public:
 	// ブロックのPush Up系
 	void PreparationPushUp();
 	void MovePushUpBoard(int _pn);
+
+	
+	// お邪魔ブロック系
+	void AttackForOppenent(int _pn);
 
 
 	// 各プロセス関数

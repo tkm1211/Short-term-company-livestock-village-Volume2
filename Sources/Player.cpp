@@ -77,7 +77,7 @@ void Player::DrawOfMulti(int _pn)
 
 void Player::OperatePlayer(int _pn)
 {
-	if (pad[0].sY < 0)
+	if (pad[_pn].sY < 0)
 	{
 		if (++accelerationCount[0] == 1)
 		{
@@ -98,7 +98,7 @@ void Player::OperatePlayer(int _pn)
 		accelerationCount[0] = 0;
 	}
 
-	if (0 < pad[0].sX)
+	if (0 < pad[_pn].sX)
 	{
 		if (++accelerationCount[1] == 1)
 		{
@@ -119,7 +119,7 @@ void Player::OperatePlayer(int _pn)
 		accelerationCount[1] = 0;
 	}
 
-	if (0 < pad[0].sY)
+	if (0 < pad[_pn].sY)
 	{
 		if (++accelerationCount[2] == 1)
 		{
@@ -141,7 +141,7 @@ void Player::OperatePlayer(int _pn)
 		accelerationCount[2] = 0;
 	}
 
-	if (pad[0].sX < 0)
+	if (pad[_pn].sX < 0)
 	{
 		if (++accelerationCount[3] == 1)
 		{
@@ -163,7 +163,7 @@ void Player::OperatePlayer(int _pn)
 	}
 
 	// Cross Button
-	if (pad[0].bUPs)
+	if (pad[_pn].bUPs)
 	{
 		if (++accelerationCount[0 + 4] == 1)
 		{
@@ -184,7 +184,7 @@ void Player::OperatePlayer(int _pn)
 		accelerationCount[0 + 4] = 0;
 	}
 
-	if (pad[0].bRIGHTs)
+	if (pad[_pn].bRIGHTs)
 	{
 		if (++accelerationCount[1 + 4] == 1)
 		{
@@ -205,7 +205,7 @@ void Player::OperatePlayer(int _pn)
 		accelerationCount[1 + 4] = 0;
 	}
 
-	if (pad[0].bDOWNs)
+	if (pad[_pn].bDOWNs)
 	{
 		if (++accelerationCount[2 + 4] == 1)
 		{
@@ -226,7 +226,7 @@ void Player::OperatePlayer(int _pn)
 		accelerationCount[2 + 4] = 0;
 	}
 
-	if (pad[0].bLEFTs)
+	if (pad[_pn].bLEFTs)
 	{
 		if (++accelerationCount[3 + 4] == 1)
 		{
@@ -275,17 +275,17 @@ void Player::PositionCorreciton()
 	}
 }
 
-void Player::SetBreakBlock(int _playerNum)
+void Player::SetBreakBlock(int _pn)
 {
-	if (regularBlockManager[0].GetStatus() != BlockManager::State::Wait) return;
+	if (regularBlockManager[_pn].GetStatus() != BlockManager::State::Wait) return;
 
-	if (pad[0].bAt || pad[0].bBt || pad[0].bXt || pad[0].bYt)
+	if (pad[_pn].bAt || pad[_pn].bBt || pad[_pn].bXt || pad[_pn].bYt)
 	{
 			// TODO : Correspond Multi Player
 		{
-			if (regularBlockManager[0].BreakBlock(row, column))
+			if (regularBlockManager[_pn].BreakBlock(row, column))
 			{
-				regularGameUI[0].SetIsTimerStop(true);
+				regularGameUI[_pn].SetIsTimerStop(true);
 			}
 		}
 	}
