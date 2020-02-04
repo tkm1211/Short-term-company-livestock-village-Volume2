@@ -28,6 +28,8 @@ public:
 	static constexpr int MAX_PAR = 35;
 	static constexpr int MIN_PAR = 30;
 
+	static constexpr int OBSTACLE_KEEPING_COUNT_MAX = 180;
+
 
 public:
 	enum Color
@@ -130,6 +132,10 @@ public:
 	
 	// お邪魔ブロック系
 	void AttackForOppenent(int _pn);
+	void SetObstacleWhenCountReaches(int _pn);
+	int  SetNumOfObstacle(int _num);
+	void SetFallObstacle(int _fallObstacleNum, int _pn);
+	void CheckDownObstacle();
 
 
 	// 各プロセス関数
@@ -139,6 +145,7 @@ public:
 	void PopRowLineProcess();
 	void PushUpProcess(int _pn);
 	void CheckUpComboProcess(int _pn);
+	void FallObstacleProcess(int _pn);
 
 	// Getter and Setter
 	State	GetStatus() { return status; }

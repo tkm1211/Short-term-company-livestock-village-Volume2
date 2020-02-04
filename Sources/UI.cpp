@@ -91,6 +91,13 @@ void GameUI::Init(int _pn)
 
 	// ÉÅÅ[É^Å[
 	{
+		interpolationTimeCnt = 0;
+		second = 0.0f;
+		gaugeDownCnt = 0;
+
+		isTimerStop = false;
+		isGaugeMax = false;
+
 		if (nowGameMode == SceneSelect::SelectGameMode::Single)
 		{
 			meterBack.pos = DirectX::XMFLOAT2(1302.0f + ADJUST, 510.0f);

@@ -2,6 +2,7 @@
 #include "Resource.h"
 
 #include <input_device.h> //TODO:後で消す
+#include <array>
 #include "SceneManager.h"
 #include "Production.h"
 #include "UI.h"
@@ -213,7 +214,7 @@ void BlockManager::ProcessOfSingleGame()
 }
 
 /*-------------------------------------------*/
-// シングルゲームの更新関数
+// マルチゲームの更新関数
 /*-------------------------------------------*/
 void BlockManager::ProcessOfMultiGame(int _pn)
 {
@@ -241,6 +242,10 @@ void BlockManager::ProcessOfMultiGame(int _pn)
 	case BlockManager::CheckUpCombo:
 		CheckUpComboProcess(_pn);
 		break;
+	case BlockManager::FallObstacle:
+		//SetObstacleWhenCountReaches(_pn);
+		FallObstacleProcess(_pn);
+		break;
 	default:
 		break;
 	}
@@ -250,6 +255,8 @@ void BlockManager::ProcessOfMultiGame(int _pn)
 		SetStatus(State::PushUp);
 		isPushUpByGauge = false;
 	}
+
+	SetObstacleWhenCountReaches(_pn);
 
 	for (auto& it : blocks)
 	{
@@ -311,7 +318,7 @@ void BlockManager::CheckDownBlock()
 	{
 		for (int r = 0;r<BOARD_ROW_MAX;r++)
 		{
-			if (sortBlocks[c + 1][r].GetColor() == -1 && !sortBlocks[c][r].GetIsFall() || sortBlocks[c+1][r].GetIsFall())
+			if (sortBlocks[c + 1][r].GetColor() == -1 && !sortBlocks[c][r].GetIsFall() || sortBlocks[c + 1][r].GetIsFall())
 			{
 				Block* result = nullptr;
 				if (SearchBlock(r, c, &result))
@@ -396,6 +403,10 @@ void BlockManager::ChainProcess(int _pn)
 		{
 			chainCount++;
 			regularGameUI[_pn].SetNowChainNum(chainCount);
+			if (sceneSelect.JudgeGameMode(SceneSelect::Multi))
+			{
+				AttackForOppenent(_pn);
+			}
 		}
 		else
 		{
@@ -639,7 +650,26 @@ void BlockManager::CheckUpComboProcess(int _pn)
 	}
 }
 
+/*-------------------------------------------*/
+// FallObstacleの処理
+/*-------------------------------------------*/
+void BlockManager::FallObstacleProcess(int _pn)
+{
+	CheckDownObstacle();
 
+	for (auto& it : blocks)
+	{
+		if (it.GetColor() == Color::Obstacle &&
+			it.GetIsFall())
+		{
+			regularGameUI[_pn].SetIsTimerStop(true);
+			return;
+		}
+	}
+
+	regularGameUI[_pn].SetIsTimerStop(false);
+	SetStatus(State::Wait);
+}
 
 /*-------------------------------------------*/
 // チェイン関係の処理関数
@@ -653,28 +683,28 @@ void BlockManager::RagisterChainBlock(int _pn)
 	// ラムダ式の数々
 	auto CheckUp = [&](int row, int column)
 	{
-		if (sortBlocks[column - 1][row].GetColor() == sortBlocks[column][row].GetColor())
+		if (sortBlocks[column - 1][row].GetColor() == sortBlocks[column][row].GetColor() && sortBlocks[column][row].GetColor() != Color::Obstacle)
 			return true;
 
 		return false;
 	};
 	auto CheckDown = [&](int row, int column)
 	{
-		if (sortBlocks[column + 1][row].GetColor() == sortBlocks[column][row].GetColor())
+		if (sortBlocks[column + 1][row].GetColor() == sortBlocks[column][row].GetColor() && sortBlocks[column][row].GetColor() != Color::Obstacle)
 			return true;
 
 		return false;
 	};
 	auto CheckLeft = [&](int row, int column)
 	{
-		if (sortBlocks[column][row - 1].GetColor() == sortBlocks[column][row].GetColor())
+		if (sortBlocks[column][row - 1].GetColor() == sortBlocks[column][row].GetColor() && sortBlocks[column][row].GetColor() != Color::Obstacle)
 			return true;
 
 		return false;
 	};
 	auto CheckRight = [&](int row, int column)
 	{
-		if (sortBlocks[column][row + 1].GetColor() == sortBlocks[column][row].GetColor())
+		if (sortBlocks[column][row + 1].GetColor() == sortBlocks[column][row].GetColor() && sortBlocks[column][row].GetColor() != Color::Obstacle)
 			return true;
 
 		return false;
@@ -893,28 +923,28 @@ bool BlockManager::RagisterUpComboBlock()
 	// ラムダ式の数々
 	auto CheckUp = [&](int row, int column)
 	{
-		if (sortBlocks[column - 1][row].GetColor() == sortBlocks[column][row].GetColor())
+		if (sortBlocks[column - 1][row].GetColor() == sortBlocks[column][row].GetColor() && sortBlocks[column][row].GetColor() != Color::Obstacle)
 			return true;
 
 		return false;
 	};
 	auto CheckDown = [&](int row, int column)
 	{
-		if (sortBlocks[column + 1][row].GetColor() == sortBlocks[column][row].GetColor())
+		if (sortBlocks[column + 1][row].GetColor() == sortBlocks[column][row].GetColor() && sortBlocks[column][row].GetColor() != Color::Obstacle)
 			return true;
 
 		return false;
 	};
 	auto CheckLeft = [&](int row, int column)
 	{
-		if (sortBlocks[column][row - 1].GetColor() == sortBlocks[column][row].GetColor())
+		if (sortBlocks[column][row - 1].GetColor() == sortBlocks[column][row].GetColor() && sortBlocks[column][row].GetColor() != Color::Obstacle)
 			return true;
 
 		return false;
 	};
 	auto CheckRight = [&](int row, int column)
 	{
-		if (sortBlocks[column][row + 1].GetColor() == sortBlocks[column][row].GetColor())
+		if (sortBlocks[column][row + 1].GetColor() == sortBlocks[column][row].GetColor() && sortBlocks[column][row].GetColor() != Color::Obstacle)
 			return true;
 
 		return false;
@@ -1095,6 +1125,7 @@ void BlockManager::PreparationPushUp()
 		if (0 == it.GetColumn())
 		{
 			// TODO :  Go to GameOver
+			if (PRODUCTION->CheckFlag(GO_TITLE)) continue;
 			PRODUCTION->SetOn(GO_TITLE);
 			PRODUCTION->Start();
 		}
@@ -1131,7 +1162,9 @@ void BlockManager::MovePushUpBoard(int _pn)
 }
 
 
-
+/*------------------------------------------*/
+// 相手への攻撃関数(For MultiPlay)
+/*------------------------------------------*/
 void BlockManager::AttackForOppenent(int _pn)
 {
 	switch (_pn)
@@ -1155,6 +1188,191 @@ void BlockManager::AttackForOppenent(int _pn)
 		break;
 	}
 }
+
+
+/*------------------------------------------*/
+// カウントいっぱいになったら、お邪魔を降らせる
+/*------------------------------------------*/
+void BlockManager::SetObstacleWhenCountReaches(int _pn)
+{
+	if (!isObstacleKeeping || status == State::PushUp) return;
+
+	if (++obstacleKeepTime >= OBSTACLE_KEEPING_COUNT_MAX)
+	{
+		if (status != State::Wait)return;
+
+		// お邪魔ブロックを降らせるステートに以降する
+		status = State::FallObstacle;
+		
+		SetFallObstacle(SetNumOfObstacle(obstacleNum), _pn);
+		obstacleKeepTime = 0;
+		obstacleNum = 0;
+		isObstacleKeeping = false;
+	}
+}
+
+
+/*------------------------------------------*/
+// obstacleCountによって降らせる数を変える
+// return : Fall of obstacle count.
+/*------------------------------------------*/
+int BlockManager::SetNumOfObstacle(int _num)
+{
+	switch (_num)
+	{
+	case 1:
+		return 0;	//break;
+	case 2:
+		return 1;	//break;
+	case 3:
+		return 2;	//break;
+	case 4:
+		return 4;	//break;
+	case 5:
+		return 6;	//break;
+	case 6:
+		return 8;	//break;
+	case 7:
+		return 11;	//break;
+	case 8:
+		return 14;	//break;
+	case 9:
+		return 18;	//break;
+	default:
+		return 20;	//break;
+	}
+}
+
+
+/*------------------------------------------*/
+// お邪魔ブロックを降らせる(For MultiPlay)
+/*------------------------------------------*/
+void BlockManager::SetFallObstacle(int _fallObstacleNum, int _pn)
+{
+	int checkBoard[10][6];
+	//int fallObstacleBlockRow[20];
+	std::array<int, 20> fallObstacleBlockRow;
+	int enable = 0;
+	int obstacle = 1;
+	int dummy = -1;
+	int count = 0;
+
+	// checkBoardを初期化
+	for (int i = 0; i < 10; i++)
+	{
+		for (int j = 0; j < 6; j++)
+		{
+			checkBoard[i][j] = dummy;
+		}
+	}
+	// 落とす予定地を初期化しておく
+	for (auto& it : fallObstacleBlockRow)
+	{
+		it = dummy;
+	}
+
+
+	for (int k = 0; k < _fallObstacleNum; k++)
+	{
+		// vectorの中身を見る
+		for (size_t i = 0; i < blocks.size(); i++)
+		{
+			checkBoard[blocks[i].GetColumn()][blocks[i].GetRow()] = enable;	// 要素があるところにはenableを入れる
+		}
+
+		// 右下から見て、dummyがあるところの上にお邪魔を生成する
+		bool getArea = false;
+		for (int i = 8; i > -1; i--)
+		{
+			for (int j = 5; j > -1; j--)
+			{
+				if (checkBoard[i][j] == dummy)
+				{
+					//fallObstacleBlockRow[count++] = j;
+					fallObstacleBlockRow[k] = j;
+					checkBoard[i][j] = enable;
+					getArea = true;
+				}
+				if (getArea)break;
+			}
+			if (getArea)break;
+		}
+	}
+
+	std::array<int, 6> overlapCount{ 0 };
+
+	int generateRowSave[20];	// 生成したrowを保持する
+	for (auto& it : generateRowSave)
+	{
+		it = -1;
+	}
+
+	// お邪魔ブロックを生成する
+	int generateCount = 0;
+	dummy = -1;
+	for (int i = 0; i < 20; i++)
+	{
+		if (fallObstacleBlockRow[i] == dummy)break;
+
+		for (int j = 0; j < 20; j++)
+		{
+			if (fallObstacleBlockRow[i] == generateRowSave[j])
+			{
+				overlapCount[fallObstacleBlockRow[i]]++;
+			}
+		}
+		GenerateBlock(fallObstacleBlockRow[i], -2 - overlapCount[fallObstacleBlockRow[i]], Color::Obstacle); // 生成時に画面外に行くように、-2
+
+		for (size_t k = blocks.size()-1; k < -1; k--)
+		{
+			if (blocks[k].GetColor() == Color::Obstacle)
+			{
+				blocks[k].SetIsFall(true);
+				break;
+			}
+		}
+		generateRowSave[generateCount++] = fallObstacleBlockRow[i];
+	}
+}
+
+
+/*------------------------------------------*/
+// (For MultiPlay)
+/*------------------------------------------*/
+void BlockManager::CheckDownObstacle()
+{
+	Block sortAllBlock[COLUMN_MAX - 1][ROW_MAX]; // 下段一段分が必要ないので -1
+	Block dummy{};
+	for (int c = 0; c < COLUMN_MAX - 1; c++)
+	{
+		for (int r = 0; r < BOARD_ROW_MAX; r++)
+		{
+			sortAllBlock[c][r] = dummy;
+			Block* result = nullptr;
+			if (SearchBlock(r, c - 9, &result))
+			{
+				sortAllBlock[c][r] = *result;
+			}
+		}
+	}
+
+	for (int c = 0; c < COLUMN_MAX - 1 - 1; c++)
+	{
+		for (int r = 0; r < BOARD_ROW_MAX; r++)
+		{
+			if (sortAllBlock[c + 1][r].GetColor() == -1 && !sortAllBlock[c][r].GetIsFall() || sortAllBlock[c + 1][r].GetIsFall())
+			{
+				Block* result = nullptr;
+				if (SearchBlock(r, c - 9, &result))
+				{
+					if (result->GetColor() == Color::Obstacle)
+						result->SetIsFall(true);
+				}
+			}
+		}
+	}
+}
+
 
 
 /*------------------------------------------*/
