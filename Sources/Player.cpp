@@ -77,7 +77,7 @@ void Player::DrawOfMulti(int _pn)
 
 void Player::OperatePlayer(int _pn)
 {
-	if (pad[_pn].sY < 0)
+	if (pad[_pn].sLY < 0)
 	{
 		if (++accelerationCount[0] == 1)
 		{
@@ -98,7 +98,7 @@ void Player::OperatePlayer(int _pn)
 		accelerationCount[0] = 0;
 	}
 
-	if (0 < pad[_pn].sX)
+	if (0 < pad[_pn].sLX)
 	{
 		if (++accelerationCount[1] == 1)
 		{
@@ -119,7 +119,7 @@ void Player::OperatePlayer(int _pn)
 		accelerationCount[1] = 0;
 	}
 
-	if (0 < pad[_pn].sY)
+	if (0 < pad[_pn].sLY)
 	{
 		if (++accelerationCount[2] == 1)
 		{
@@ -141,7 +141,7 @@ void Player::OperatePlayer(int _pn)
 		accelerationCount[2] = 0;
 	}
 
-	if (pad[_pn].sX < 0)
+	if (pad[_pn].sLX < 0)
 	{
 		if (++accelerationCount[3] == 1)
 		{

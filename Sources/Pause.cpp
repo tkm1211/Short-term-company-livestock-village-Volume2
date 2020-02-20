@@ -37,7 +37,7 @@ void Pause::Update()
 {
 	if (isOn)
 	{
-		if (pad[0].sY < 0 || pad[0].bUPs)
+		if (pad[0].sLY < 0 || pad[0].bUPs)
 		{
 			if (++pushCnt[0] == 1)
 			{
@@ -62,7 +62,7 @@ void Pause::Update()
 			pushCnt[0] = 0;
 		}
 
-		if (0 < pad[0].sY || pad[0].bDOWNs)
+		if (0 < pad[0].sLY || pad[0].bDOWNs)
 		{
 			if (++pushCnt[1] == 1)
 			{
