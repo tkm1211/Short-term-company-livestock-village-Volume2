@@ -6,6 +6,7 @@
 #include "SceneManager.h"
 #include "Production.h"
 #include "UI.h"
+#include "Effect.h"
 /*--------------------------------------*/
 //	Global area
 /*--------------------------------------*/
@@ -906,6 +907,7 @@ void BlockManager::RagisterChainBlock(int _pn)
 	{
 		if (currEraseNum[i])
 		{
+			regularEffects[_pn].GenerateParticle(blocks[i].GetRow(), blocks[i].GetColumn(), blocks[i].GetColor());
 			blocks[i].BreakMe();
 			eraseBlockCount++;
 

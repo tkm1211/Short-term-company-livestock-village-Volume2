@@ -8,6 +8,7 @@
 #include "Player.h"
 #include "BlockManager.h"
 #include "UI.h"
+#include "Effect.h"
 
 /*--------------------------------------*/
 //	Global area
@@ -30,6 +31,8 @@ void SceneSingleGame::Init()
 	regularPlayer[0].Init();
 	regularBlockManager[0].Init();
 	regularGameUI[0].Init();
+	regularEffects[0].Init(0);
+
 }
 
 void SceneSingleGame::Uninit()
@@ -38,6 +41,7 @@ void SceneSingleGame::Uninit()
 	regularPlayer[0].Uninit();
 	regularBlockManager[0].Uninit();
 	regularGameUI[0].Uninit();
+	regularEffects[0].Uninit(0);
 }
 
 void SceneSingleGame::Update()
@@ -53,6 +57,7 @@ void SceneSingleGame::Update()
 	regularPlayer[0].Update();
 	regularGameUI[0].Update();
 	regularBlockManager[0].Update();
+	regularEffects[0].Update(0);
 
 	//ProcessOfGameReady();
 
@@ -72,6 +77,8 @@ void SceneSingleGame::Draw()
 	regularBlockManager[0].DrawOfSingle();
 	regularPlayer[0].DrawOfSingle();
 	regularGameUI[0].DrawOfSingle();
+	regularEffects[0].Draw(0);
+
 
 	if (PRODUCTION->CheckFlag(GO_SINGLEGAME) || PRODUCTION->CheckFlag(GO_TITLE))
 	{

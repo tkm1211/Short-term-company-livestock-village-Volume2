@@ -8,6 +8,7 @@
 #include "Player.h"
 #include "BlockManager.h"
 #include "UI.h"
+#include "Effect.h"
 
 /*--------------------------------------*/
 //	Menber function
@@ -30,6 +31,10 @@ void SceneMultiGame::Init()
 	{
 		regularGameUI[i].Init(i);
 	}
+	for (int i = 0; i < 2; i++)
+	{
+		regularEffects[i].Init(i);
+	}
 
 
 	isGameReady = true;
@@ -43,6 +48,7 @@ void SceneMultiGame::Uninit()
 		regularPlayer[i].Uninit();
 		regularBlockManager[i].Uninit();
 		regularGameUI[i].Uninit();
+		regularEffects[i].Uninit(i);
 	}
 }
 
@@ -68,6 +74,11 @@ void SceneMultiGame::Update()
 	{
 		regularBlockManager[i].Update(i);
 	}
+	for (int i = 0; i < 2; i++)
+	{
+		regularEffects[i].Update(i);
+	}
+
 
 	if (PRODUCTION->CheckFlag(GO_MULTIGAME) || PRODUCTION->CheckFlag(GO_TITLE)) return;
 
@@ -93,6 +104,10 @@ void SceneMultiGame::Draw()
 	for (int i = 0; i < 2; i++)
 	{
 		regularGameUI[i].DrawOfMulti(i);
+	}
+	for (int i = 0; i < 2; i++)
+	{
+		regularEffects[i].Draw(i);
 	}
 
 	if (PRODUCTION->CheckFlag(GO_MULTIGAME) || PRODUCTION->CheckFlag(GO_TITLE))
