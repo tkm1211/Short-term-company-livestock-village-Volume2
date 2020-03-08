@@ -56,7 +56,6 @@ void BlockManager::Init(int _pn)
 
 	PopRowLineProcess();
 
-	blocks;
 
 	// Member variable initialize.
 	status = State::Wait;
@@ -210,7 +209,7 @@ void BlockManager::ProcessOfSingleGame()
 
 	for (auto& it : blocks)
 	{
-		it.Update();
+		it.Update(0);
 	}
 }
 
@@ -261,7 +260,7 @@ void BlockManager::ProcessOfMultiGame(int _pn)
 
 	for (auto& it : blocks)
 	{
-		it.Update();
+		it.Update(_pn);
 	}
 
 }
@@ -732,6 +731,41 @@ void BlockManager::RagisterChainBlock(int _pn)
 		}
 	};
 
+	auto EraseObstacleBlocks = [&](int row, int column, int pn, bool searchUp, bool searchRight, bool searchDown, bool searchLeft)
+	{
+		if (searchUp)
+		{
+			if (sortBlocks[column - 1][row].GetColor() == BlockManager::Color::Obstacle)
+			{
+				RasisterNum(row, column - 1);
+			}
+		}
+
+		if (searchDown)
+		{
+			if (sortBlocks[column + 1][row].GetColor() == BlockManager::Color::Obstacle)
+			{
+				RasisterNum(row, column + 1);
+			}
+		}
+
+		if (searchRight)
+		{
+			if (sortBlocks[column][row + 1].GetColor() == BlockManager::Color::Obstacle)
+			{
+				RasisterNum(row + 1, column);
+			}
+		}
+
+		if (searchLeft)
+		{
+			if (sortBlocks[column][row - 1].GetColor() == BlockManager::Color::Obstacle)
+			{
+				RasisterNum(row - 1, column);
+			}
+		}
+	};
+
 	// ここから走査開始
 
 	for (int c = 0; c < BOARD_COLUMN_MAX; c++)
@@ -748,11 +782,13 @@ void BlockManager::RagisterChainBlock(int _pn)
 					{
 						RasisterNum(r, c);
 						SetChainFlagAndPos(r, c);
+						EraseObstacleBlocks(r, c, _pn, false, true, true, false);
 					}
 					else if (CheckDown(r, c))
 					{
 						RasisterNum(r, c);
 						SetChainFlagAndPos(r, c);
+						EraseObstacleBlocks(r, c, _pn, false, true, true, false);
 					}
 				}
 				else if (c == 8) //下端
@@ -761,11 +797,13 @@ void BlockManager::RagisterChainBlock(int _pn)
 					{
 						RasisterNum(r, c);
 						SetChainFlagAndPos(r, c);
+						EraseObstacleBlocks(r, c, _pn, true, true, false, false);
 					}
 					else if (CheckRight(r, c))
 					{
 						RasisterNum(r, c);
 						SetChainFlagAndPos(r, c);
+						EraseObstacleBlocks(r, c, _pn, true, true, false, false);
 					}
 				}
 				else
@@ -774,16 +812,19 @@ void BlockManager::RagisterChainBlock(int _pn)
 					{
 						RasisterNum(r, c);
 						SetChainFlagAndPos(r, c);
+						EraseObstacleBlocks(r, c, _pn, true, true, false, false);
 					}
 					else if (CheckUp(r, c))
 					{
 						RasisterNum(r, c);
 						SetChainFlagAndPos(r, c);
+						EraseObstacleBlocks(r, c, _pn, true, true, false, false);
 					}
 					else if (CheckDown(r, c))
 					{
 						RasisterNum(r, c);
 						SetChainFlagAndPos(r, c);
+						EraseObstacleBlocks(r, c, _pn, true, true, false, false);
 					}
 				}
 			}
@@ -795,11 +836,14 @@ void BlockManager::RagisterChainBlock(int _pn)
 					{
 						RasisterNum(r, c);
 						SetChainFlagAndPos(r, c);
+						EraseObstacleBlocks(r, c, _pn, false, false, true, true);
+
 					}
 					else if (CheckDown(r, c))
 					{
 						RasisterNum(r, c);
 						SetChainFlagAndPos(r, c);
+						EraseObstacleBlocks(r, c, _pn, false, false, true, true);
 					}
 				}
 				else if (c == 8) // 下端
@@ -808,11 +852,14 @@ void BlockManager::RagisterChainBlock(int _pn)
 					{
 						RasisterNum(r, c);
 						SetChainFlagAndPos(r, c);
+						EraseObstacleBlocks(r, c, _pn, true, false, false, true);
+
 					}
 					else if (CheckLeft(r, c))
 					{
 						RasisterNum(r, c);
 						SetChainFlagAndPos(r, c);
+						EraseObstacleBlocks(r, c, _pn, true, false, false, true);
 					}
 				}
 				else
@@ -821,16 +868,19 @@ void BlockManager::RagisterChainBlock(int _pn)
 					{
 						RasisterNum(r, c);
 						SetChainFlagAndPos(r, c);
+						EraseObstacleBlocks(r, c, _pn, true, false, true, true);
 					}
 					else if (CheckUp(r, c))
 					{
 						RasisterNum(r, c);
 						SetChainFlagAndPos(r, c);
+						EraseObstacleBlocks(r, c, _pn, true, false, true, true);
 					}
 					else if (CheckDown(r, c))
 					{
 						RasisterNum(r, c);
 						SetChainFlagAndPos(r, c);
+						EraseObstacleBlocks(r, c, _pn, true, false, true, true);
 					}
 				}
 			}
@@ -842,16 +892,20 @@ void BlockManager::RagisterChainBlock(int _pn)
 					{
 						RasisterNum(r, c);
 						SetChainFlagAndPos(r, c);
+						EraseObstacleBlocks(r, c, _pn, false, true, true, true);
+
 					}
 					else if (CheckDown(r, c))
 					{
 						RasisterNum(r, c);
 						SetChainFlagAndPos(r, c);
+						EraseObstacleBlocks(r, c, _pn, false, true, true, true);
 					}
 					else if (CheckLeft(r, c))
 					{
 						RasisterNum(r, c);
 						SetChainFlagAndPos(r, c);
+						EraseObstacleBlocks(r, c, _pn, false, true, true, true);
 					}
 				}
 				else if (c == 8)
@@ -860,16 +914,19 @@ void BlockManager::RagisterChainBlock(int _pn)
 					{
 						RasisterNum(r, c);
 						SetChainFlagAndPos(r, c);
+						EraseObstacleBlocks(r, c, _pn, true, true, false, true);
 					}
 					else if (CheckUp(r, c))
 					{
 						RasisterNum(r, c);
 						SetChainFlagAndPos(r, c);
+						EraseObstacleBlocks(r, c, _pn, true, true, false, true);
 					}
 					else if (CheckLeft(r, c))
 					{
 						RasisterNum(r, c);
 						SetChainFlagAndPos(r, c);
+						EraseObstacleBlocks(r, c, _pn, true, true, false, true);
 					}
 				}
 				else
@@ -878,21 +935,25 @@ void BlockManager::RagisterChainBlock(int _pn)
 					{
 						RasisterNum(r, c);
 						SetChainFlagAndPos(r, c);
+						EraseObstacleBlocks(r, c, _pn, true, true, true, true);
 					}
 					else if (CheckRight(r, c))
 					{
 						RasisterNum(r, c);
 						SetChainFlagAndPos(r, c);
+						EraseObstacleBlocks(r, c, _pn, true, true, true, true);
 					}
 					else if (CheckDown(r, c))
 					{
 						RasisterNum(r, c);
 						SetChainFlagAndPos(r, c);
+						EraseObstacleBlocks(r, c, _pn, true, true, true, true);
 					}
 					else if (CheckLeft(r, c))
 					{
 						RasisterNum(r, c);
 						SetChainFlagAndPos(r, c);
+						EraseObstacleBlocks(r, c, _pn, true, true, true, true);
 					}
 				}
 			}
@@ -1279,6 +1340,10 @@ void BlockManager::SetFallObstacle(int _fallObstacleNum, int _pn)
 		// vectorの中身を見る
 		for (size_t i = 0; i < blocks.size(); i++)
 		{
+			int row = blocks[i].GetRow();
+			int clm = blocks[i].GetColumn();
+			if (row < 0 || row > 5)continue;
+			if (clm < 0 || clm > 9)continue;
 			checkBoard[blocks[i].GetColumn()][blocks[i].GetRow()] = enable;	// 要素があるところにはenableを入れる
 		}
 

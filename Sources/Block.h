@@ -18,6 +18,8 @@ private:
 
 	bool isExist;
 	bool isFall;
+	bool lastIsFall;
+	bool readySmoke;
 
 
 public:
@@ -27,11 +29,11 @@ public:
 
 	void Init();
 	void Uninit();
-	void Update();
+	void Update(int _pn);
 	void Draw();
 
 private:
-	void OperateBlock();
+	void OperateBlock(int _pn);
 
 public:
 	void GenerateMe(int _row, int _column, int _color);

@@ -1,4 +1,6 @@
 #include "Block.h"
+#include "SceneManager.h"
+#include "Effect.h"
 
 /*--------------------------------------*/
 //	Global area
@@ -20,6 +22,8 @@ void Block::Init()
 
 	isExist = false;
 	isFall = false;
+	lastIsFall = false;
+	readySmoke = false;
 }
 
 void Block::Uninit()
@@ -32,14 +36,28 @@ void Block::Uninit()
 
 	isExist = false;
 	isFall = false;
+	lastIsFall = false;
+	readySmoke = false;
 }
 
-void Block::Update()
+void Block::Update(int _pn)
 {
+	lastIsFall = isFall;
 	if (isFall)
 	{
-		OperateBlock();
+		OperateBlock(_pn);
 	}
+
+	if (lastIsFall == false && isFall == false)
+	{
+		if (readySmoke)
+		{
+			// Generate smoke
+			regularEffects[_pn].GenerateSmoke(row, column);
+			readySmoke = false;
+		}
+	}
+
 }
 
 void Block::Draw()
@@ -47,7 +65,7 @@ void Block::Draw()
 
 }
 
-void Block::OperateBlock()
+void Block::OperateBlock(int _pn)
 {
 	pos.y += FALL_SPEED;
 	if (++moveCount >= FALL_COUNT)
@@ -55,7 +73,9 @@ void Block::OperateBlock()
 		isFall = false;//TODO:‚Æ‚è‚Ü
 		++column;
 		moveCount = 0;
+
 	}
+
 }
 
 void Block::GenerateMe(int _row, int _column, int _color)
@@ -68,6 +88,12 @@ void Block::GenerateMe(int _row, int _column, int _color)
 	color = _color;
 	pos = DirectX::XMFLOAT2(row * SIZE_X, column * SIZE_Y);
 
+	if (color == 7)
+	{
+		readySmoke = true;
+	}
+
+	isFall = true;
 	isExist = true;
 }
 

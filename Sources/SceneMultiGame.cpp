@@ -107,7 +107,7 @@ void SceneMultiGame::Draw()
 	}
 	for (int i = 0; i < 2; i++)
 	{
-		regularEffects[i].Draw(i);
+		regularEffects[i].DrawOfMulti(i);
 	}
 
 	if (PRODUCTION->CheckFlag(GO_MULTIGAME) || PRODUCTION->CheckFlag(GO_TITLE))

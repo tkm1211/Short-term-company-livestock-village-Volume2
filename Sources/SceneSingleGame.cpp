@@ -77,7 +77,7 @@ void SceneSingleGame::Draw()
 	regularBlockManager[0].DrawOfSingle();
 	regularPlayer[0].DrawOfSingle();
 	regularGameUI[0].DrawOfSingle();
-	regularEffects[0].Draw(0);
+	regularEffects[0].DrawOfSingle();
 
 
 	if (PRODUCTION->CheckFlag(GO_SINGLEGAME) || PRODUCTION->CheckFlag(GO_TITLE))

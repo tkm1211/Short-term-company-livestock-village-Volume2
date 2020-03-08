@@ -17,6 +17,8 @@ void Effect::Init(int _pn)
 {
 	sprDeadLine = std::make_unique<SpriteBatch>(L"Data/effect.png", 1, DirectX::XMFLOAT2(684, 1032));
 	sprParticle = std::make_unique<SpriteBatch>(L"Data/particle.png", 200, DirectX::XMFLOAT2(24, 24));
+	sprSmokeS = std::make_unique<SpriteBatch>(L"Data/SmokeS.png", 10, DirectX::XMFLOAT2(276, 114));
+	sprSmokeL = std::make_unique<SpriteBatch>(L"Data/SmokeL.png", 10, DirectX::XMFLOAT2(582, 114));
 
 	
 	isPlus = true;
@@ -36,6 +38,16 @@ void Effect::Init(int _pn)
 		it.maxTime = 0.0f;
 		it.isEnable = false;
 	}
+
+	for (auto& it : smokeS)
+	{
+		it.anmCnt = 0;
+		it.anmFrm = 0;
+		it.isEnable = false;
+		it.pos = DirectX::XMFLOAT2(0.0f, 0.0f);
+	}
+
+	isShowSmoke = false;
 }
 
 void Effect::Uninit(int _pn)
@@ -45,6 +57,7 @@ void Effect::Uninit(int _pn)
 void Effect::Update(int _pn)
 {
 	MoveParticle(_pn);
+	UpdateOfSmoke();
 }
 
 void Effect::Draw(int _pn)
@@ -101,6 +114,91 @@ void Effect::Draw(int _pn)
 }
 
 
+void Effect::DrawOfSingle()
+{
+	// Draw Aleat
+	SetDrawBlendMode(BLEND_MODE::ADD);
+	{
+
+	}
+	SetDrawBlendMode(BLEND_MODE::ALPHA);
+
+
+	// Draw Particle
+	{
+		sprParticle->Begin();
+
+		for (auto& it : particle)
+		{
+			if (!it.isEnable)continue;
+
+			sprParticle->Draw(it.pos.x + GameUI::SINGLE_CORRECTION_X + GameUI::ADJUST, it.pos.y + GameUI::SINGLE_CORRECTION_Y + GameUI::ADJUST, 48 * it.alpha, 48 * it.alpha, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, it.particleType);
+		}
+
+		sprParticle->End();
+	}
+}
+
+void Effect::DrawOfMulti(int _pn)
+{
+	//sprSmokeS->Begin();
+	//sprSmokeS->Draw(0 + GameUI::MULTIPLAY_ONE_ORIJIN_X - 80, 114 * 5 + GameUI::MULTI_CORRECTION_Y + GameUI::ADJUST, 276, 114, 0);
+	//sprSmokeS->End();
+
+
+	// Draw Particle.
+	sprParticle->Begin();
+
+	if (_pn == 0)
+	{
+		for (auto& it : particle)
+		{
+			if (!it.isEnable)continue;
+
+			sprParticle->Draw(it.pos.x + GameUI::MULTIPLAY_ONE_ORIJIN_X - 80, it.pos.y + GameUI::MULTI_CORRECTION_Y + GameUI::ADJUST, 48, 48, 0.0f, 1.0f, 1.0f, 1.0f, it.alpha, it.particleType);
+		}
+
+	}
+	else
+	{
+		for (auto& it : particle)
+		{
+			if (!it.isEnable)continue;
+
+			sprParticle->Draw(it.pos.x + GameUI::MULTIPLAY_TWO_ORIJIN_X - 80, it.pos.y + GameUI::MULTI_CORRECTION_Y + GameUI::ADJUST, 48, 48, 0.0f, 1.0f, 1.0f, 1.0f, it.alpha, it.particleType);
+		}
+
+
+	}
+
+	sprParticle->End();
+
+
+	// Draw Smoke
+	if (!isShowSmoke)return;
+	sprSmokeS->Begin();
+	if (_pn == 0)
+	{
+		for (auto& it : smokeS)
+		{
+			if (!it.isEnable)continue;
+			sprSmokeS->Draw(it.pos.x + GameUI::MULTIPLAY_ONE_ORIJIN_X - 128, it.pos.y + GameUI::MULTI_CORRECTION_Y - 50, 276.0f, 114.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, it.anmFrm);
+		}
+	}
+	else
+	{
+		for (auto& it : smokeS)
+		{
+			if (!it.isEnable)continue;
+			sprSmokeS->Draw(it.pos.x + GameUI::MULTIPLAY_TWO_ORIJIN_X - 128, it.pos.y + GameUI::MULTI_CORRECTION_Y - 50, 276.0f, 114.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, it.anmFrm);
+		}
+	}
+
+	sprSmokeS->End();
+
+}
+
+
 
 void Effect::GenerateParticle(int _row, int _column, int _color)
 {
@@ -150,3 +248,52 @@ void Effect::MoveParticle(int _pn)
 		}
 	}
 }
+
+
+
+bool Effect::JudgeIsShowingSmoke()
+{
+	for (auto& it : smokeS)
+	{
+		if (it.isEnable)return false;
+	}
+
+	return true;
+}
+
+void Effect::UpdateOfSmoke()
+{
+	if (!isShowSmoke)return;
+
+	for (auto& it : smokeS)
+	{
+		if (++it.anmCnt % 6 == 0)
+		{
+			if (++it.anmFrm >= 6)
+			{
+				it.isEnable = false;
+			}
+		}
+	}
+
+	JudgeIsShowingSmoke();
+}
+
+void Effect::GenerateSmoke(int _row, int _column)
+{
+
+	for (auto& it : smokeS)
+	{
+		if (it.isEnable)continue;
+
+		it.pos = DirectX::XMFLOAT2(114.0f * _row + 57.0f, 114.0f * _column + 57.0f);
+		it.anmCnt = 0;
+		it.anmFrm = 0;
+		it.isEnable = true;
+		break;
+	}
+
+	SetIsShowSmoke(true);
+}
+
+
