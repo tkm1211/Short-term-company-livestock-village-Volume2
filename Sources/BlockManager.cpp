@@ -94,7 +94,7 @@ void BlockManager::Update(int _pn)
 	{
 		ProcessOfSingleGame();
 	}
-	else if (sceneSelect.JudgeGameMode(SceneSelect::SelectGameMode::Multi))
+	else if (sceneSelect.JudgeGameMode(SceneSelect::SelectGameMode::Multi) || sceneSelect.JudgeGameMode(SceneSelect::SelectGameMode::CPU))
 	{
 		ProcessOfMultiGame(_pn);
 	}
@@ -403,7 +403,7 @@ void BlockManager::ChainProcess(int _pn)
 		{
 			chainCount++;
 			regularGameUI[_pn].SetNowChainNum(chainCount);
-			if (sceneSelect.JudgeGameMode(SceneSelect::Multi))
+			if (sceneSelect.JudgeGameMode(SceneSelect::Multi) || sceneSelect.JudgeGameMode(SceneSelect::CPU))
 			{
 				AttackForOppenent(_pn);
 			}

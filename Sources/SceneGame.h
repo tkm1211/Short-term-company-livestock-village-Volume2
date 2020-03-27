@@ -33,11 +33,20 @@ public:
 class SceneCPUGame : public BaseScene
 {
 public:
+	SceneSelect::SelectGameMode gameMode;
+private:
+	bool isGameReady;
+
+public:
 	SceneCPUGame() { /*Init();*/ }
 	void Init();
 	void Uninit();
 	void Update();
 	void Draw();
+
+	// Getter and Setter
+	bool GetIsGameReady() { return isGameReady; }
+	void SetIsGameReady(bool _n) { isGameReady = _n; }
 };
 #pragma endregion
 

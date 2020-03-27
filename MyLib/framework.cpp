@@ -256,7 +256,8 @@ bool framework::initialize(HINSTANCE _hInstance)
 
 	srand((unsigned int)time(NULL));		//—”Œn—ñ‚Ì•ÏX
 
-	isMause = FALSE;
+	isMause = TRUE;
+	//isMause = FALSE;
 
 	return true;
 }

@@ -3,6 +3,7 @@
 #include "Production.h"
 #include "Resource.h"
 #include <input_device.h>
+#include "framework.h"
 
 SceneTitle sceneTitle;
 SceneSelect sceneSelect;
@@ -36,6 +37,10 @@ void SceneManager::Update()
 		GetXInputState(&pad[i], i);
 	}
 
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+
 	if (nextScene)
 	{
 		if (nowScene)
@@ -52,6 +57,9 @@ void SceneManager::Update()
 void SceneManager::Render()
 {
 	nowScene->Draw();
+
+	ImGui::Render();
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
 
 void SceneManager::Uninit()

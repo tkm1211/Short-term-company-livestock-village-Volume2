@@ -154,6 +154,7 @@ public:
 	bool	GetIsPushUpByGauge() { return isPushUpByGauge; }
 	void	SetIsPushUpByGauge(bool _n) { isPushUpByGauge = _n; }
 	bool	GetIsPushing() { return isPushing; }
+	std::array<Block, BLOCK_NUM_MAX> GetBlocks() { return blocks; } // 2020/03/19 : TAKUMAí«â¡
 
 	/*---------------------------*/
 	// ï÷óòä÷êî
