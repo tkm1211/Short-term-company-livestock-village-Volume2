@@ -73,12 +73,11 @@ void Block::OperateBlock(int _pn)
 		isFall = false;//TODO:‚Æ‚è‚Ü
 		++column;
 		moveCount = 0;
-
 	}
 
 }
 
-void Block::GenerateMe(int _row, int _column, int _color)
+void Block::GenerateMe(int _row, int _column, int _color, bool _isFall)
 {
 	// ”O‚Ìˆ×‰Šú‰»
 	Init();
@@ -93,7 +92,7 @@ void Block::GenerateMe(int _row, int _column, int _color)
 		readySmoke = true;
 	}
 
-	isFall = true;
+	isFall = _isFall;
 	isExist = true;
 }
 

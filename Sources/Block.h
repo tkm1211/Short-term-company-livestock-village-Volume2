@@ -36,7 +36,7 @@ private:
 	void OperateBlock(int _pn);
 
 public:
-	void GenerateMe(int _row, int _column, int _color);
+	void GenerateMe(int _row, int _column, int _color, bool _isFall = true);
 	void BreakMe();
 
 public:	// Getter and Setter

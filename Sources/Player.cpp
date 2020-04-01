@@ -39,6 +39,7 @@ void Player::Update(int _pn)
 	if (sceneSelect.gameMode == SceneSelect::SelectGameMode::Multi && sceneMultiGame.GetIsGameReady()) return;
 
 	OperatePlayer(_pn);
+
 	SetBreakBlock(_pn);
 }
 
@@ -248,6 +249,11 @@ void Player::OperatePlayer(int _pn)
 	}
 
 	PositionCorreciton();
+}
+
+void Player::PushUpPlayer(int _pn)
+{
+
 }
 
 void Player::PositionCorreciton()

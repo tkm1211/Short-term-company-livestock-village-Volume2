@@ -26,33 +26,33 @@ void BlockManager::Init(int _pn)
 		it.Init();
 	}
 
-	GenerateBlock(0, 5, Color::Green);
-	GenerateBlock(1, 5, Color::Yellow);
-	GenerateBlock(2, 5, Color::LightBlue);
-	GenerateBlock(3, 5, Color::Red);
-	GenerateBlock(4, 5, Color::Green);
-	GenerateBlock(5, 5, Color::Yellow);
+	GenerateBlock(0, 5, Color::Green, false);
+	GenerateBlock(1, 5, Color::Yellow, false);
+	GenerateBlock(2, 5, Color::LightBlue, false);
+	GenerateBlock(3, 5, Color::Red, false);
+	GenerateBlock(4, 5, Color::Green, false);
+	GenerateBlock(5, 5, Color::Yellow, false);
 
-	GenerateBlock(0, 6, Color::Yellow);
-	GenerateBlock(1, 6, Color::LightBlue);
-	GenerateBlock(2, 6, Color::Red);
-	GenerateBlock(3, 6, Color::Green);
-	GenerateBlock(4, 6, Color::Yellow);
-	GenerateBlock(5, 6, Color::LightBlue);
+	GenerateBlock(0, 6, Color::Yellow, false);
+	GenerateBlock(1, 6, Color::LightBlue, false);
+	GenerateBlock(2, 6, Color::Red, false);
+	GenerateBlock(3, 6, Color::Green, false);
+	GenerateBlock(4, 6, Color::Yellow, false);
+	GenerateBlock(5, 6, Color::LightBlue, false);
 
-	GenerateBlock(0, 7, Color::LightBlue);
-	GenerateBlock(1, 7, Color::Red);
-	GenerateBlock(2, 7, Color::Green);
-	GenerateBlock(3, 7, Color::Red);
-	GenerateBlock(4, 7, Color::LightBlue);
-	GenerateBlock(5, 7, Color::Yellow);
+	GenerateBlock(0, 7, Color::LightBlue, false);
+	GenerateBlock(1, 7, Color::Red, false);
+	GenerateBlock(2, 7, Color::Green, false);
+	GenerateBlock(3, 7, Color::Red, false);
+	GenerateBlock(4, 7, Color::LightBlue, false);
+	GenerateBlock(5, 7, Color::Yellow, false);
 
-	GenerateBlock(0, 8, Color::Red);
-	GenerateBlock(1, 8, Color::Green);
-	GenerateBlock(2, 8, Color::Yellow);
-	GenerateBlock(3, 8, Color::LightBlue);
-	GenerateBlock(4, 8, Color::Green);
-	GenerateBlock(5, 8, Color::Red);
+	GenerateBlock(0, 8, Color::Red, false);
+	GenerateBlock(1, 8, Color::Green, false);
+	GenerateBlock(2, 8, Color::Yellow, false);
+	GenerateBlock(3, 8, Color::LightBlue, false);
+	GenerateBlock(4, 8, Color::Green, false);
+	GenerateBlock(5, 8, Color::Red, false);
 
 	PopRowLineProcess();
 
@@ -268,14 +268,14 @@ void BlockManager::ProcessOfMultiGame(int _pn)
 /*-------------------------------------------*/
 // ブロックの生成関数
 /*-------------------------------------------*/
-void BlockManager::GenerateBlock(int _row, int _column, int _color)
+void BlockManager::GenerateBlock(int _row, int _column, int _color, bool _isFall)
 {
 	for (auto& it : blocks)
 	{
 		if (it.GetIsExist()) continue;
 
 		// If, GetIsExist is False.
-		it.GenerateMe(_row, _column, _color);
+		it.GenerateMe(_row, _column, _color, _isFall);
 		break;
 	}
 }
@@ -297,6 +297,8 @@ bool BlockManager::BreakBlock(int _row, int _column)
 	Block* result = nullptr;
 	if (SearchBlock(_row, _column, &result))
 	{
+		if (result->GetColor() == BlockManager::Color::Obstacle)return false;
+
 		result->BreakMe();
 		ret = true;
 		SetStatus(State::Break);
@@ -316,7 +318,7 @@ void BlockManager::CheckDownBlock()
 {
 	for (int c = BOARD_COLUMN_MAX - 2; c > -1; --c) // 一番下は無条件で落ちないため -2
 	{
-		for (int r = 0;r<BOARD_ROW_MAX;r++)
+		for (int r = 0; r < BOARD_ROW_MAX; r++)
 		{
 			if (sortBlocks[c + 1][r].GetColor() == -1 && !sortBlocks[c][r].GetIsFall() || sortBlocks[c + 1][r].GetIsFall())
 			{
@@ -471,7 +473,7 @@ void BlockManager::PopRowLineProcess()
 			{
 				while (copyBlocks[i - 1].GetColor() == copyBlocks[i].GetColor() || copyBlocks[i + 1].GetColor() == copyBlocks[i].GetColor())
 				{
-					copyBlocks[i].SetColor( rand() % colorMax);
+					copyBlocks[i].SetColor(rand() % colorMax);
 				}
 			}
 			else if (i == 0)
@@ -481,7 +483,7 @@ void BlockManager::PopRowLineProcess()
 					copyBlocks[i].SetColor(rand() % colorMax);
 				}
 			}
-			else if(i == 5)
+			else if (i == 5)
 			{
 				while (copyBlocks[i - 1].GetColor() == copyBlocks[i].GetColor())
 				{
@@ -606,7 +608,7 @@ void BlockManager::PopRowLineProcess()
 		}
 
 		lastColor = popColor;
-		GenerateBlock(i, 9, popColor);
+		GenerateBlock(i, 9, popColor, false);
 	}
 
 
@@ -669,6 +671,12 @@ void BlockManager::FallObstacleProcess(int _pn)
 
 	regularGameUI[_pn].SetIsTimerStop(false);
 	SetStatus(State::Wait);
+
+	//TODO : 準備がされているなら、smokeLを発生させる
+	if (regularEffects[_pn].GetIsReadySmokeL())
+	{
+		regularEffects[_pn].GenerateSmokeL(_pn);
+	}
 }
 
 /*-------------------------------------------*/
@@ -1233,7 +1241,7 @@ void BlockManager::AttackForOppenent(int _pn)
 	switch (_pn)
 	{
 	case 0:
-		if ( chainCount >= 2 )
+		if (chainCount >= 2)
 		{
 			regularBlockManager[1].obstacleNum++;
 			regularBlockManager[1].obstacleKeepTime = 0;
@@ -1242,7 +1250,7 @@ void BlockManager::AttackForOppenent(int _pn)
 		break;
 
 	case 1:
-		if ( chainCount >= 2 )
+		if (chainCount >= 2)
 		{
 			regularBlockManager[0].obstacleNum++;
 			regularBlockManager[0].obstacleKeepTime = 0;
@@ -1266,7 +1274,7 @@ void BlockManager::SetObstacleWhenCountReaches(int _pn)
 
 		// お邪魔ブロックを降らせるステートに以降する
 		status = State::FallObstacle;
-		
+
 		SetFallObstacle(SetNumOfObstacle(obstacleNum), _pn);
 		obstacleKeepTime = 0;
 		obstacleNum = 0;
@@ -1366,6 +1374,16 @@ void BlockManager::SetFallObstacle(int _fallObstacleNum, int _pn)
 		}
 	}
 
+	// SmokeLを出す場合は準備をする
+	if (_fallObstacleNum >= Effect::BORDER_OF_SMOKEL)
+	{
+		regularEffects[_pn].SetIsReadySmokeL(true);
+	}
+
+
+
+
+
 	std::array<int, 6> overlapCount{ 0 };
 
 	int generateRowSave[20];	// 生成したrowを保持する
@@ -1390,7 +1408,7 @@ void BlockManager::SetFallObstacle(int _fallObstacleNum, int _pn)
 		}
 		GenerateBlock(fallObstacleBlockRow[i], -2 - overlapCount[fallObstacleBlockRow[i]], Color::Obstacle); // 生成時に画面外に行くように、-2
 
-		for (size_t k = blocks.size()-1; k < -1; k--)
+		for (size_t k = blocks.size() - 1; k < -1; k--)
 		{
 			if (blocks[k].GetColor() == Color::Obstacle)
 			{
@@ -1403,9 +1421,9 @@ void BlockManager::SetFallObstacle(int _fallObstacleNum, int _pn)
 }
 
 
-/*------------------------------------------*/
-// (For MultiPlay)
-/*------------------------------------------*/
+/*---------------------------------------------------*/
+// お邪魔ブロックが持続して落ちるかの判定(For MultiPlay)
+/*---------------------------------------------------*/
 void BlockManager::CheckDownObstacle()
 {
 	Block sortAllBlock[COLUMN_MAX - 1][ROW_MAX]; // 下段一段分が必要ないので -1

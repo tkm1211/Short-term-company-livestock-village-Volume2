@@ -34,6 +34,10 @@ private:
 	static constexpr int PARTICLE_MAX = 1000;
 	static constexpr int SMOKE_S_MAX = 6;
 
+public:
+	static constexpr int BORDER_OF_SMOKEL = 4;
+
+private:
 	std::unique_ptr<SpriteBatch> sprShock;
 	std::unique_ptr<SpriteBatch> sprDeadLine;
 	std::unique_ptr<SpriteBatch> sprParticle;
@@ -56,7 +60,10 @@ public:
 
 #pragma region Smokeån
 	std::array<Smoke, SMOKE_S_MAX> smokeS;
+	Smoke smokeL;
 	bool isShowSmoke;
+	bool isShowSmokeL;
+	bool isReadySmokeL;
 #pragma endregion
 
 public:
@@ -73,9 +80,23 @@ public:
 #pragma region Smokeån
 	bool JudgeIsShowingSmoke();
 	void UpdateOfSmoke();
+	void UpdateOfSmokeL(int _pn);
+	void DrawSmokeS(int _pn);
+	void DrawSmokeL(int _pn);
 	void SetIsShowSmoke(bool n) { isShowSmoke = n; }
 	bool GetIsShowSmoke() { return isShowSmoke; }
 	void GenerateSmoke(int _row, int _column);
+	void GenerateSmokeL(int _pn);
+#pragma endregion
+
+#pragma region Setter
+	void SetIsReadySmokeL(bool _n) { isReadySmokeL = _n; }
+	void SetIsShowSmokeL(bool _n) { isShowSmokeL = _n; }
+#pragma endregion
+
+#pragma region Getter
+	bool GetIsReadySmokeL() { return isReadySmokeL; }
+	bool GetIsShowSmokeL() { return isShowSmokeL; }
 #pragma endregion
 };
 

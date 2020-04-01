@@ -48,6 +48,7 @@ void Effect::Init(int _pn)
 	}
 
 	isShowSmoke = false;
+	isShowSmokeL = false;
 }
 
 void Effect::Uninit(int _pn)
@@ -58,6 +59,7 @@ void Effect::Update(int _pn)
 {
 	MoveParticle(_pn);
 	UpdateOfSmoke();
+	UpdateOfSmokeL(_pn);
 }
 
 void Effect::Draw(int _pn)
@@ -175,26 +177,17 @@ void Effect::DrawOfMulti(int _pn)
 
 
 	// Draw Smoke
-	if (!isShowSmoke)return;
-	sprSmokeS->Begin();
-	if (_pn == 0)
+	if (isShowSmoke)
 	{
-		for (auto& it : smokeS)
-		{
-			if (!it.isEnable)continue;
-			sprSmokeS->Draw(it.pos.x + GameUI::MULTIPLAY_ONE_ORIJIN_X - 128, it.pos.y + GameUI::MULTI_CORRECTION_Y - 50, 276.0f, 114.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, it.anmFrm);
-		}
-	}
-	else
-	{
-		for (auto& it : smokeS)
-		{
-			if (!it.isEnable)continue;
-			sprSmokeS->Draw(it.pos.x + GameUI::MULTIPLAY_TWO_ORIJIN_X - 128, it.pos.y + GameUI::MULTI_CORRECTION_Y - 50, 276.0f, 114.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, it.anmFrm);
-		}
+		DrawSmokeS(_pn);
 	}
 
-	sprSmokeS->End();
+
+	// Draw SmokeL
+	if (isShowSmokeL)
+	{
+		DrawSmokeL(_pn);
+	}
 
 }
 
@@ -279,6 +272,66 @@ void Effect::UpdateOfSmoke()
 	JudgeIsShowingSmoke();
 }
 
+void Effect::UpdateOfSmokeL(int _pn)
+{
+	if (!isShowSmokeL) return;
+
+	if (++smokeL.anmCnt % 6 == 0)
+	{
+		if (++smokeL.anmFrm >= 9)
+		{
+			smokeL.isEnable = false;
+			SetIsShowSmokeL(false);
+			SetIsReadySmokeL(false);
+		}
+	}
+}
+
+void Effect::DrawSmokeS(int _pn)
+{
+	sprSmokeS->Begin();
+	if (_pn == 0)
+	{
+		for (auto& it : smokeS)
+		{
+			if (!it.isEnable)continue;
+			sprSmokeS->Draw(it.pos.x + GameUI::MULTIPLAY_ONE_ORIJIN_X - 128, it.pos.y + GameUI::MULTI_CORRECTION_Y - 50, 276.0f, 114.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, it.anmFrm);
+		}
+	}
+	else
+	{
+		for (auto& it : smokeS)
+		{
+			if (!it.isEnable)continue;
+			sprSmokeS->Draw(it.pos.x + GameUI::MULTIPLAY_TWO_ORIJIN_X - 128, it.pos.y + GameUI::MULTI_CORRECTION_Y - 50, 276.0f, 114.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, it.anmFrm);
+		}
+	}
+
+	sprSmokeS->End();
+}
+
+void Effect::DrawSmokeL(int _pn)
+{
+	sprSmokeL->Begin();
+
+	// smokeL‚Ì‘å‚«‚³’²®—p‚Ì•Ï”
+	const float scale = 5.0f;
+
+	if (_pn == 0)
+	{
+		if (!smokeL.isEnable)return;
+		sprSmokeL->Draw(smokeL.pos.x + GameUI::MULTIPLAY_ONE_ORIJIN_X - 128, smokeL.pos.y + GameUI::MULTI_CORRECTION_Y - 50, 276.0f * scale, 114.0f * scale, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, smokeL.anmFrm);
+	}
+	else
+	{
+		if (!smokeL.isEnable)return;
+		sprSmokeL->Draw(smokeL.pos.x + GameUI::MULTIPLAY_TWO_ORIJIN_X - 128, smokeL.pos.y + GameUI::MULTI_CORRECTION_Y - 50, 276.0f * scale, 114.0f * scale, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, smokeL.anmFrm);
+	}
+
+	sprSmokeL->End();
+
+}
+
 void Effect::GenerateSmoke(int _row, int _column)
 {
 
@@ -294,6 +347,23 @@ void Effect::GenerateSmoke(int _row, int _column)
 	}
 
 	SetIsShowSmoke(true);
+}
+
+void Effect::GenerateSmokeL(int _pn)
+{
+	if (_pn == 0)
+	{
+		smokeL.pos = DirectX::XMFLOAT2(0, 0);
+	}
+	else
+	{
+		smokeL.pos = DirectX::XMFLOAT2(0, 0); //‰¼‚Å‚¸‚ç‚µ‚Ä‚é
+	}
+	smokeL.anmCnt = 0;
+	smokeL.anmFrm = 0;
+	smokeL.isEnable = true;
+
+	SetIsShowSmokeL(true);
 }
 
 

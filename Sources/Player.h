@@ -34,6 +34,7 @@ public:
 	void DrawOfMulti(int _pn);
 
 	void OperatePlayer(int _pn);
+	void PushUpPlayer(int _pn);
 	void SetBreakBlock(int _pn);
 
 	void PositionCorreciton();

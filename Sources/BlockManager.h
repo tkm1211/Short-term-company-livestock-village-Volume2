@@ -106,7 +106,7 @@ public:
 
 
 	// ƒuƒƒbƒN‚Ì¶¬Œn
-	void GenerateBlock(int _row, int _column, int _color);
+	void GenerateBlock(int _row, int _column, int _color, bool _isFall = true);
 	void SetStartBlock();
 
 
