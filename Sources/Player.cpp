@@ -37,6 +37,7 @@ void Player::Update(int _pn)
 {
 	if (sceneSelect.gameMode == SceneSelect::SelectGameMode::Single && sceneSingleGame.GetIsGameReady()) return;
 	if (sceneSelect.gameMode == SceneSelect::SelectGameMode::Multi && sceneMultiGame.GetIsGameReady()) return;
+	if (sceneSelect.gameMode == SceneSelect::SelectGameMode::CPU && sceneCPUGame.GetIsGameReady()) return;
 
 	OperatePlayer(_pn);
 
