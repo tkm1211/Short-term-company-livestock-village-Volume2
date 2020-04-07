@@ -315,7 +315,7 @@ void Effect::DrawSmokeL(int _pn)
 	sprSmokeL->Begin();
 
 	// smokeL‚Ì‘å‚«‚³’²®—p‚Ì•Ï”
-	const float scale = 5.0f;
+	const float scale = 3.0f;
 
 	if (_pn == 0)
 	{
@@ -353,11 +353,11 @@ void Effect::GenerateSmokeL(int _pn)
 {
 	if (_pn == 0)
 	{
-		smokeL.pos = DirectX::XMFLOAT2(0, 0);
+		smokeL.pos = DirectX::XMFLOAT2(60, 800);
 	}
 	else
 	{
-		smokeL.pos = DirectX::XMFLOAT2(0, 0); //‰¼‚Å‚¸‚ç‚µ‚Ä‚é
+		smokeL.pos = DirectX::XMFLOAT2(60, 800); //‰¼‚Å‚¸‚ç‚µ‚Ä‚é
 	}
 	smokeL.anmCnt = 0;
 	smokeL.anmFrm = 0;

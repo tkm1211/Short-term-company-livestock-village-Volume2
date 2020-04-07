@@ -82,7 +82,7 @@ void SceneSingleGame::Draw()
 
 	if (PRODUCTION->CheckFlag(GO_SINGLEGAME) || PRODUCTION->CheckFlag(GO_TITLE))
 	{
-		//PRODUCTION->Draw();
+		PRODUCTION->Draw();
 	}
 }
 

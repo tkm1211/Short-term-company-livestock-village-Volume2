@@ -4,6 +4,7 @@
 #include <input_device.h> //TODO:後で消す
 #include <array>
 #include "SceneManager.h"
+#include "SceneSelect.h"
 #include "Production.h"
 #include "UI.h"
 #include "Effect.h"
@@ -90,11 +91,11 @@ void BlockManager::Update(int _pn)
 {
 
 	// 一人用の更新関数
-	if (sceneSelect.JudgeGameMode(SceneSelect::SelectGameMode::Single))
+	if (IF_SINGLE_NOW)
 	{
 		ProcessOfSingleGame();
 	}
-	else if (sceneSelect.JudgeGameMode(SceneSelect::SelectGameMode::Multi) || sceneSelect.JudgeGameMode(SceneSelect::SelectGameMode::CPU))
+	else if (IF_MULTI_NOW)
 	{
 		ProcessOfMultiGame(_pn);
 	}
@@ -984,6 +985,13 @@ void BlockManager::RagisterChainBlock(int _pn)
 			!isChainContinued ? isChainContinued = true : isChainContinued = isChainContinued;
 		}
 	}
+
+	// 一度にたくさん消したら、その分多く降らせる
+	if (IF_MULTI_NOW)
+	{
+		AddObstacleByBreakNum(_pn);
+	}
+
 }
 
 bool BlockManager::RagisterUpComboBlock()
@@ -1456,6 +1464,61 @@ void BlockManager::CheckDownObstacle()
 			}
 		}
 	}
+}
+
+
+/*----------------------------------------------------*/
+// 壊したブロックの数に応じてお邪魔が増える(For MultiPlay)
+/*----------------------------------------------------*/
+void BlockManager::AddObstacleByBreakNum(int _pn)
+{
+	auto AddObstacle = [&](int _breakNum)
+	{
+		switch (_breakNum)
+		{
+		case 3:
+			return 2;
+
+		case 4:
+			return 2;
+
+		case 5:
+			return 3;
+
+		case 6:
+			return 4;
+
+		case 7:
+			return 5;
+
+		case 8:
+			return 6;
+
+		case 9:
+			return 7;
+
+		case 10:
+			return 8;
+
+		default:
+			return 0;
+
+		}
+	};
+
+	//if (chainCount >= 2)
+	//{
+		switch (_pn)
+		{
+		case 0:
+			regularBlockManager[1].obstacleNum += AddObstacle(regularBlockManager[0].eraseBlockCount);
+			break;
+
+		case 1:
+			regularBlockManager[0].obstacleNum += AddObstacle(regularBlockManager[1].eraseBlockCount);
+			break;
+		}
+	//}
 }
 
 

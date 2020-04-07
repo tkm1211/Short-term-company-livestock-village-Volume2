@@ -136,6 +136,7 @@ public:
 	int  SetNumOfObstacle(int _num);
 	void SetFallObstacle(int _fallObstacleNum, int _pn);
 	void CheckDownObstacle();
+	void AddObstacleByBreakNum(int _pn);
 
 
 	// 各プロセス関数
