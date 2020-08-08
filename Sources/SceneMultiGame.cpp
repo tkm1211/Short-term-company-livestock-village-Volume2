@@ -17,7 +17,7 @@
 /*--------------------------------------*/
 void SceneMultiGame::Init()
 {
-	gameMode = SceneSelect::SelectGameMode::Multi;
+	gameMode = SelectGameMode::Multi;
 
 
 	BG_INSTANCE->Init();

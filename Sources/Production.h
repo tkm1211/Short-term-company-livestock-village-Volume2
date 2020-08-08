@@ -73,5 +73,6 @@ public:
 #define GO_CPUGAME		0b00001000		//ゲーム画面に以降する CPU
 #define GO_MULTIGAME	0b00010000		//ゲーム画面に以降する マルチ
 #define GO_TUTORIAL		0b00100000		//チュートリアル画面に以降する
+#define GO_PLAYERSELECT	0b01000000		//TODO : Temp
 
 #endif //_PRODUCTION_H_

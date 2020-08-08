@@ -24,6 +24,7 @@ public:
 		SINGLE_GAME,
 		CPU_GAME,
 		MULTI_GAME,
+		PLAYER_SELECT,
 	};
 
 	BaseScene* nowScene;

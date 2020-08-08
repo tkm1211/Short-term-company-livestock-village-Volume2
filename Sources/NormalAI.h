@@ -11,6 +11,8 @@ private:
 
 	static const int StackedBlocksTopColumn = 3;
 
+	static const int maxWaitTimer = 15;
+
 private:
 	bool startMoveFlg;
 	int moveCnt;

@@ -82,7 +82,7 @@ void Effect::Draw(int _pn)
 	SetDrawBlendMode(BLEND_MODE::ADD);
 
 	// Draw Aleat.
-	if (!sceneSelect.gameMode == SceneSelect::SelectGameMode::Single)
+	if (!(sceneSelect.gameMode == SelectGameMode::Single))
 	{
 
 	}
@@ -96,7 +96,7 @@ void Effect::Draw(int _pn)
 	// Particle
 	sprParticle->Begin();
 
-	if (sceneSelect.gameMode == SceneSelect::SelectGameMode::Single)
+	if (sceneSelect.gameMode == SelectGameMode::Single)
 	{
 		for (auto& it : particle)
 		{

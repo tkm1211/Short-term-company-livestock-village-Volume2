@@ -418,7 +418,7 @@ void BlockManager::ChainProcess(int _pn)
 		{
 			chainCount++;
 			regularGameUI[_pn].SetNowChainNum(chainCount);
-			if (sceneSelect.JudgeGameMode(SceneSelect::Multi) || sceneSelect.JudgeGameMode(SceneSelect::CPU))
+			if (sceneSelect.JudgeGameMode(SelectGameMode::Multi) || sceneSelect.JudgeGameMode(SelectGameMode::CPU))
 			{
 				AttackForOppenent(_pn);
 			}
@@ -1645,6 +1645,27 @@ bool BlockManager::SearchBlock(int _row, int _column, Block** _ans)
 {
 	for (int i = 0; i < BLOCK_NUM_MAX; ++i)
 	{
+		if (blocks[i].GetRow() == _row && blocks[i].GetColumn() == _column)
+		{
+			*_ans = &blocks[i];
+			return true;
+		}
+	}
+	return false;
+}
+
+/*------------------------------------------*/
+// ˆø”‚Æ“¯‚¶êŠ‚É‚ ‚éBlock‚ð•Ô‚·
+// return : (search sucess?) true : false
+/*------------------------------------------*/
+bool BlockManager::SearchAliveBlock(int _row, int _column, Block** _ans)
+{
+	for (int i = 0; i < BLOCK_NUM_MAX; ++i)
+	{
+		if (blocks[i].GetColumn() == 9 || blocks[i].GetColor() == Color::Obstacle)
+		{
+			continue;
+		}
 		if (blocks[i].GetRow() == _row && blocks[i].GetColumn() == _column)
 		{
 			*_ans = &blocks[i];

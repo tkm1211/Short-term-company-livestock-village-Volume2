@@ -29,8 +29,6 @@ protected:
 	static const int rightInput = 0x0008;
 	static const int leftInput  = 0x0010;
 
-	static const int maxWaitTimer = 30;
-
 protected:
 	// AI‚Ìó‘Ô
 	AIStatus aiStatus;

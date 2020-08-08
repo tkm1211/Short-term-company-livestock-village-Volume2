@@ -164,6 +164,7 @@ public:
 	/*---------------------------*/
 	// ブロックのサーチ系
 	bool SearchBlock(int _row, int _column, Block** _ans);
+	bool SearchAliveBlock(int _row, int _column, Block** _ans);
 	bool SearchBlockNum(int _row, int _column, int& _ans);
 
 	static void UseImGui();

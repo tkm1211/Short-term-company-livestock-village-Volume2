@@ -27,6 +27,17 @@ public:
 		Character02,
 		Character03,
 		Character04,
+		Character05,
+		Character06,
+		Character07,
+		Character08,
+		SelectCPU,
+		MenuBG,
+		MenuBG2,
+		SelectFrameL,
+		SelectFrameM,
+		SelectFrameS,
+		SelectArrow,
 		MiniCharacter,
 		MiniBlock,
 		Pause,
@@ -52,6 +63,17 @@ private:
 	std::shared_ptr<SpriteBatch> sprCharcter02;
 	std::shared_ptr<SpriteBatch> sprCharcter03;
 	std::shared_ptr<SpriteBatch> sprCharcter04;
+	std::shared_ptr<SpriteBatch> sprCharcter05;
+	std::shared_ptr<SpriteBatch> sprCharcter06;
+	std::shared_ptr<SpriteBatch> sprCharcter07;
+	std::shared_ptr<SpriteBatch> sprCharcter08;
+	std::shared_ptr<SpriteBatch> sprSelectCPU;
+	std::shared_ptr<SpriteBatch> sprMenuBG;
+	std::shared_ptr<SpriteBatch> sprMenuBG2;
+	std::shared_ptr<SpriteBatch> sprSelectFrameL;
+	std::shared_ptr<SpriteBatch> sprSelectFrameM;
+	std::shared_ptr<SpriteBatch> sprSelectFrameS;
+	std::shared_ptr<SpriteBatch> sprSelectArrow;
 	std::shared_ptr<SpriteBatch> sprMiniCharacter;
 	std::shared_ptr<SpriteBatch> sprMiniBlock;
 	std::shared_ptr<SpriteBatch> sprPause;

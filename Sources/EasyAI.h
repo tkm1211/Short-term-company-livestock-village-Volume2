@@ -9,6 +9,8 @@ private:
 	static const int movePercent = 45;
 	static const int breakPercent = 55;
 
+	static const int maxWaitTimer = 30;
+
 private:
 	bool startMoveFlg;
 	int moveCnt;

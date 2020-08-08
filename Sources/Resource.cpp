@@ -26,7 +26,7 @@ void Resource::Init()
 	}
 	if (!sprSelect)
 	{
-		sprSelect = std::make_shared<SpriteBatch>(L"Data/modeselect.png");
+		sprSelect = std::make_shared<SpriteBatch>(L"Data/modeselect.png", 10);
 		assert(sprSelect && "Misstake load texture data <sprSelect>");
 	}
 	if (!sprSelectBack)
@@ -99,6 +99,66 @@ void Resource::Init()
 		sprCharcter04 = std::make_shared<SpriteBatch>(L"Data/character04.png", 10, DirectX::XMFLOAT2(416, 416));
 		assert(sprCharcter04 && "Misstake load texture data <sprCharcter04>");
 	}
+	if (!sprCharcter05)
+	{
+		sprCharcter05 = std::make_shared<SpriteBatch>(L"Data/character05.png");
+		assert(sprCharcter05 && "Misstake load texture data <sprCharcter05>");
+	}
+	if (!sprCharcter06)
+	{
+		sprCharcter06 = std::make_shared<SpriteBatch>(L"Data/character06.png");
+		assert(sprCharcter06 && "Misstake load texture data <sprCharcter06>");
+	}
+	if (!sprCharcter07)
+	{
+		sprCharcter07 = std::make_shared<SpriteBatch>(L"Data/character07.png");
+		assert(sprCharcter07 && "Misstake load texture data <sprCharcter07>");
+	}
+	if (!sprCharcter08)
+	{
+		sprCharcter08 = std::make_shared<SpriteBatch>(L"Data/character08.png");
+		assert(sprCharcter08 && "Misstake load texture data <sprCharcter08>");
+	}
+
+	// Select
+	{
+		if (!sprSelectCPU)
+		{
+			sprSelectCPU = std::make_shared<SpriteBatch>(L"Data/Image/Select/modeselect_CPU.png", 10);
+			assert(sprSelectCPU && "Misstake load texture data <sprSelectCPU>");
+		}
+		if (!sprMenuBG)
+		{
+			sprMenuBG = std::make_shared<SpriteBatch>(L"Data/Image/Select/selectBG.png", 10);
+			assert(sprMenuBG && "Misstake load texture data <sprMenuBG>");
+		}
+		if (!sprMenuBG2)
+		{
+			sprMenuBG2 = std::make_shared<SpriteBatch>(L"Data/Image/Select/MenuBG2.png", 10);
+			assert(sprMenuBG2 && "Misstake load texture data <sprMenuBG2>");
+		}
+		if (!sprSelectFrameL)
+		{
+			sprSelectFrameL = std::make_shared<SpriteBatch>(L"Data/Image/Select/SelectFrameL.png", 7, DirectX::XMFLOAT2(600, 600));
+			assert(sprSelectFrameL && "Misstake load texture data <sprSelectFrameL>");
+		}
+		if (!sprSelectFrameM)
+		{
+			sprSelectFrameM = std::make_shared<SpriteBatch>(L"Data/Image/Select/SelectFrameM.png", 7, DirectX::XMFLOAT2(480, 480));
+			assert(sprSelectFrameM && "Misstake load texture data <sprSelectFrameM>");
+		}
+		if (!sprSelectFrameS)
+		{
+			sprSelectFrameS = std::make_shared<SpriteBatch>(L"Data/Image/Select/SelectFrameS.png", 5, DirectX::XMFLOAT2(60, 60));
+			assert(sprSelectFrameS && "Misstake load texture data <sprSelectFrameS>");
+		}
+		if (!sprSelectArrow)
+		{
+			sprSelectArrow = std::make_shared<SpriteBatch>(L"Data/Image/Select/SelectArrow.png", 2, DirectX::XMFLOAT2(54, 138));
+			assert(sprSelectArrow && "Misstake load texture data <sprsprSelectArrow>");
+		}
+	}
+	
 	if (!sprMiniCharacter)
 	{
 		sprMiniCharacter = std::make_shared<SpriteBatch>(L"Data/MiniPlayer.png", 10, DirectX::XMFLOAT2(96.0f, 240.0f));
@@ -165,6 +225,28 @@ std::shared_ptr<SpriteBatch>& Resource::GetSpriteData(Resource::Texture _texture
 		return sprCharcter03;			// break;
 	case Texture::Character04:
 		return sprCharcter04;			// break;
+case Texture::Character05:
+		return sprCharcter05;			// break;
+	case Texture::Character06:
+		return sprCharcter06;			// break;
+	case Texture::Character07:
+		return sprCharcter07;			// break;
+	case Texture::Character08:
+		return sprCharcter08;			// break;
+	case Texture::SelectCPU:
+		return sprSelectCPU;			// break;
+	case Texture::MenuBG:
+		return sprMenuBG;				// break;
+	case Texture::MenuBG2:
+		return sprMenuBG2;				// break;
+	case Texture::SelectFrameL:
+		return sprSelectFrameL;			// break;
+	case Texture::SelectFrameM:
+		return sprSelectFrameM;			// break;
+	case Texture::SelectFrameS:
+		return sprSelectFrameS;			// break;
+	case Texture::SelectArrow:
+		return sprSelectArrow;			// break;
 	case Texture::MiniCharacter:
 		return sprMiniCharacter;		// break;
 	case Texture::MiniBlock:

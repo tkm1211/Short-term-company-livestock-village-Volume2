@@ -1,6 +1,7 @@
 #include "CPU.h"
 #include "EasyAI.h"
 #include "NormalAI.h"
+#include "HardAI.h"
 #include "Resource.h"
 #include "UI.h"
 #include "BlockManager.h"
@@ -29,10 +30,10 @@ void CPU::Init()
 		//cpuAI = std::make_unique<EasyAI>();
 
 		// Make NormalAI
-		cpuAI = std::make_unique<NormalAI>();
+		//cpuAI = std::make_unique<NormalAI>();
 
 		// Make HardAI
-		//cpuAI = std::make_unique<HardAI>();
+		cpuAI = std::make_unique<HardAI>();
 
 
 		cpuAI->Init();
@@ -64,11 +65,14 @@ void CPU::UnInit()
 
 void CPU::Update()
 {
-	if (sceneSelect.gameMode != SceneSelect::SelectGameMode::CPU) return;
-	if (sceneSelect.gameMode == SceneSelect::SelectGameMode::CPU && sceneCPUGame.GetIsGameReady()) return;
+	if (sceneSelect.gameMode != SelectGameMode::CPU) return;
+	if (sceneSelect.gameMode == SelectGameMode::CPU && sceneCPUGame.GetIsGameReady()) return;
 
 	// Update AI
-	cpuAI->Update(row, column);
+	if (regularBlockManager[1].status == BlockManager::Wait)
+	{
+		cpuAI->Update(row, column);
+	}
 
 	// Update CPU
 	OperateCPU();

@@ -25,7 +25,7 @@ BlockManager provisionalBlockManager;
 void SceneSingleGame::Init()
 {
 	// Member variable
-	gameMode = SceneSelect::SelectGameMode::Single;
+		gameMode = SelectGameMode::Single;
 	readyTimer = 0;
 	isGameReady = true;
 

@@ -66,11 +66,11 @@ void GameUI::Init(int _pn)
 			using namespace DirectX;
 			auto& it = drawBlockStatus[i];
 
-			if (nowGameMode == SceneSelect::SelectGameMode::Single)
+			if (nowGameMode == SelectGameMode::Single)
 			{
 				it.pos = XMFLOAT2(3.0f + 615.0f + 114.0f * i, 12.0f + 1032.0f);
 			}
-			else if (nowGameMode == SceneSelect::SelectGameMode::Multi || nowGameMode == SceneSelect::SelectGameMode::CPU)
+			else if (nowGameMode == SelectGameMode::Multi || nowGameMode == SelectGameMode::CPU)
 			{
 				switch (_pn)
 				{
@@ -100,7 +100,7 @@ void GameUI::Init(int _pn)
 		isTimerStop = false;
 		isGaugeMax = false;
 
-		if (nowGameMode == SceneSelect::SelectGameMode::Single)
+		if (nowGameMode == SelectGameMode::Single)
 		{
 			meterBack.pos = DirectX::XMFLOAT2(1302.0f + ADJUST, 510.0f);
 			meterBack.tex = DirectX::XMFLOAT2(36.0f, 936.0f);
@@ -110,7 +110,7 @@ void GameUI::Init(int _pn)
 			meter.tex = DirectX::XMFLOAT2(0.0f, 936.0f);
 			meter.size = DirectX::XMFLOAT2(36.0f, 570.0f);
 		}
-		else if (nowGameMode == SceneSelect::SelectGameMode::Multi || nowGameMode == SceneSelect::SelectGameMode::CPU)
+		else if (nowGameMode == SelectGameMode::Multi || nowGameMode == SelectGameMode::CPU)
 		{
 			switch (_pn)
 			{
@@ -139,7 +139,7 @@ void GameUI::Init(int _pn)
 		if (gaugeTexPosY < 951.0f)
 		{
 			gaugeTexPosY = 936.0f + 570.0f;
-			if (sceneSelect.gameMode == SceneSelect::SelectGameMode::Multi && _pn == 1) meter.tex.x = 36.0f;
+			if (sceneSelect.gameMode == SelectGameMode::Multi && _pn == 1) meter.tex.x = 36.0f;
 			meter.tex.y = 936.0f + 570.0f;
 		}
 		else if (maxSecond <= second && gaugeTexPosY <= 936.0f + 570.0f)
@@ -164,7 +164,7 @@ void GameUI::Init(int _pn)
 
 	// スコアボード系
 	{
-		if (nowGameMode == SceneSelect::SelectGameMode::Single)
+		if (nowGameMode == SelectGameMode::Single)
 		{
 			scoreBoard.pos = DirectX::XMFLOAT2(1416.0f, 774.0f);
 			scoreBoard.tex = DirectX::XMFLOAT2(0.0f, 312.0f);
@@ -172,7 +172,7 @@ void GameUI::Init(int _pn)
 
 			scorePos = DirectX::XMFLOAT2(1463.0f, 879.0f);
 		}
-		else if (nowGameMode == SceneSelect::SelectGameMode::Multi || nowGameMode == SceneSelect::SelectGameMode::CPU)
+		else if (nowGameMode == SelectGameMode::Multi || nowGameMode == SelectGameMode::CPU)
 		{
 			switch (_pn)
 			{
@@ -207,13 +207,13 @@ void GameUI::Init(int _pn)
 
 	// Character関係
 	{
-		if (nowGameMode == SceneSelect::SelectGameMode::Single)
+		if (nowGameMode == SelectGameMode::Single)
 		{
 			charTex.pos = DirectX::XMFLOAT2(150.0f, 327.0f);
 			charTex.tex = DirectX::XMFLOAT2(0.0f, 0.0f);
 			charTex.size = DirectX::XMFLOAT2(320.f, 416.0f);
 		}
-		else if (nowGameMode == SceneSelect::SelectGameMode::Multi || nowGameMode == SceneSelect::SelectGameMode::CPU)
+		else if (nowGameMode == SelectGameMode::Multi || nowGameMode == SelectGameMode::CPU)
 		{
 			switch (_pn)
 			{
@@ -1017,9 +1017,9 @@ void GameUI::UpdateOfCharacter(int _pn)
 /*------------------------------------------*/
 void GameUI::UpdateOfGameReady()
 {
-	if (sceneSelect.gameMode == SceneSelect::SelectGameMode::Single && !sceneSingleGame.GetIsGameReady()) return;
-	if (sceneSelect.gameMode == SceneSelect::SelectGameMode::Multi && !sceneMultiGame.GetIsGameReady()) return;
-	if (sceneSelect.gameMode == SceneSelect::SelectGameMode::CPU && !sceneCPUGame.GetIsGameReady()) return;
+	if (sceneSelect.gameMode == SelectGameMode::Single && !sceneSingleGame.GetIsGameReady()) return;
+	if (sceneSelect.gameMode == SelectGameMode::Multi && !sceneMultiGame.GetIsGameReady()) return;
+	if (sceneSelect.gameMode == SelectGameMode::CPU && !sceneCPUGame.GetIsGameReady()) return;
 
 	switch (readyState)
 	{
@@ -1067,11 +1067,11 @@ void GameUI::UpdateOfGameReady()
 			readyState++;
 			readyTimer = 0;
 			readyAlpha = 0.0f;
-			if (sceneSelect.JudgeGameMode(SceneSelect::SelectGameMode::Single))
+			if (sceneSelect.JudgeGameMode(SelectGameMode::Single))
 				sceneSingleGame.SetIsGameReady(false);
-			else if (sceneSelect.JudgeGameMode(SceneSelect::SelectGameMode::Multi))
+			else if (sceneSelect.JudgeGameMode(SelectGameMode::Multi))
 				sceneMultiGame.SetIsGameReady(false);
-			else if (sceneSelect.JudgeGameMode(SceneSelect::SelectGameMode::CPU))
+			else if (sceneSelect.JudgeGameMode(SelectGameMode::CPU))
 				sceneCPUGame.SetIsGameReady(false);
 		}
 		break;

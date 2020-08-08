@@ -7,7 +7,7 @@
 class SceneSingleGame : public BaseScene
 {
 public:
-	SceneSelect::SelectGameMode gameMode;
+	SelectGameMode gameMode;
 private:
 
 	int readyTimer;
@@ -33,7 +33,7 @@ public:
 class SceneCPUGame : public BaseScene
 {
 public:
-	SceneSelect::SelectGameMode gameMode;
+	SelectGameMode gameMode;
 private:
 	bool isGameReady;
 
@@ -54,7 +54,7 @@ public:
 class SceneMultiGame : public BaseScene
 {
 public:
-	SceneSelect::SelectGameMode gameMode;
+	SelectGameMode gameMode;
 
 	bool isGameReady;
 public:

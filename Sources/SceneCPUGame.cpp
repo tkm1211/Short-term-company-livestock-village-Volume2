@@ -15,7 +15,7 @@
 /*--------------------------------------*/
 void SceneCPUGame::Init()
 {
-	gameMode = SceneSelect::SelectGameMode::CPU;
+	gameMode = SelectGameMode::CPU;
 
 
 	BG_INSTANCE->Init();
