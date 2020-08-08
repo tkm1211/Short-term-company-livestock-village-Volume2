@@ -684,6 +684,16 @@ void	SpriteBatch::Draw(
 		);
 }
 
+void SpriteBatch::Draw(TexData d, float angle, float r, float g, float b, float a)
+{
+	Draw(
+		DirectX::XMFLOAT2(d.pos.x, d.pos.y), DirectX::XMFLOAT2(d.size.x, d.size.y),
+		DirectX::XMFLOAT2(d.tex.x, d.tex.y), DirectX::XMFLOAT2(d.size.x, d.size.y),
+		DirectX::XMFLOAT2(0.0f, 0.0f), angle,
+		DirectX::XMFLOAT4(r, g, b, a)
+	);
+}
+
 /*--------------------------------*/
 //	ï`âÊå„èàóù
 /*--------------------------------*/

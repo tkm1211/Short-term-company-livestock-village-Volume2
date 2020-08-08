@@ -6,7 +6,25 @@
 class SceneTitle : public BaseScene
 {
 private:
-	std::shared_ptr<SpriteBatch> sprTitle;
+	
+
+private:
+	std::shared_ptr<SpriteBatch> sprLogo;
+	std::shared_ptr<SpriteBatch> sprTitleBack;
+	std::shared_ptr<SpriteBatch> sprChar;
+
+	TexData logoData;
+	TexData titleBackData;
+	TexData charData;
+	TexData bigBlockData;
+	TexData smallBlockData;
+	TexData pressATextData;
+
+	int		charAnmFrm;
+	int		charAnmCnt;
+
+	float	pressATextAlpha;
+
 public:
 	SceneTitle() { /*Init();*/ }
 	void Init();

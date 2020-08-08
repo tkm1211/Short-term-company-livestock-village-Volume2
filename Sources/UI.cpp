@@ -1,5 +1,6 @@
 #include "UI.h"
 
+#include <Blender.h>
 #include "SceneManager.h"
 #include "BlockManager.h"
 #include "Resource.h"
@@ -7,6 +8,7 @@
 #include "ConvenientMath.h"
 #include "Constant.h"
 #include "Player.h"
+#include "Sound.h"
 
 /*--------------------------------------*/
 //	Global area
@@ -24,7 +26,7 @@ void GameUI::Init(int _pn)
 	// 画像データのロード
 	{
 		sprGameUI = RESOURCE->GetSpriteData(Resource::Texture::UI);
-		int charNum = 0;// TODO:仮変数
+		int charNum = _pn;// TODO:仮変数
 		switch (charNum)
 		{
 		case 0:
@@ -216,15 +218,15 @@ void GameUI::Init(int _pn)
 			switch (_pn)
 			{
 			case 0:
-				charTex.pos = DirectX::XMFLOAT2(948.0f - 6.0f, 609.0f);
+				charTex.pos = DirectX::XMFLOAT2(780.0f, 609.0f);
 				charTex.tex = DirectX::XMFLOAT2(0.0f, 0.0f);
-				charTex.size = DirectX::XMFLOAT2(-160.0f, 208.0f);
+				charTex.size = DirectX::XMFLOAT2(160.0f, 208.0f);
 				break;
 
 			case 1:
-				charTex.pos = DirectX::XMFLOAT2(970.0f + 6.0f, 81.0f);
+				charTex.pos = DirectX::XMFLOAT2(1150.0f, 81.0f);
 				charTex.tex = DirectX::XMFLOAT2(0.0f, 0.0f);
-				charTex.size = DirectX::XMFLOAT2(160.0f, 208.0f);
+				charTex.size = DirectX::XMFLOAT2(-160.0f, 208.0f);
 				break;
 			}
 		}
@@ -427,6 +429,7 @@ void GameUI::DrawOfSingle()
 	XMFLOAT2 basicTex(0, 696);
 	XMFLOAT2 basicCenter(0.0f, 0.0f);
 	XMFLOAT4 basicColor(1.0f, 1.0f, 1.0f, 1.0f);
+
 
 
 	sprGameUI->Begin();
@@ -863,6 +866,7 @@ void GameUI::UpdateOfGauge(int _pn)
 	gaugeTexPosY = meter.tex.y + (maxSecond - second) / maxSecond * meter.size.y;
 	if (gaugeTexPosY < 951.0f)
 	{
+		pAudio->Play(Sound::Get()->seHandle[Sound::SE::SPEED_UP].get());
 		gaugeTexPosY = 936.0f + 570.0f;
 		//if (_playerNum == 1) meter.tex.x = 36.0f;
 		meter.tex.y = 936.0f + 570.0f;
@@ -890,7 +894,6 @@ void GameUI::UpdateGaugeSpeed()
 			maxSecond -= 0.5f;
 			speedUpCount++;
 			secondTime = 0;
-
 		}
 	}
 	else
@@ -1025,6 +1028,7 @@ void GameUI::UpdateOfGameReady()
 		if (readyTimer == 50)
 		{
 			// play sound.
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::READY].get());
 		}
 		if (readyTimer <= 60 && readyTimer >= 50)
 		{
@@ -1047,6 +1051,7 @@ void GameUI::UpdateOfGameReady()
 		if (readyTimer == 1)
 		{
 			// play sound.
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::GO].get());
 		}
 
 		if (++readyTimer <= 60)

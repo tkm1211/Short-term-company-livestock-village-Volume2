@@ -6,7 +6,9 @@
 #include "Resource.h"
 #include "BlockManager.h"
 #include "UI.h"
+#include "Sound.h"
 
+class BlockManager;
 /*--------------------------------------*/
 //	Global area
 /*--------------------------------------*/
@@ -85,6 +87,7 @@ void Player::OperatePlayer(int _pn)
 		{
 			--column;
 			pos.y -= Player::MOVING_WIDTH;
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 		}
 		if (accelerationCount[0] >= ACCEL_START)
 		{
@@ -92,6 +95,7 @@ void Player::OperatePlayer(int _pn)
 			{
 				--column;
 				pos.y -= Player::MOVING_WIDTH;
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			}
 		}
 	}
@@ -106,6 +110,7 @@ void Player::OperatePlayer(int _pn)
 		{
 			++row;
 			pos.x += Player::MOVING_WIDTH;
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 		}
 		if (accelerationCount[1] >= ACCEL_START)
 		{
@@ -113,6 +118,7 @@ void Player::OperatePlayer(int _pn)
 			{
 				++row;
 				pos.x += Player::MOVING_WIDTH;
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			}
 		}
 	}
@@ -127,6 +133,7 @@ void Player::OperatePlayer(int _pn)
 		{
 			++column;
 			pos.y += Player::MOVING_WIDTH;
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 		}
 		if (accelerationCount[2] >= ACCEL_START)
 		{
@@ -134,7 +141,7 @@ void Player::OperatePlayer(int _pn)
 			{
 				++column;
 				pos.y += Player::MOVING_WIDTH;
-
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			}
 		}
 	}
@@ -149,6 +156,7 @@ void Player::OperatePlayer(int _pn)
 		{
 			--row;
 			pos.x -= Player::MOVING_WIDTH;
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 		}
 		if (accelerationCount[3] >= ACCEL_START)
 		{
@@ -156,6 +164,7 @@ void Player::OperatePlayer(int _pn)
 			{
 				--row;
 				pos.x -= Player::MOVING_WIDTH;
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			}
 		}
 	}
@@ -171,6 +180,7 @@ void Player::OperatePlayer(int _pn)
 		{
 			--column;
 			pos.y -= Player::MOVING_WIDTH;
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 		}
 		if (accelerationCount[0 + 4] >= ACCEL_START)
 		{
@@ -178,6 +188,7 @@ void Player::OperatePlayer(int _pn)
 			{
 				--column;
 				pos.y -= Player::MOVING_WIDTH;
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			}
 		}
 	}
@@ -192,6 +203,7 @@ void Player::OperatePlayer(int _pn)
 		{
 			++row;
 			pos.x += Player::MOVING_WIDTH;
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 		}
 		if (accelerationCount[1 + 4] >= ACCEL_START)
 		{
@@ -199,6 +211,7 @@ void Player::OperatePlayer(int _pn)
 			{
 				++row;
 				pos.x += Player::MOVING_WIDTH;
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			}
 		}
 	}
@@ -213,6 +226,7 @@ void Player::OperatePlayer(int _pn)
 		{
 			++column;
 			pos.y += Player::MOVING_WIDTH;
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 		}
 		if (accelerationCount[2 + 4] >= ACCEL_START)
 		{
@@ -220,6 +234,7 @@ void Player::OperatePlayer(int _pn)
 			{
 				++column;
 				pos.y += Player::MOVING_WIDTH;
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			}
 		}
 	}
@@ -234,6 +249,7 @@ void Player::OperatePlayer(int _pn)
 		{
 			--row;
 			pos.x -= Player::MOVING_WIDTH;
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 		}
 		if (accelerationCount[3 + 4] >= ACCEL_START)
 		{
@@ -241,6 +257,7 @@ void Player::OperatePlayer(int _pn)
 			{
 				--row;
 				pos.x -= Player::MOVING_WIDTH;
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			}
 		}
 	}
@@ -293,6 +310,7 @@ void Player::SetBreakBlock(int _pn)
 			if (regularBlockManager[_pn].BreakBlock(row, column))
 			{
 				regularGameUI[_pn].SetIsTimerStop(true);
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::DESTRUCTION1].get());
 			}
 		}
 	}

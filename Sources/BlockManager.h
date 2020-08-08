@@ -150,12 +150,14 @@ public:
 
 	// Getter and Setter
 	State	GetStatus() { return status; }
-	void	SetStatus(State _n) { lastStatus = status; status = _n; }
 	int		GetColorMax() { return colorMax; }
 	bool	GetIsPushUpByGauge() { return isPushUpByGauge; }
-	void	SetIsPushUpByGauge(bool _n) { isPushUpByGauge = _n; }
 	bool	GetIsPushing() { return isPushing; }
+	void	SetStatus(State _n) { lastStatus = status; status = _n; }
+	void	SetIsPushUpByGauge(bool _n) { isPushUpByGauge = _n; }
 	std::array<Block, BLOCK_NUM_MAX> GetBlocks() { return blocks; } // 2020/03/19 : TAKUMA追加
+
+	int GetFallObstacleNum() {return fallObstacleNum;}
 
 	/*---------------------------*/
 	// 便利関数
@@ -163,6 +165,8 @@ public:
 	// ブロックのサーチ系
 	bool SearchBlock(int _row, int _column, Block** _ans);
 	bool SearchBlockNum(int _row, int _column, int& _ans);
+
+	static void UseImGui();
 };
 
 extern BlockManager provisionalBlockManager;

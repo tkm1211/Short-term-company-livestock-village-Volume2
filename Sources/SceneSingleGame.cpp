@@ -9,6 +9,8 @@
 #include "BlockManager.h"
 #include "UI.h"
 #include "Effect.h"
+#include "PauseScene.h"
+#include "Sound.h"
 
 /*--------------------------------------*/
 //	Global area
@@ -32,7 +34,10 @@ void SceneSingleGame::Init()
 	regularBlockManager[0].Init();
 	regularGameUI[0].Init();
 	regularEffects[0].Init(0);
+	pause.Init();
 
+	// Play BGM
+	pAudio->Play(Sound::Get()->bgmHandle[Sound::BGM::GAME].get(), true);
 }
 
 void SceneSingleGame::Uninit()
@@ -42,6 +47,11 @@ void SceneSingleGame::Uninit()
 	regularBlockManager[0].Uninit();
 	regularGameUI[0].Uninit();
 	regularEffects[0].Uninit(0);
+	pause.Uninit();
+
+	// Stop BGM
+	pAudio->Stop(Sound::Get()->bgmHandle[Sound::BGM::GAME].get());
+	pAudio->DeleteSourceVoice(Sound::Get()->bgmHandle[Sound::BGM::GAME].get());
 }
 
 void SceneSingleGame::Update()
@@ -53,12 +63,15 @@ void SceneSingleGame::Update()
 		PRODUCTION->CSOH(SCENE_MANAGER->TITLE);
 
 
-	BG_INSTANCE->Update();
-	regularPlayer[0].Update();
-	regularGameUI[0].Update();
-	regularBlockManager[0].Update();
-	regularEffects[0].Update(0);
-
+	pause.Update();
+	if (!pause.GetisPauseNow())
+	{
+		BG_INSTANCE->Update();
+		regularPlayer[0].Update();
+		regularGameUI[0].Update();
+		regularBlockManager[0].Update();
+		regularEffects[0].Update(0);
+	}
 	//ProcessOfGameReady();
 
 
@@ -78,7 +91,7 @@ void SceneSingleGame::Draw()
 	regularPlayer[0].DrawOfSingle();
 	regularGameUI[0].DrawOfSingle();
 	regularEffects[0].DrawOfSingle();
-
+	pause.Draw();
 
 	if (PRODUCTION->CheckFlag(GO_SINGLEGAME) || PRODUCTION->CheckFlag(GO_TITLE))
 	{

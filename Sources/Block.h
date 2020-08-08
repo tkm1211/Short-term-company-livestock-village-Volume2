@@ -7,9 +7,11 @@ class Block
 private:
 	static constexpr int FALL_COUNT = 6;
 	static constexpr int FALL_SPEED = 114 / FALL_COUNT;//  =19 
+public:
 	static constexpr int SIZE_X = 114;
 	static constexpr int SIZE_Y = 114;
 
+private:
 	DirectX::XMFLOAT2 pos;
 	int color;		// êF
 	int row;		// â°î‘çÜ

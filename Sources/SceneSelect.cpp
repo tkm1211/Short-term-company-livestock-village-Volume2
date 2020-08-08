@@ -5,6 +5,7 @@
 #include "Resource.h"
 #include "SceneManager.h"
 #include "Production.h"
+#include "Sound.h"
 
 /*--------------------------------------*/
 //	Global area
@@ -20,16 +21,19 @@ void SceneSelect::Init()
 {
 	sprSelect = RESOURCE->GetSpriteData(Resource::Texture::Select);
 	gameMode = SelectGameMode::Single;
+
+	// Play BGM
+	pAudio->Play(Sound::Get()->bgmHandle[Sound::BGM::SELECT].get(), true);
 }
 
 void SceneSelect::Update()
 {
 	if (PRODUCTION->CheckFlag(GO_SINGLEGAME))
-		PRODUCTION->CSOH(SCENE_MANAGER->SINGLE_GAME);
+		PRODUCTION->CSOH(SCENE_MANAGER->SINGLE_GAME, true);
 	if (PRODUCTION->CheckFlag(GO_PLAYERSTILE))
 		PRODUCTION->CSOH(SCENE_MANAGER->SCENE_SELECT);
 	if (PRODUCTION->CheckFlag(GO_MULTIGAME))
-		PRODUCTION->CSOH(SCENE_MANAGER->MULTI_GAME);
+		PRODUCTION->CSOH(SCENE_MANAGER->MULTI_GAME, true);
 	if (PRODUCTION->CheckFlag(GO_CPUGAME))
 		PRODUCTION->CSOH(SCENE_MANAGER->CPU_GAME);
 
@@ -72,7 +76,9 @@ void SceneSelect::Draw()
 
 void SceneSelect::Uninit()
 {
-
+	// Play BGM
+	pAudio->Stop(Sound::Get()->bgmHandle[Sound::BGM::SELECT].get());
+	pAudio->DeleteSourceVoice(Sound::Get()->bgmHandle[Sound::BGM::SELECT].get());
 }
 
 

@@ -5,6 +5,8 @@
 #include <input_device.h>
 #include "framework.h"
 
+#include "Sound.h"
+
 SceneTitle sceneTitle;
 SceneSelect sceneSelect;
 SceneSingleGame sceneSingleGame;
@@ -26,6 +28,8 @@ void SceneManager::Init()
 	pAudio->Initialize();
 	RESOURCE->Init();
 	PRODUCTION->Init();
+	Sound::Create();
+	Sound::Get()->Load();
 	SetScene(SCENE::TITLE);
 }
 
@@ -52,13 +56,14 @@ void SceneManager::Update()
 		nowScene->Init();
 	}
 	nowScene->Update();
+	Sound::Get()->Update();
 }
 
 void SceneManager::Render()
 {
+	ImGui::Render();
 	nowScene->Draw();
 
-	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
 
@@ -77,6 +82,8 @@ void SceneManager::Uninit()
 	nowScene = nullptr;
 	nextScene = nullptr;
 
+	Sound::Get()->Uninit();
+	Sound::Destroy();
 	pAudio->Uninitialize();
 }
 

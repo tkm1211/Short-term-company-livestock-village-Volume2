@@ -11,6 +11,8 @@ private:
 	std::shared_ptr<SpriteBatch> sprBG;
 	std::shared_ptr<SpriteBatch> sprPlayerBack;
 	std::shared_ptr<SpriteBatch> sprGrid;
+	std::shared_ptr<SpriteBatch> sprRedFrame;
+	std::shared_ptr<SpriteBatch> sprBlueFrame;
 
 public:
 	BG() { Init(); }

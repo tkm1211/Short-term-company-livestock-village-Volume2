@@ -1,6 +1,7 @@
 #include "Block.h"
 #include "SceneManager.h"
 #include "Effect.h"
+#include "Sound.h"
 
 /*--------------------------------------*/
 //	Global area
@@ -54,6 +55,7 @@ void Block::Update(int _pn)
 		{
 			// Generate smoke
 			regularEffects[_pn].GenerateSmoke(row, column);
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::LANDING_SMALL_OBSTACLE].get());
 			readySmoke = false;
 		}
 	}
@@ -85,7 +87,7 @@ void Block::GenerateMe(int _row, int _column, int _color, bool _isFall)
 	row = _row;
 	column = _column;
 	color = _color;
-	pos = DirectX::XMFLOAT2(row * SIZE_X, column * SIZE_Y);
+	pos = DirectX::XMFLOAT2((float)(row * SIZE_X), (float)(column * SIZE_Y));
 
 	if (color == 7)
 	{

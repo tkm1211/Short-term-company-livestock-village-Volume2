@@ -9,6 +9,8 @@
 #include "BlockManager.h"
 #include "UI.h"
 #include "Effect.h"
+#include "PauseScene.h"
+#include "Sound.h"
 
 /*--------------------------------------*/
 //	Menber function
@@ -35,9 +37,12 @@ void SceneMultiGame::Init()
 	{
 		regularEffects[i].Init(i);
 	}
-
+	pause.Init();
 
 	isGameReady = true;
+
+	// Play BGM
+	pAudio->Play(Sound::Get()->bgmHandle[Sound::BGM::GAME].get(), true);
 }
 
 void SceneMultiGame::Uninit()
@@ -50,6 +55,11 @@ void SceneMultiGame::Uninit()
 		regularGameUI[i].Uninit();
 		regularEffects[i].Uninit(i);
 	}
+	pause.Uninit();
+
+	// Stop BGM
+	pAudio->Stop(Sound::Get()->bgmHandle[Sound::BGM::GAME].get());
+	pAudio->DeleteSourceVoice(Sound::Get()->bgmHandle[Sound::BGM::GAME].get());
 }
 
 void SceneMultiGame::Update()
@@ -61,22 +71,29 @@ void SceneMultiGame::Update()
 		PRODUCTION->CSOH(SCENE_MANAGER->TITLE);
 
 
-	BG_INSTANCE->Update();
-	for (int i = 0; i < 2; i++)
+	pause.Update();
+	if (!pause.GetisPauseNow())
 	{
-		regularGameUI[i].Update(i);
-	}
-	for (int i = 0; i < 2; i++)
-	{
-		regularPlayer[i].Update(i);
-	}
-	for (int i = 0; i < 2; i++)
-	{
-		regularBlockManager[i].Update(i);
-	}
-	for (int i = 0; i < 2; i++)
-	{
-		regularEffects[i].Update(i);
+		BG_INSTANCE->Update();
+		for (int i = 0; i < 2; i++)
+		{
+			regularGameUI[i].Update(i);
+		}
+		for (int i = 0; i < 2; i++)
+		{
+			regularPlayer[i].Update(i);
+		}
+		for (int i = 0; i < 2; i++)
+		{
+			regularBlockManager[i].Update(i);
+		}
+		//BlockManager::UseImGui();
+
+		for (int i = 0; i < 2; i++)
+		{
+			regularEffects[i].Update(i);
+		}
+		//Effect::UseImGui();
 	}
 
 
@@ -109,6 +126,7 @@ void SceneMultiGame::Draw()
 	{
 		regularEffects[i].DrawOfMulti(i);
 	}
+	pause.Draw();
 
 	if (PRODUCTION->CheckFlag(GO_MULTIGAME) || PRODUCTION->CheckFlag(GO_TITLE))
 	{

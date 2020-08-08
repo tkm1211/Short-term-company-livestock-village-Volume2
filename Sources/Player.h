@@ -16,12 +16,14 @@ private:
 	std::shared_ptr<SpriteBatch> sprPickel;
 
 	DirectX::XMFLOAT2 pos;
-	int row;
-	int column;
 	int accelerationCount[8]; // ピッピピピピって感じで移動する時のカウント
 	int animFrame;
 
 	bool canMove;
+
+public:
+	int row;
+	int column;
 
 public:
 	Player() { Init(); }
@@ -38,6 +40,11 @@ public:
 	void SetBreakBlock(int _pn);
 
 	void PositionCorreciton();
+
+	DirectX::XMFLOAT2 GetPos() { return pos; }
+	void SetPos(DirectX::XMFLOAT2 n) { pos = n; }
+	bool GetCanMove() { return canMove; }
+	void SetCanMove(bool n) { canMove = n; }
 };
 
 extern Player provisionalPlayer;

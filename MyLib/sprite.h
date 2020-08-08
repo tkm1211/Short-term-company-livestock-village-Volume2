@@ -186,6 +186,15 @@ public:
 		float r = 1.0f, float g = 1.0f, float b = 1.0f, float a = 1.0f,
 		int cutOutAdress = 0
 		);
+	/*-----------------------------------*/
+	//	•`‰æ ( TexData‚ğg‚¦‚é‚æ‚¤‚É‚µ‚½‚â‚Â )
+	/*-----------------------------------*/
+	void	Draw(
+		TexData d,
+		float angle = 0.0f,/*degree*/
+		float r = 1.0f, float g = 1.0f, float b = 1.0f, float a = 1.0f
+	);
+
 
 	/*-----------------------------------*/
 	//	Œãˆ—

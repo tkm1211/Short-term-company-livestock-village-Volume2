@@ -8,6 +8,11 @@
 #include "Production.h"
 #include "UI.h"
 #include "Effect.h"
+#include "Sound.h"
+#include <imgui.h>
+#include "Player.h"
+
+class Player;
 /*--------------------------------------*/
 //	Global area
 /*--------------------------------------*/
@@ -164,6 +169,9 @@ void BlockManager::DrawOfMulti(int _pn)
 	sprBlock->End();
 }
 
+
+
+
 //-----------------------------------------------------------------------
 
 //	各種関数
@@ -244,7 +252,6 @@ void BlockManager::ProcessOfMultiGame(int _pn)
 		CheckUpComboProcess(_pn);
 		break;
 	case BlockManager::FallObstacle:
-		//SetObstacleWhenCountReaches(_pn);
 		FallObstacleProcess(_pn);
 		break;
 	default:
@@ -258,6 +265,7 @@ void BlockManager::ProcessOfMultiGame(int _pn)
 	}
 
 	SetObstacleWhenCountReaches(_pn);
+	fallObstacleNum = SetNumOfObstacle(obstacleNum);
 
 	for (auto& it : blocks)
 	{
@@ -353,6 +361,10 @@ void BlockManager::SetSortBlocks()
 	}
 }
 
+
+
+
+#pragma region Process Function
 /*-------------------------------------------*/
 // Waitの処理
 /*-------------------------------------------*/
@@ -677,8 +689,14 @@ void BlockManager::FallObstacleProcess(int _pn)
 	if (regularEffects[_pn].GetIsReadySmokeL())
 	{
 		regularEffects[_pn].GenerateSmokeL(_pn);
+		pAudio->Play(Sound::Get()->seHandle[Sound::SE::LANDING_LARGE_OBSTACLE].get());
 	}
 }
+
+#pragma endregion 
+
+
+
 
 /*-------------------------------------------*/
 // チェイン関係の処理関数
@@ -737,6 +755,7 @@ void BlockManager::RagisterChainBlock(int _pn)
 			//provisionalGameUI.SetShowChainNumPos(ans->GetPos());
 			//provisionalGameUI.SetIsShowChainNum(true);
 			regularGameUI[_pn].SetShowChainNumInit(ans->GetPos());
+			regularEffects[_pn].GenerateMiniChar(r, c, _pn);
 		}
 	};
 
@@ -977,6 +996,8 @@ void BlockManager::RagisterChainBlock(int _pn)
 	{
 		if (currEraseNum[i])
 		{
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::DESTRUCTION1].get());
+
 			regularEffects[_pn].GenerateParticle(blocks[i].GetRow(), blocks[i].GetColumn(), blocks[i].GetColor());
 			blocks[i].BreakMe();
 			eraseBlockCount++;
@@ -984,6 +1005,12 @@ void BlockManager::RagisterChainBlock(int _pn)
 			// チェインを継続する
 			!isChainContinued ? isChainContinued = true : isChainContinued = isChainContinued;
 		}
+	}
+
+	// Play SE
+	if (isChainContinued)
+	{
+		pAudio->Play(Sound::Get()->seHandle[Sound::SE::DESTRUCTION1].get());
 	}
 
 	// 一度にたくさん消したら、その分多く降らせる
@@ -1213,6 +1240,7 @@ void BlockManager::PreparationPushUp()
 	isPushing = true;
 }
 
+
 /*------------------------------------------*/
 // ブロックを一段上げる
 /*------------------------------------------*/
@@ -1221,8 +1249,15 @@ void BlockManager::MovePushUpBoard(int _pn)
 	// 6フレームかけて上にあげていく
 	for (auto& it : blocks)
 	{
-		it.SetPosY(it.GetPos().y - 114.0f / 6.0f);
+		it.SetPosY(it.GetPos().y - Block::SIZE_X / 6.0f);
 	}
+
+	// プレイヤーのカーソルを持ち上げる
+	auto tmpPos = regularPlayer[_pn].GetPos();
+	tmpPos.y -= Block::SIZE_X / 6.0f;
+	regularPlayer[_pn].SetPos(tmpPos);
+	regularPlayer[_pn].SetCanMove(false);
+
 
 	pushingCount++;
 
@@ -1231,6 +1266,10 @@ void BlockManager::MovePushUpBoard(int _pn)
 	{
 		pushingCount = 0;
 		SetStatus(State::PopRowLine);
+
+		// プレイヤー関係
+		regularPlayer[_pn].column--;
+		regularPlayer[_pn].SetCanMove(true);
 
 		isPushing = false;
 		if (!regularGameUI[_pn].GetIsGaugeMax())
@@ -1246,23 +1285,51 @@ void BlockManager::MovePushUpBoard(int _pn)
 /*------------------------------------------*/
 void BlockManager::AttackForOppenent(int _pn)
 {
+	auto AddObstacleNum = [&](int _pn)
+	{
+		regularBlockManager[_pn].obstacleNum++;
+		regularBlockManager[_pn].obstacleKeepTime = 0;
+		regularBlockManager[_pn].isObstacleKeeping = true;
+	};
+
+	auto SubObstacleNum = [&](int _pn)
+	{
+		regularBlockManager[_pn].obstacleNum--;
+		if (regularBlockManager[_pn].obstacleNum <= 0)
+		{
+			regularBlockManager[_pn].obstacleNum = 0;
+			regularBlockManager[_pn].obstacleKeepTime = 0;
+			regularBlockManager[_pn].isObstacleKeeping = false;
+		}
+	};
+
 	switch (_pn)
 	{
 	case 0:
 		if (chainCount >= 2)
 		{
-			regularBlockManager[1].obstacleNum++;
-			regularBlockManager[1].obstacleKeepTime = 0;
-			regularBlockManager[1].isObstacleKeeping = true;
+			if (obstacleNum > 0)
+			{
+				SubObstacleNum(0);
+			}
+			else
+			{
+				AddObstacleNum(1);
+			}
 		}
 		break;
 
 	case 1:
 		if (chainCount >= 2)
 		{
-			regularBlockManager[0].obstacleNum++;
-			regularBlockManager[0].obstacleKeepTime = 0;
-			regularBlockManager[0].isObstacleKeeping = true;
+			if (obstacleNum > 0)
+			{
+				SubObstacleNum(1);
+			}
+			else
+			{
+				AddObstacleNum(0);
+			}
 		}
 		break;
 	}
@@ -1283,9 +1350,18 @@ void BlockManager::SetObstacleWhenCountReaches(int _pn)
 		// お邪魔ブロックを降らせるステートに以降する
 		status = State::FallObstacle;
 
-		SetFallObstacle(SetNumOfObstacle(obstacleNum), _pn);
+		fallObstacleNum = SetNumOfObstacle(obstacleNum);
+		SetFallObstacle(fallObstacleNum, _pn);
+
+		regularEffects[_pn].SetStackObstacleNumber(0);
+		fallObstacleNum = 0;
 		obstacleKeepTime = 0;
 		obstacleNum = 0;
+		isObstacleKeeping = false;
+	}
+	else if (obstacleNum == 0)
+	{
+		obstacleKeepTime = 0;
 		isObstacleKeeping = false;
 	}
 }
@@ -1299,6 +1375,8 @@ int BlockManager::SetNumOfObstacle(int _num)
 {
 	switch (_num)
 	{
+	case 0:
+		return 0;	//break;
 	case 1:
 		return 0;	//break;
 	case 2:
@@ -1506,20 +1584,56 @@ void BlockManager::AddObstacleByBreakNum(int _pn)
 		}
 	};
 
-	//if (chainCount >= 2)
-	//{
-		switch (_pn)
-		{
-		case 0:
-			regularBlockManager[1].obstacleNum += AddObstacle(regularBlockManager[0].eraseBlockCount);
-			break;
+	auto ResetObstacle = [&](BlockManager& bm)
+	{
+		bm.obstacleNum = 0;
+		bm.obstacleKeepTime = 0;
+		bm.isObstacleKeeping = false;
 
-		case 1:
-			regularBlockManager[0].obstacleNum += AddObstacle(regularBlockManager[1].eraseBlockCount);
-			break;
+	};
+
+
+	auto& bm0 = regularBlockManager[0];
+	auto& bm1 = regularBlockManager[1];
+	switch (_pn)
+	{
+	case 0:
+		// 自分のobstacleNumがあったら先に自分のやつを減らす
+		if (bm0.obstacleNum > 0)
+		{
+			bm0.obstacleNum -= AddObstacle(bm0.eraseBlockCount);
+			if (bm0.obstacleNum <= 0)
+			{
+				ResetObstacle(bm0);
+			}
 		}
-	//}
+		else
+		{
+			bm1.obstacleNum += AddObstacle(bm0.eraseBlockCount);
+			bm1.isObstacleKeeping = true;
+		}
+		break;
+
+	case 1:
+		// 自分のobstacleNumがあったら先に自分のやつを減らす
+		if (bm1.obstacleNum > 0)
+		{
+			bm1.obstacleNum -= AddObstacle(bm1.eraseBlockCount);
+			if (bm1.obstacleNum <= 0)
+			{
+				ResetObstacle(bm1);
+			}
+		}
+		else
+		{
+			bm0.obstacleNum += AddObstacle(bm1.eraseBlockCount);
+			bm0.isObstacleKeeping = true;
+		}
+		break;
+	}
 }
+
+
 
 
 
@@ -1555,6 +1669,28 @@ bool BlockManager::SearchBlockNum(int _row, int _column, int& _ans)
 		}
 	}
 	return false;
+}
+
+void BlockManager::UseImGui()
+{
+	ImGui::Begin("obstacle");
+
+	ImGui::Text("player1");
+	ImGui::SliderInt("obstacleNum", &regularBlockManager[0].obstacleNum, 0, 100);
+	ImGui::SliderInt("keeptime", &regularBlockManager[0].obstacleKeepTime, 0, 180);
+	ImGui::Checkbox("isObstacleKeeping", &regularBlockManager[0].isObstacleKeeping);
+	ImGui::End();
+
+	//ImGui::Text(" ");
+
+	ImGui::Begin("obstacle2");
+
+	ImGui::Text("player2");
+	ImGui::SliderInt("obstacleNum", &regularBlockManager[1].obstacleNum, 0, 100);
+	ImGui::SliderInt("keeptime", &regularBlockManager[1].obstacleKeepTime, 0, 180);
+	ImGui::Checkbox("isObstacleKeeping", &regularBlockManager[1].isObstacleKeeping);
+
+	ImGui::End();
 }
 
 

@@ -35,7 +35,8 @@
 	 ImGui::SetCurrentContext(ImGui::CreateContext());
 	 ImGui_ImplWin32_Init(hwnd);
 	 ImGui_ImplDX11_Init(device, deviceContext);
-	 ImGui::StyleColorsDark();
+	 //ImGui::StyleColorsDark();
+	 ImGui::StyleColorsLight();
 
 	 ImGuiIO &io = ImGui::GetIO();
 	 io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\meiryo.ttc", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());

@@ -30,9 +30,33 @@ public:
 		bool isEnable;
 	};
 
+	struct MiniChar
+	{
+		DirectX::XMFLOAT2 pos;
+		int anmFrm;
+		int anmCnt;
+		bool isEnable;
+	};
+
+	struct MiniBlock
+	{
+		DirectX::XMFLOAT2 pos;
+		DirectX::XMFLOAT2 firstPos;
+		int anmFrm;
+		int anmCnt;
+		int flyingCnt;
+		int attackerNum;
+		
+		bool isEnable;
+		bool nowFlying;
+		bool nowFalling;
+
+	};
+
 private:
 	static constexpr int PARTICLE_MAX = 1000;
 	static constexpr int SMOKE_S_MAX = 6;
+	static constexpr float FORCE_OF_MINIBLOCK = -15.0;
 
 public:
 	static constexpr int BORDER_OF_SMOKEL = 4;
@@ -43,6 +67,9 @@ private:
 	std::unique_ptr<SpriteBatch> sprParticle;
 	std::unique_ptr<SpriteBatch> sprSmokeS;
 	std::unique_ptr<SpriteBatch> sprSmokeL;
+	std::shared_ptr<SpriteBatch> sprMiniChar;
+	std::shared_ptr<SpriteBatch> sprMiniBlock;
+	std::shared_ptr<SpriteBatch> sprStack;
 
 	float deadLineAlpha;
 
@@ -65,6 +92,18 @@ public:
 	bool isShowSmokeL;
 	bool isReadySmokeL;
 #pragma endregion
+
+#pragma region MiniCharån
+	MiniChar miniChar;
+	bool isShowMiniChar;
+#pragma endregion
+
+#pragma region MiniBlockån
+	std::array<MiniBlock, 10> miniBlock;
+	bool isShowMiniBlock;
+	bool isShowStackNum;
+	int stackObstacleNum;
+#pragma endregion 
 
 public:
 	void Init(int);
@@ -89,15 +128,37 @@ public:
 	void GenerateSmokeL(int _pn);
 #pragma endregion
 
+#pragma region MiniCharån
+	void GenerateMiniChar(int _row, int _column, int _pn);
+	void UpdateOfMiniChar();
+	void DrawMiniChar(int _pn);
+#pragma endregion
+
+#pragma region MiniBlockån
+	void GenerateMiniBlock(int _row, int _column, int _pn);
+	void UpdateOfMiniBlock(int _pn);
+	void DrawMiniBlock(int _pn);
+	void DrawStackObstacle(int _pn);
+	void SetStackObstacleNum(int _pn);
+#pragma endregion
+
 #pragma region Setter
 	void SetIsReadySmokeL(bool _n) { isReadySmokeL = _n; }
 	void SetIsShowSmokeL(bool _n) { isShowSmokeL = _n; }
+	void SetIsShowMiniChar(bool _n) { isShowMiniChar = _n; }
+	void SetIsShowMiniBlock(bool _n) { isShowMiniBlock = _n; }
+	void SetStackObstacleNumber(int _n) { stackObstacleNum = _n; }
 #pragma endregion
 
 #pragma region Getter
 	bool GetIsReadySmokeL() { return isReadySmokeL; }
 	bool GetIsShowSmokeL() { return isShowSmokeL; }
+	bool GetIsShowMiniChar() { return isShowMiniChar; }
+	bool GetIsShowMiniBlock() { return isShowMiniBlock; }
 #pragma endregion
+
+
+	static void UseImGui();
 };
 
 extern std::array<Effect, 2> regularEffects;
