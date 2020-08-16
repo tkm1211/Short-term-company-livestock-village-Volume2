@@ -98,6 +98,8 @@ public:
 	void Draw() override;
 
 	int GetCharacterNum(int index) { return charNum[index]; }
+	int GetLevel(int index) { return levelNum[index]; }
+	int GetCPUPowor() { return cpuPoworNum - 1; }
 
 private:
 	void BeginMove();

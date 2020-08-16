@@ -261,3 +261,19 @@ int SceneSelect::GetCharacterNumber(int playerNumber)
 
 	return characterSelector->GetSelectCharacterNum(playerNumber);
 }
+
+int SceneSelect::GetLevel(int playerNumber)
+{
+	int index = static_cast<int>(SelectMode::LevelSelect);
+	LevelSelector* levelSelector = dynamic_cast<LevelSelector*>(selectors[index].get());
+
+	return levelSelector->GetLevel(playerNumber);
+}
+
+int SceneSelect::GetCPUPowor()
+{
+	int index = static_cast<int>(SelectMode::LevelSelect);
+	LevelSelector* levelSelector = dynamic_cast<LevelSelector*>(selectors[index].get());
+
+	return levelSelector->GetCPUPowor();
+}

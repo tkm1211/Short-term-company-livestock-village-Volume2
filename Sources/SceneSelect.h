@@ -167,9 +167,22 @@ public:
 	bool JudgeGameMode(SelectGameMode _b); // 【a == b】 is true
 
 	/// <summary>
-	/// キャラクター番号の取得関数
+	/// 各プレイヤーのキャラクター番号の取得関数
 	/// </summary>
 	/// <param name="playerNumber"> 0 or 1 </param>
-	/// <returns> キャラクター番号 </returns>
+	/// <returns> キャラクター番号 : 0 ~ 7 (注意 : 7は、ランダムなので取得した場合、0 ~ 6に変換してください。) </returns>
 	int GetCharacterNumber(int playerNumber);
+
+	/// <summary>
+	/// 各プレイヤーのレベルの取得関数
+	/// </summary>
+	/// <param name="playerNumber">　0 or 1 </param>
+	/// <returns> レベル : 0 ~ 7 </returns>
+	int GetLevel(int playerNumber);
+
+	/// <summary>
+	/// CPU難易度の取得関数
+	/// </summary>
+	/// <returns> CPU難易度 : 0 ~ 2 </returns>
+	int GetCPUPowor();
 };
