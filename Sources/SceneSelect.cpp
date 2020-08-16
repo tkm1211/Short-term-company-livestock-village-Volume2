@@ -253,3 +253,11 @@ bool SceneSelect::JudgeGameMode(SelectGameMode _b)
 
 	return false;
 }
+
+int SceneSelect::GetCharacterNumber(int playerNumber)
+{
+	int index = static_cast<int>(SelectMode::CharacterSelect);
+	CharacterSelector* characterSelector = dynamic_cast<CharacterSelector*>(selectors[index].get());
+
+	return characterSelector->GetSelectCharacterNum(playerNumber);
+}

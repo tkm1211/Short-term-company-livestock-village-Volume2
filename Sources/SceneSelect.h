@@ -159,56 +159,17 @@ public:
 	template<class T>
 	T* AddSelector();
 
-	//// 初期化
-	//void PlayStyleInit();
-	//void CharacterSelectInit();
-	//void LevelSelectInit();
-	//void CPULevelSelectInit();
-	//void OptionInit();
-	//void GoGameInit();
-
-	//// 更新
-	//void PlayStyleUpdate();
-	//void CharacterSelectUpdate();
-	//void LevelSelectUpdate();
-	//void CPULevelSelectUpdate();
-	//void OptionUpdate();
 	void GoGameUpdate();
-
-	//// 描画
-	//void PlayStyleDraw();
-	//void CharacterSelectDraw();
-	//void LevelSelectDraw();
-	//void CPULevelSelectDraw();
-	//void OptionDraw();
-	//void GoGameDraw();
-
-	//// セレクト間の移行更新
-	//void PlayStyleMove();
-	//void CharacterSelectMove();
-	//void LevelSelectMove();
-	//void CPULevelSelectMove();
-	//void OptionMove();
-	//void GoGameMove();
-
-	//// セレクト更新
-	//void PlayStyleChoice();
-	//void CharacterSelectChoice();
-	//void LevelSelectChoice();
-	//void CPULevelSelectChoice();
-	//void OptionChoice();
-	//void GoGameChoice();
-
-	//// ユーザー操作更新
-	//void PlayStyleOperation();
-	//void CharacterSelectOperation();
-	//void LevelSelectOperation();
-	//void CPULevelSelectOperation();
-	//void OptionOperation();
-	//void GoGameOperation();
 
 	bool FileLoad();
 	bool FileSave();
 
 	bool JudgeGameMode(SelectGameMode _b); // 【a == b】 is true
+
+	/// <summary>
+	/// キャラクター番号の取得関数
+	/// </summary>
+	/// <param name="playerNumber"> 0 or 1 </param>
+	/// <returns> キャラクター番号 </returns>
+	int GetCharacterNumber(int playerNumber);
 };
