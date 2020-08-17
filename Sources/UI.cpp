@@ -26,7 +26,8 @@ void GameUI::Init(int _pn)
 	// 画像データのロード
 	{
 		sprGameUI = RESOURCE->GetSpriteData(Resource::Texture::UI);
-		int charNum = _pn;// TODO:仮変数
+		//int charNum = _pn;// TODO:仮変数
+		int charNum = sceneSelect.GetCharacterNumber(_pn);
 		switch (charNum)
 		{
 		case 0:
@@ -40,6 +41,15 @@ void GameUI::Init(int _pn)
 			break;
 		case 3:
 			sprCharacter = RESOURCE->GetSpriteData(Resource::Texture::Character04);
+			break;
+		case 4:
+			sprCharacter = RESOURCE->GetSpriteData(Resource::Texture::Character05);
+			break;
+		case 5:
+			sprCharacter = RESOURCE->GetSpriteData(Resource::Texture::Character06);
+			break;
+		case 6:
+			sprCharacter = RESOURCE->GetSpriteData(Resource::Texture::Character07);
 			break;
 		default:
 			break;

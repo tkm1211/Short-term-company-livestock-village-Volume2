@@ -1,6 +1,7 @@
 #include "LevelSelector.h"
 #include "CharacterSelector.h"
 #include "Resource.h"
+#include "Sound.h"
 #include "input_device.h"
 
 
@@ -426,6 +427,7 @@ void LevelSelector::Operation()
 			okAlpha[0] = 1.0f;
 
 			decision[0] = true;
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
 		}
 		if (pad[0].bBt)
 		{
@@ -438,6 +440,7 @@ void LevelSelector::Operation()
 			{
 				levelNum[0]--;
 			}
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 		}
 		if (pad[0].bRIGHTt)
 		{
@@ -445,6 +448,7 @@ void LevelSelector::Operation()
 			{
 				levelNum[0]++;
 			}
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 		}
 		break;
 	case SelectGameMode::CPU:
@@ -453,6 +457,7 @@ void LevelSelector::Operation()
 			if (pad[0].bAt)
 			{
 				cpuPoworDecision = true;
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
 			}
 			if (pad[0].bBt)
 			{
@@ -464,6 +469,7 @@ void LevelSelector::Operation()
 				{
 					cpuPoworNum--;
 				}
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			}
 			if (pad[0].bRIGHTt)
 			{
@@ -471,6 +477,7 @@ void LevelSelector::Operation()
 				{
 					cpuPoworNum++;
 				}
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			}
 		}
 		else
@@ -482,6 +489,7 @@ void LevelSelector::Operation()
 				okAlpha[index] = 1.0f;
 
 				decision[index] = true;
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
 			}
 			if (pad[0].bBt)
 			{
@@ -497,6 +505,7 @@ void LevelSelector::Operation()
 				{
 					levelNum[index]--;
 				}
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			}
 			if (pad[0].bRIGHTt)
 			{
@@ -504,6 +513,7 @@ void LevelSelector::Operation()
 				{
 					levelNum[index]++;
 				}
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			}
 		}
 		break;
@@ -517,6 +527,7 @@ void LevelSelector::Operation()
 				okAlpha[i] = 1.0f;
 
 				decision[i] = true;
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
 			}
 			if (pad[i].bBt)
 			{
@@ -534,6 +545,7 @@ void LevelSelector::Operation()
 				{
 					levelNum[i]--;
 				}
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			}
 			if (pad[i].bRIGHTt)
 			{
@@ -541,6 +553,7 @@ void LevelSelector::Operation()
 				{
 					levelNum[i]++;
 				}
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			}
 		}
 		break;

@@ -2,6 +2,7 @@
 #include "PlayStyleSelector.h"
 #include "LevelSelector.h"
 #include "Resource.h"
+#include "Sound.h"
 #include "input_device.h"
 
 
@@ -431,6 +432,7 @@ void CharacterSelector::Operation()
 			okAlpha[0] = 1.0f;
 
 			characterDecision[0] = true;
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
 		}
 		if (pad[0].bBt)
 		{
@@ -443,6 +445,7 @@ void CharacterSelector::Operation()
 			{
 				selectCharacterNum[0]--;
 			}
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 		}
 		if (pad[0].bRIGHTt)
 		{
@@ -450,6 +453,7 @@ void CharacterSelector::Operation()
 			{
 				selectCharacterNum[0]++;
 			}
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 		}
 		if (pad[0].bUPt)
 		{
@@ -457,6 +461,7 @@ void CharacterSelector::Operation()
 			{
 				selectCharacterNum[0] -= (characterMax + 1) / 2;
 			}
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 		}
 		if (pad[0].bDOWNt)
 		{
@@ -464,6 +469,7 @@ void CharacterSelector::Operation()
 			{
 				selectCharacterNum[0] += (characterMax + 1) / 2;
 			}
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 		}
 		break;
 	case SelectGameMode::CPU:
@@ -479,6 +485,7 @@ void CharacterSelector::Operation()
 			characterDecision[selectCPUCharacterState] = true;
 			//selectCharacterNum[selectCPUCharacterState + 1] = selectCharacterNum[selectCPUCharacterState];
 			selectCPUCharacterState++;
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
 		}
 		if (pad[0].bBt && 0 < selectCPUCharacterState)
 		{
@@ -498,6 +505,7 @@ void CharacterSelector::Operation()
 			{
 				selectCharacterNum[selectCPUCharacterState]--;
 			}
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 		}
 		if (pad[0].bRIGHTt)
 		{
@@ -505,6 +513,7 @@ void CharacterSelector::Operation()
 			{
 				selectCharacterNum[selectCPUCharacterState]++;
 			}
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 		}
 		if (pad[0].bUPt)
 		{
@@ -512,6 +521,7 @@ void CharacterSelector::Operation()
 			{
 				selectCharacterNum[selectCPUCharacterState] -= (characterMax + 1) / 2;
 			}
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 		}
 		if (pad[0].bDOWNt)
 		{
@@ -519,6 +529,7 @@ void CharacterSelector::Operation()
 			{
 				selectCharacterNum[selectCPUCharacterState] += (characterMax + 1) / 2;
 			}
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 		}
 		break;
 	case SelectGameMode::Multi:
@@ -531,6 +542,7 @@ void CharacterSelector::Operation()
 				okAlpha[i] = 1.0f;
 
 				characterDecision[i] = true;
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
 			}
 			if (pad[i].bBt)
 			{
@@ -543,6 +555,7 @@ void CharacterSelector::Operation()
 				{
 					selectCharacterNum[i]--;
 				}
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			}
 			if (pad[i].bRIGHTt)
 			{
@@ -550,6 +563,7 @@ void CharacterSelector::Operation()
 				{
 					selectCharacterNum[i]++;
 				}
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			}
 			if (pad[i].bUPt)
 			{
@@ -557,6 +571,7 @@ void CharacterSelector::Operation()
 				{
 					selectCharacterNum[i] -= (characterMax + 1) / 2;
 				}
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			}
 			if (pad[i].bDOWNt)
 			{
@@ -564,6 +579,7 @@ void CharacterSelector::Operation()
 				{
 					selectCharacterNum[i] += (characterMax + 1) / 2;
 				}
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			}
 		}
 		break;

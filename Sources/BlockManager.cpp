@@ -12,6 +12,8 @@
 #include <imgui.h>
 #include "Player.h"
 
+//#define DEBUG_BLOCKS
+
 class Player;
 /*--------------------------------------*/
 //	Global area
@@ -25,13 +27,9 @@ std::array<BlockManager, 2> regularBlockManager;
 
 void BlockManager::Init(int _pn)
 {
-	sprBlock = RESOURCE->GetSpriteData(Resource::Texture::Block);
+	InitializeVariables(_pn);
 
-	for (auto& it : blocks)
-	{
-		it.Init();
-	}
-
+#ifdef DEBUG_BLOCKS
 	GenerateBlock(0, 5, Color::Green, false);
 	GenerateBlock(1, 5, Color::Yellow, false);
 	GenerateBlock(2, 5, Color::LightBlue, false);
@@ -59,14 +57,46 @@ void BlockManager::Init(int _pn)
 	GenerateBlock(3, 8, Color::LightBlue, false);
 	GenerateBlock(4, 8, Color::Green, false);
 	GenerateBlock(5, 8, Color::Red, false);
+#else
+	const int difficultyColorNum[7] = { 4, 5, 5, 6, 6, 7, 7 };
+	colorMax = difficultyColorNum[sceneSelect.GetLevel(_pn) - 1];
+
+	int lastRnd = rand() % colorMax;
+	GenerateBlock(0, 5, lastRnd);
+
+	for (int i = 1; i < 6; i++)
+	{
+		int rnd = rand() % colorMax;
+		while (rnd == lastRnd)
+		{
+			rnd = rand() % colorMax;
+		}
+		lastRnd = rnd;
+		GenerateBlock(i, 5, rnd);
+	}
+
+	SetStartBlocks();
+#endif
 
 	PopRowLineProcess();
 
 
+}
+
+void BlockManager::InitializeVariables(int _pn)
+{
 	// Member variable initialize.
+	sprBlock = RESOURCE->GetSpriteData(Resource::Texture::Block);
+
+	for (auto& it : blocks)
+	{
+		it.Init();
+	}
+
 	status = State::Wait;
 
 	for (auto& it : waitTime) it = 0;
+	for (auto& it : isGameover) it = false;
 
 	chainCount = 0;
 	pushingCount = 0;
@@ -83,6 +113,7 @@ void BlockManager::Init(int _pn)
 	fallObstacleNow = false;
 }
 
+
 void BlockManager::Uninit()
 {
 	for (auto& it : blocks)
@@ -98,6 +129,7 @@ void BlockManager::Update(int _pn)
 	// 一人用の更新関数
 	if (IF_SINGLE_NOW)
 	{
+		if(isGameover[0])
 		ProcessOfSingleGame();
 	}
 	else if (IF_MULTI_NOW)
@@ -168,6 +200,7 @@ void BlockManager::DrawOfMulti(int _pn)
 	}
 	sprBlock->End();
 }
+
 
 
 
@@ -292,9 +325,267 @@ void BlockManager::GenerateBlock(int _row, int _column, int _color, bool _isFall
 /*-------------------------------------------*/
 // スタート時のブロック設定
 /*-------------------------------------------*/
-void BlockManager::SetStartBlock()
+void BlockManager::SetStartBlocks()
 {
-	// unknown
+	struct NextBlock
+	{
+		int color;
+		int par;
+	};
+	for (int i = 6; i < 9; i++)
+	{
+		NextBlock _nb;
+		int lastColor = -1;
+		bool isLeft = false;
+		for (int j = 0; j < ROW_MAX; j++)
+		{
+			NextBlock nextBlock[3];
+			bool inData[3] = { false };
+			for (size_t k = 0; k < blocks.size(); k++)
+			{
+				if (blocks[k].GetColumn() == i - 1 && blocks[k].GetRow() == j - 1)	// left
+				{
+					nextBlock[0].color = blocks[k].GetColor();
+					nextBlock[0].par = MAX_PAR;
+					inData[0] = true;
+				}
+				else if (blocks[k].GetColumn() == i - 1 && blocks[k].GetRow() == 0)
+				{
+					nextBlock[0].color = -1;
+					nextBlock[0].par = MAX_PAR;
+					inData[0] = true;
+					isLeft = true;
+				}
+				if (blocks[k].GetColumn() == i - 1 && blocks[k].GetRow() == j)		// center
+				{
+					nextBlock[1].color = blocks[k].GetColor();
+					nextBlock[1].par = MIN_PAR;
+					inData[1] = true;
+					_nb = nextBlock[1];
+				}
+				if (blocks[k].GetColumn() == i - 1 && blocks[k].GetRow() == j + 1)	// right
+				{
+					nextBlock[2].color = blocks[k].GetColor();
+					nextBlock[2].par = MAX_PAR;
+					inData[2] = true;
+				}
+				else
+				{
+					for (int l = 0; l < colorMax; l++)
+					{
+						if (nextBlock[0].color != l && nextBlock[1].color != l)
+						{
+							nextBlock[2].color = l;
+						}
+					}
+					for (int l = 0; l < colorMax; l++)
+					{
+						if (nextBlock[0].color != l && nextBlock[1].color != l && nextBlock[2].color != l)
+						{
+							nextBlock[1].color = l;
+						}
+					}
+					nextBlock[0].par = END_MAX_PAR;
+					nextBlock[1].par = END_MIN_PAR;
+					nextBlock[2].par = END_MIN_PAR;
+				}
+
+				if (inData[0] == true && inData[1] == true && inData[2] == true)
+				{
+					break;
+				}
+			}
+
+			if (isLeft)
+			{
+				for (int l = 0; l < colorMax; l++)
+				{
+					if (nextBlock[1].color != l && nextBlock[2].color != l)
+					{
+						nextBlock[0].color = l;
+						break;
+					}
+				}
+				for (int l = 0; l < colorMax; l++)
+				{
+					if (nextBlock[0].color != l && nextBlock[1].color != l && nextBlock[2].color != l)
+					{
+						nextBlock[1].color = l;
+						break;
+					}
+				}
+				nextBlock[0].par = END_MIN_PAR;
+				nextBlock[1].par = END_MIN_PAR;
+				nextBlock[2].par = END_MAX_PAR;
+			}
+			else
+			{
+				for (int l = 0; l < colorMax; l++)
+				{
+					if (nextBlock[0].color != l && nextBlock[1].color != l && nextBlock[2].color != l)
+					{
+						nextBlock[1].color = l;
+					}
+				}
+			}
+
+			// 乱数を発生させる
+			int rnd_ = rand() % 100;
+			int color_ = 0;
+			int num = -1;
+			if (rnd_ <= nextBlock[0].par)
+			{
+				color_ = nextBlock[0].color;
+				num = 0;
+			}
+			else if (rnd_ <= nextBlock[0].par + nextBlock[1].par)
+			{
+				color_ = nextBlock[1].color;
+				num = 1;
+			}
+			else if (rnd_ <= nextBlock[0].par + nextBlock[1].par + nextBlock[2].par)
+			{
+				color_ = nextBlock[2].color;
+				num = 2;
+			}
+			while (lastColor == color_)
+			{
+				rnd_ = rand() % (100 - nextBlock[num].par);
+				color_ = 0;
+				int remainTwoColor[2] = { -1, -1 };
+				int _num = 0;
+				for (int i = 0; i < 3; i++)
+				{
+					if (i != num)
+					{
+						remainTwoColor[_num] = i;
+						_num++;
+					}
+				}
+				if (rnd_ <= nextBlock[remainTwoColor[0]].par)
+				{
+					color_ = nextBlock[remainTwoColor[0]].color;
+				}
+				else if (rnd_ <= nextBlock[remainTwoColor[0]].par + nextBlock[remainTwoColor[1]].par)
+				{
+					color_ = nextBlock[remainTwoColor[1]].color;
+				}
+			}
+			if (_nb.color == color_)
+			{
+				if (nextBlock[0].color == color_)
+				{
+					if (lastColor != -1)
+					{
+						if (nextBlock[1].color == lastColor)
+						{
+							color_ = nextBlock[2].color;
+						}
+						else if (nextBlock[2].color == lastColor)
+						{
+							color_ = nextBlock[1].color;
+						}
+						else
+						{
+							if (nextBlock[1].par < nextBlock[2].par)
+							{
+								color_ = nextBlock[2].color;
+							}
+							if (nextBlock[2].par < nextBlock[1].par)
+							{
+								color_ = nextBlock[1].color;
+							}
+						}
+					}
+					else
+					{
+						if (nextBlock[1].par < nextBlock[2].par)
+						{
+							color_ = nextBlock[2].color;
+						}
+						if (nextBlock[2].par < nextBlock[1].par)
+						{
+							color_ = nextBlock[1].color;
+						}
+					}
+				}
+				else if (nextBlock[1].color == color_)
+				{
+					if (lastColor != -1)
+					{
+						if (nextBlock[0].color == lastColor)
+						{
+							color_ = nextBlock[2].color;
+						}
+						else if (nextBlock[2].color == lastColor)
+						{
+							color_ = nextBlock[0].color;
+						}
+						else
+						{
+							if (nextBlock[0].par < nextBlock[2].par)
+							{
+								color_ = nextBlock[2].color;
+							}
+							if (nextBlock[2].par < nextBlock[0].par)
+							{
+								color_ = nextBlock[0].color;
+							}
+						}
+					}
+					else
+					{
+						if (nextBlock[0].par < nextBlock[2].par)
+						{
+							color_ = nextBlock[2].color;
+						}
+						if (nextBlock[2].par < nextBlock[0].par)
+						{
+							color_ = nextBlock[0].color;
+						}
+					}
+				}
+				else if (nextBlock[2].color == color_)
+				{
+					if (lastColor != -1)
+					{
+						if (nextBlock[0].color == lastColor)
+						{
+							color_ = nextBlock[1].color;
+						}
+						else if (nextBlock[1].color == lastColor)
+						{
+							color_ = nextBlock[0].color;
+						}
+						else
+						{
+							if (nextBlock[0].par < nextBlock[1].par)
+							{
+								color_ = nextBlock[1].color;
+							}
+							if (nextBlock[1].par < nextBlock[0].par)
+							{
+								color_ = nextBlock[0].color;
+							}
+						}
+					}
+					else
+					{
+						if (nextBlock[0].par < nextBlock[1].par)
+						{
+							color_ = nextBlock[1].color;
+						}
+						if (nextBlock[1].par < nextBlock[0].par)
+						{
+							color_ = nextBlock[0].color;
+						}
+					}
+				}
+			}
+			lastColor = color_;
+			GenerateBlock(j, i, color_);
+		}
+	}
 }
 
 /*-------------------------------------------*/

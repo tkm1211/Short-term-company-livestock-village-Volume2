@@ -1,6 +1,7 @@
 #include "PlayStyleSelector.h"
 #include "SceneManager.h"
 #include "Production.h"
+#include "Sound.h"
 
 #include "input_device.h"
 
@@ -150,6 +151,7 @@ void PlayStyleSelector::Choice()
 {
 	if ((pad[0].bAt || GetAsyncKeyState('N') & 1) && !selectMoveLeft && !selectMoveRight)
 	{
+		pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
 		updateState = UpdateState::EndMove;
 		switch (static_cast<SelectGameMode>(styleNum))
 		{
@@ -275,6 +277,7 @@ void PlayStyleSelector::Operation()
 	{
 		if (pad[0].bLEFTt)
 		{
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			styleNum--;
 			selectMoveLeft = true;
 			moveCnt = 0;
@@ -285,6 +288,7 @@ void PlayStyleSelector::Operation()
 		}
 		if (pad[0].bRIGHTt)
 		{
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			styleNum++;
 			selectMoveRight = true;
 			moveCnt = 0;

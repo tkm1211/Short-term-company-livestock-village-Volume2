@@ -46,7 +46,7 @@ void Resource::Init()
 	}
 	if (!sprDescriptionRule)
 	{
-		sprDescriptionRule = std::make_shared<SpriteBatch>(L"Data/rule.png");
+		sprDescriptionRule = std::make_shared<SpriteBatch>(L"Data/rule.png", 10);
 		assert(sprDescriptionRule && "Misstake load texture data <sprDescriptionRule>");
 	}
 	if (!sprPlayerBack)

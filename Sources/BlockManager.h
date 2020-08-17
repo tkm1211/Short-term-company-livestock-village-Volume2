@@ -71,8 +71,8 @@ private:
 	int chainCount;	// チェイン数を数える変数
 	int pushingCount;
 	int eraseBlockCount;
-
 	int colorMax = 5;
+	std::array<bool, 2> isGameover;
 
 	// Relation of Obstacle
 	int obstacleNum;		// お邪魔ブロックの数
@@ -98,6 +98,8 @@ public:
 	void DrawOfSingle();
 	void DrawOfMulti(int _pn);
 
+	// 初期化関数
+	void InitializeVariables(int _pn);
 
 	// 一人プレイ用の更新
 	void ProcessOfSingleGame();
@@ -107,7 +109,7 @@ public:
 
 	// ブロックの生成系
 	void GenerateBlock(int _row, int _column, int _color, bool _isFall = true);
-	void SetStartBlock();
+	void SetStartBlocks();
 
 
 	// ブロックの破壊系
