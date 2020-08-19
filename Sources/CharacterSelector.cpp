@@ -527,16 +527,16 @@ void CharacterSelector::Operation()
 			if ((characterMax + 1) / 2 <= selectCharacterNum[0])
 			{
 				selectCharacterNum[0] -= (characterMax + 1) / 2;
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			}
-			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 		}
 		if (pad[0].bDOWNt || 0 < pad[0].sLY)
 		{
 			if (selectCharacterNum[0] < (characterMax + 1) / 2)
 			{
 				selectCharacterNum[0] += (characterMax + 1) / 2;
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			}
-			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 		}
 		break;
 	case SelectGameMode::CPU:
@@ -617,16 +617,16 @@ void CharacterSelector::Operation()
 			if ((characterMax + 1) / 2 <= selectCharacterNum[selectCPUCharacterState])
 			{
 				selectCharacterNum[selectCPUCharacterState] -= (characterMax + 1) / 2;
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			}
-			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 		}
 		if (pad[0].bDOWNt || 0 < pad[0].sLY)
 		{
 			if (selectCharacterNum[selectCPUCharacterState] < (characterMax + 1) / 2)
 			{
 				selectCharacterNum[selectCPUCharacterState] += (characterMax + 1) / 2;
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			}
-			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 		}
 		break;
 	case SelectGameMode::Multi:
@@ -698,16 +698,16 @@ void CharacterSelector::Operation()
 				if ((characterMax + 1) / 2 <= selectCharacterNum[i])
 				{
 					selectCharacterNum[i] -= (characterMax + 1) / 2;
+					pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 				}
-				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			}
 			if (pad[i].bDOWNt || 0 < pad[i].sLY)
 			{
 				if (selectCharacterNum[i] < (characterMax + 1) / 2)
 				{
 					selectCharacterNum[i] += (characterMax + 1) / 2;
+					pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 				}
-				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			}
 		}
 		break;
