@@ -54,6 +54,11 @@ void SceneTitle::Init()
 
 	// Play BGM
 	pAudio->Play(Sound::Get()->bgmHandle[Sound::BGM::TITLE].get(), true);
+
+	// ‰¼‚É‚±‚±‚Å‰Šú‰»‚·‚é
+	sceneSingleGame.isGameover = false;
+	sceneMultiGame.isGameover[0] = false;
+	sceneMultiGame.isGameover[1] = false;
 }
 
 void SceneTitle::Update()

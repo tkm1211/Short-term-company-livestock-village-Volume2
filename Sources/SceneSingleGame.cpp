@@ -25,9 +25,10 @@ BlockManager provisionalBlockManager;
 void SceneSingleGame::Init()
 {
 	// Member variable
-		gameMode = SelectGameMode::Single;
+	gameMode = SelectGameMode::Single;
 	readyTimer = 0;
 	isGameReady = true;
+	isGameover = false;
 
 	BG_INSTANCE->Init();
 	regularPlayer[0].Init();
@@ -37,7 +38,7 @@ void SceneSingleGame::Init()
 	pause.Init();
 
 	// Play BGM
-	pAudio->Play(Sound::Get()->bgmHandle[Sound::BGM::GAME].get(), true);
+	pAudio->Play(Sound::Get()->bgmHandle[Sound::BGM::GAME2].get(), true);
 }
 
 void SceneSingleGame::Uninit()
@@ -50,8 +51,8 @@ void SceneSingleGame::Uninit()
 	pause.Uninit();
 
 	// Stop BGM
-	pAudio->Stop(Sound::Get()->bgmHandle[Sound::BGM::GAME].get());
-	pAudio->DeleteSourceVoice(Sound::Get()->bgmHandle[Sound::BGM::GAME].get());
+	pAudio->Stop(Sound::Get()->bgmHandle[Sound::BGM::GAME2].get());
+	pAudio->DeleteSourceVoice(Sound::Get()->bgmHandle[Sound::BGM::GAME2].get());
 }
 
 void SceneSingleGame::Update()
@@ -72,7 +73,6 @@ void SceneSingleGame::Update()
 		regularBlockManager[0].Update();
 		regularEffects[0].Update(0);
 	}
-	//ProcessOfGameReady();
 
 
 	if (PRODUCTION->CheckFlag(GO_SINGLEGAME) || PRODUCTION->CheckFlag(GO_TITLE)) return;

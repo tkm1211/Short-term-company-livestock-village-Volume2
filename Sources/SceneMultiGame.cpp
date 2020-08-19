@@ -40,9 +40,11 @@ void SceneMultiGame::Init()
 	pause.Init();
 
 	isGameReady = true;
+	isGameover[0] = false;
+	isGameover[1] = false;
 
 	// Play BGM
-	pAudio->Play(Sound::Get()->bgmHandle[Sound::BGM::GAME].get(), true);
+	pAudio->Play(Sound::Get()->bgmHandle[Sound::BGM::GAME2].get(), true);
 }
 
 void SceneMultiGame::Uninit()
@@ -58,8 +60,8 @@ void SceneMultiGame::Uninit()
 	pause.Uninit();
 
 	// Stop BGM
-	pAudio->Stop(Sound::Get()->bgmHandle[Sound::BGM::GAME].get());
-	pAudio->DeleteSourceVoice(Sound::Get()->bgmHandle[Sound::BGM::GAME].get());
+	pAudio->Stop(Sound::Get()->bgmHandle[Sound::BGM::GAME2].get());
+	pAudio->DeleteSourceVoice(Sound::Get()->bgmHandle[Sound::BGM::GAME2].get());
 }
 
 void SceneMultiGame::Update()

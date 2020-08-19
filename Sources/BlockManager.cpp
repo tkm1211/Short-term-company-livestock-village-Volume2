@@ -12,7 +12,7 @@
 #include <imgui.h>
 #include "Player.h"
 
-//#define DEBUG_BLOCKS
+#define DEBUG_BLOCKS
 
 class Player;
 /*--------------------------------------*/
@@ -57,6 +57,8 @@ void BlockManager::Init(int _pn)
 	GenerateBlock(3, 8, Color::LightBlue, false);
 	GenerateBlock(4, 8, Color::Green, false);
 	GenerateBlock(5, 8, Color::Red, false);
+
+
 #else
 	const int difficultyColorNum[7] = { 4, 5, 5, 6, 6, 7, 7 };
 	colorMax = difficultyColorNum[sceneSelect.GetLevel(_pn) - 1];
@@ -88,6 +90,9 @@ void BlockManager::InitializeVariables(int _pn)
 	// Member variable initialize.
 	sprBlock = RESOURCE->GetSpriteData(Resource::Texture::Block);
 
+	const int difficultyColorNum[7] = { 4, 5, 5, 6, 6, 7, 7 };
+	colorMax = difficultyColorNum[sceneSelect.GetLevel(_pn) - 1];
+
 	for (auto& it : blocks)
 	{
 		it.Init();
@@ -96,7 +101,6 @@ void BlockManager::InitializeVariables(int _pn)
 	status = State::Wait;
 
 	for (auto& it : waitTime) it = 0;
-	for (auto& it : isGameover) it = false;
 
 	chainCount = 0;
 	pushingCount = 0;
@@ -111,6 +115,38 @@ void BlockManager::InitializeVariables(int _pn)
 	isChainAfterPushUp = false;
 	isObstacleKeeping = false;
 	fallObstacleNow = false;
+
+
+	// GameResult Variables
+	gameResultState = GameResultSingle::Start;
+	shakePos = DirectX::XMFLOAT2(0.0f, 0.0f);
+	shakePos2 = DirectX::XMFLOAT2(0.0f, 0.0f);
+	shakeTimer = 0;
+	eraseBlockCount = 0;
+	isInitBreak = false;
+	resultDisplayAlpha = 0.0f;
+	resultDisplayTimer = 0;
+	resultDisplayPos.x = 615;
+	resultDisplayPos.y = 288;
+	addResultPosY = 471;
+	resultDisplayPosFirst.x = 615;
+	resultDisplayPosFirst.y = 378;
+	scoreDisplayAlpha = 0.0f;
+	scoreDisplayPosY = 546.0f;
+	resultDisplayMultiAlpha = 0.0f;
+	resultCnt[0] = 0;
+	resultCnt[1] = 0;
+	resultCnt[2] = 0;
+	isResultSelectLeft = true;
+
+	rankingLogoDisplayAlpha = 0.0f;
+	rankingLogoDisplayPosY = 0.0f;
+	for (int i = 0; i < 3; i++)
+	{
+		rankingScoreDisplayAlpha[i] = 0.0f;
+		rankingScoreDisplayPosY[i] = 0.0f;
+	}
+
 }
 
 
@@ -129,12 +165,25 @@ void BlockManager::Update(int _pn)
 	// 一人用の更新関数
 	if (IF_SINGLE_NOW)
 	{
-		if(isGameover[0])
-		ProcessOfSingleGame();
+		if (sceneSingleGame.isGameover)
+		{
+			ProcessOfGameResultOnePlayer();
+		}
+		else
+		{
+			ProcessOfSingleGame();
+		}
 	}
 	else if (IF_MULTI_NOW)
 	{
-		ProcessOfMultiGame(_pn);
+		if (sceneMultiGame.isGameover[0] || sceneMultiGame.isGameover[1])
+		{
+			ProcessOfGameResultTwoPlayer(_pn);
+		}
+		else
+		{
+			ProcessOfMultiGame(_pn);
+		}
 	}
 
 }
@@ -164,7 +213,7 @@ void BlockManager::DrawOfSingle()
 			continue;
 		}
 
-		sprBlock->Draw(it.GetPos().x + ADJUST + SINGLE_CORRECTION_X, it.GetPos().y + ADJUST + SINGLE_CORRECTION_Y, static_cast<float>(it.GetSizeX()), static_cast<float>(it.GetSizeY()), 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, it.GetColor());
+		sprBlock->Draw(it.GetPos().x + ADJUST + SINGLE_CORRECTION_X, it.GetPos().y + ADJUST + SINGLE_CORRECTION_Y + shakePos.y, static_cast<float>(it.GetSizeX()), static_cast<float>(it.GetSizeY()), 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, it.GetColor());
 	}
 	sprBlock->End();
 }
@@ -182,7 +231,7 @@ void BlockManager::DrawOfMulti(int _pn)
 				continue;
 			}
 
-			sprBlock->Draw(it.GetPos().x + ADJUST + GameUI::MULTIPLAY_ONE_ORIJIN_X, it.GetPos().y + ADJUST + GameUI::MULTI_CORRECTION_Y, static_cast<float>(it.GetSizeX()), static_cast<float>(it.GetSizeY()), 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, it.GetColor());
+			sprBlock->Draw(it.GetPos().x + ADJUST + GameUI::MULTIPLAY_ONE_ORIJIN_X, it.GetPos().y + ADJUST + GameUI::MULTI_CORRECTION_Y + shakePos.y, static_cast<float>(it.GetSizeX()), static_cast<float>(it.GetSizeY()), 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, it.GetColor());
 		}
 		break;
 
@@ -194,7 +243,7 @@ void BlockManager::DrawOfMulti(int _pn)
 				continue;
 			}
 
-			sprBlock->Draw(it.GetPos().x + ADJUST + GameUI::MULTIPLAY_TWO_ORIJIN_X, it.GetPos().y + ADJUST + GameUI::MULTI_CORRECTION_Y, static_cast<float>(it.GetSizeX()), static_cast<float>(it.GetSizeY()), 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, it.GetColor());
+			sprBlock->Draw(it.GetPos().x + ADJUST + GameUI::MULTIPLAY_TWO_ORIJIN_X, it.GetPos().y + ADJUST + GameUI::MULTI_CORRECTION_Y + shakePos2.y, static_cast<float>(it.GetSizeX()), static_cast<float>(it.GetSizeY()), 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, it.GetColor());
 		}
 		break;
 	}
@@ -305,6 +354,562 @@ void BlockManager::ProcessOfMultiGame(int _pn)
 		it.Update(_pn);
 	}
 
+}
+
+/*-------------------------------------------*/
+// シングルゲームのリザルト関数
+/*-------------------------------------------*/
+
+void BlockManager::ProcessOfGameResultOnePlayer()
+{
+	switch (gameResultState)
+	{
+	case GameResultSingle::Start:
+		// ランキングを更新する
+		pAudio->Play(Sound::Get()->seHandle[Sound::SE::GAME_END].get());
+		regularGameUI[0].FileRead();
+		regularGameUI[0].RankingSort();
+		regularGameUI[0].FileWrite();
+		gameResultState++;
+		//break;
+	case GameResultSingle::Shake:
+		if (shakeTimer % 4 >= 2) {
+			shakePos.y = -5.0f;
+		}
+		else {
+			shakePos.y = 5.0f;
+		}
+		if (++shakeTimer >= 20)
+		{
+			gameResultState++;
+			shakePos = DirectX::XMFLOAT2(0.0f, 0.0f);
+		}
+		break;
+	case GameResultSingle::BreakBlocks:
+		if (!isInitBreak)
+		{
+			breakCnt = 0;
+			for (int i = 0; i < 10; i++) // column + 上にいった一つ
+			{
+				for (int j = 0; j < 6; j++)
+				{
+					fixBlockData[i][j] = -1;
+				}
+			}
+			for (size_t i = 0; i < blocks.size(); i++)
+			{
+				fixBlockData[blocks[i].GetColumn() + 1][blocks[i].GetRow()] = blocks[i].GetColumn() + 1;
+			}
+			isInitBreak = true;
+		}
+		else
+		{
+			if (++breakCnt % 20 == 0)			// 1秒に一回上から壊す
+			{
+				for (int i = 0; i < 10; i++)
+				{
+					for (int j = 0; j < 6; j++)
+					{
+						if (fixBlockData[i][j] == eraseBlockCount)
+						{
+							for (size_t k = 0; k < blocks.size(); k++)
+							{
+								if (blocks[k].GetRow() == j && blocks[k].GetColumn() + 1 == i)
+								{
+									if (blocks[k].GetColor() != 7)
+									{
+										regularEffects[0].GenerateParticle(blocks[k].GetRow(), blocks[k].GetColumn(), blocks[k].GetColor());
+									}
+									blocks[k].SetIsExist(false);
+								}
+							}
+						}
+					}
+				}
+
+				eraseBlockCount++;
+			}
+			if (eraseBlockCount == 9)
+			{
+				Block dummy;
+				dummy.SetPosition(DirectX::XMFLOAT2(-Block::SIZE_X, -Block::SIZE_Y));
+				dummy.SetIsExist(false);
+				blocks.fill(dummy);
+				gameResultState++;
+			}
+		}
+		break;
+	case GameResultSingle::DisplayResult:
+		if (resultDisplayTimer <= 10) {
+			resultDisplayAlpha += 0.1f;
+		}
+		if (resultDisplayAlpha == 0.1f){
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::RESULT].get());
+		}
+		resultDisplayPos.y = easing::OutExp((float)resultDisplayTimer, 60, 250 - 57, 250);
+		addResultPosY = easing::OutExp((float)resultDisplayTimer, 60, 350, 350 + 57);
+		++resultDisplayTimer;
+
+		if (resultDisplayTimer >= 60)
+		{
+			gameResultState++;
+			resultDisplayTimer = 0;
+		}
+		break;
+	case GameResultSingle::DisplayScore:
+		if (resultDisplayTimer <= 10){
+			scoreDisplayAlpha += 0.1f;
+		}
+		if (scoreDisplayAlpha == 0.1f)
+		{
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::RESULT].get());
+		}
+
+		scoreDisplayPosY = easing::OutExp((float)resultDisplayTimer, 60, 400, 400 + 57);
+
+		++resultDisplayTimer;
+		if (resultDisplayTimer >= 60)
+		{
+			gameResultState++;
+			resultDisplayTimer = 0;
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::RESULT].get());
+		}
+		break;
+	case GameResultSingle::DisplayRanking:
+		if (resultDisplayTimer <= 10){
+			rankingLogoDisplayAlpha += 0.1f;
+		}
+		if (rankingLogoDisplayAlpha == 0.1f){
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::RESULT].get());
+		}
+		rankingLogoDisplayPosY = easing::OutExp((float)resultDisplayTimer, 60, 475 - 57 + 100 * 1, 475 + 100 * 1);
+		++resultDisplayTimer;
+
+		if (resultDisplayTimer >= 60)
+		{
+			gameResultState++;
+			resultDisplayTimer = 0;
+		}
+		break;
+	case GameResultSingle::DisplayFirst:
+		if (resultDisplayTimer <= 10){
+			rankingScoreDisplayAlpha[0] += 0.1f;
+		}
+		if (rankingScoreDisplayAlpha[0] == 0.1f){
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::RESULT].get());
+		}
+
+		rankingScoreDisplayPosY[0] = easing::OutExp((float)resultDisplayTimer, 60, 460 + 110 * 2, 460 + 57 + 110 * 2);
+
+		++resultDisplayTimer;
+		if (resultDisplayTimer >= 60)
+		{
+			gameResultState++;
+			resultDisplayTimer = 0;
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::RESULT].get());
+		}
+		break;
+	case GameResultSingle::DisplaySecond:
+		if (resultDisplayTimer <= 10)
+		{
+			rankingScoreDisplayAlpha[1] += 0.1f;
+		}
+		if (rankingScoreDisplayAlpha[1] == 0.1f)
+		{
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::RESULT].get());
+		}
+
+		rankingScoreDisplayPosY[1] = easing::OutExp((float)resultDisplayTimer, 60, 460 + 110 * 3, 460 + 57 + 110 * 3);
+
+		++resultDisplayTimer;
+		if (resultDisplayTimer >= 60)
+		{
+			gameResultState++;
+			resultDisplayTimer = 0;
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::RESULT].get());
+		}
+		break;
+	case GameResultSingle::DisplayThird:
+		if (resultDisplayTimer <= 10)
+		{
+			rankingScoreDisplayAlpha[2] += 0.1f;
+		}
+		if (rankingScoreDisplayAlpha[2] == 0.1f)
+		{
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::RESULT].get());
+		}
+
+		rankingScoreDisplayPosY[2] = easing::OutExp((float)resultDisplayTimer, 60, 460 + 110 * 4, 460 + 57 + 110 * 4);
+
+		++resultDisplayTimer;
+		if (resultDisplayTimer >= 60)
+		{
+			gameResultState++;
+			resultDisplayTimer = 0;
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::RESULT].get());
+		}
+		break;
+	case GameResultSingle::ChoiceBehavior:
+		static int count;
+		static int count2;
+		static int count3;
+		if (pad[0].bLEFTt)
+		{
+			if (++count == 1)
+			{
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+				isResultSelectLeft = true;
+			}
+		}
+		else{
+			count = 0;
+		}
+
+		if (pad[0].bRIGHTt)
+		{
+			if (++count2 == 1)
+			{
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+				isResultSelectLeft = false;
+			}
+		}
+		else{
+			count2 = 0;
+		}
+
+		if (pad[0].bAt)
+		{
+			if (++count3 == 1)
+			{
+				if (isResultSelectLeft)
+				{
+					//リトライ
+					pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+					//sceneGame.goGameInit = true;
+					//sceneGame.goTitle = false;
+					//sceneGame.isStartInit = true;
+					//sceneGame.startTimer = 0;
+					if (!PRODUCTION->CheckFlag(GO_SINGLEGAME)) {
+						PRODUCTION->SetOn(GO_SINGLEGAME);
+						PRODUCTION->Start();
+					}
+
+				}
+				else
+				{
+					//タイトル
+					pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+					//sceneGame.goTitle = true;
+					//sceneGame.goGameInit = false;
+					//sceneGame.isStartInit = true;
+					//sceneGame.startTimer = 0;
+					if (!PRODUCTION->CheckFlag(GO_TITLE)) {
+						PRODUCTION->SetOn(GO_TITLE);
+						PRODUCTION->Start();
+					}
+
+				}
+			}
+		}
+		else
+		{
+			count3 = 0;
+		}
+		break;
+	}
+}
+
+/*-------------------------------------------*/
+// マルチゲームのリザルト関数
+/*-------------------------------------------*/
+void BlockManager::ProcessOfGameResultTwoPlayer(int _pn)
+{
+	switch (gameResultState)
+	{
+	case GameResultMulti::m_Start:
+		regularGameUI[0].isTimerStop = true;
+		regularGameUI[1].isTimerStop = true;
+		gameResultState++;
+		//break;
+	case GameResultMulti::m_Shake:
+		if (sceneMultiGame.isGameover[0])
+		{
+			if (shakeTimer % 4 >= 2){
+				shakePos.y = -5.0f;
+			}
+			else{
+				shakePos.y = 5.0f;
+			}
+			if (++shakeTimer >= 20) 
+			{
+				gameResultState++;
+				shakePos = DirectX::XMFLOAT2(0.0f, 0.0f);
+			}
+		}
+		else if (sceneMultiGame.isGameover[1])
+		{
+			if (shakeTimer % 4 >= 2) {
+				shakePos2.y = -5.0f;
+			}
+			else {
+				shakePos2.y = 5.0f;
+			}
+			if (++shakeTimer >= 20)
+			{
+				gameResultState++;
+				shakePos2 = DirectX::XMFLOAT2(0.0f, 0.0f);
+			}
+		}
+		break;
+	case GameResultMulti::m_RagisterBreakBlock:
+		if (sceneMultiGame.isGameover[0])
+		{
+			if (_pn == 0)
+			{
+				// Loser
+				if (!isInitBreak)
+				{
+					breakCnt = 0;
+					for (int i = 0; i < 10; i++) //column + 上にいった一つ
+					{
+						for (int j = 0; j < 6; j++)
+						{
+							fixBlockData[i][j] = -1;
+						}
+					}
+					for (size_t i = 0; i < blocks.size(); i++)
+					{
+						fixBlockData[blocks[i].GetColumn() + 1][blocks[i].GetRow()] = blocks[i].GetColumn() + 1;
+						assert(gameResultState == 2 && "gameResultState error");
+					}
+					isInitBreak = true;
+				}
+				gameResultState++;
+			}
+			else
+			{
+				gameResultState++;
+				break;	//WIN側は何もしない
+			}
+		}
+		else if (sceneMultiGame.isGameover[1])
+		{
+			if (_pn == 0)
+			{
+				gameResultState++;
+				break;	//WIN側は何もしない
+			}
+			else
+			{
+				// Loser
+				if (!isInitBreak)
+				{
+					breakCnt = 0;
+					for (int i = 0; i < 10; i++) //column + 上にいった一つ
+					{
+						for (int j = 0; j < 6; j++)
+						{
+							fixBlockData[i][j] = -1;
+						}
+					}
+					for (size_t i = 0; i < blocks.size(); i++)
+					{
+						fixBlockData[blocks[i].GetColumn() + 1][blocks[i].GetRow()] = blocks[i].GetColumn() + 1;
+						assert(gameResultState == 2 && "gameResultState error");
+					}
+					isInitBreak = true;
+					gameResultState++;
+				}
+			}
+		}
+
+		break;
+	case GameResultMulti::m_BreakBlock:
+		if (sceneMultiGame.isGameover[0])
+		{
+			if (_pn == 0)	//Lose
+			{
+				if (++breakCnt % 20 == 0)			// 1秒に一回上から壊す
+				{
+					for (int i = 0; i < 10; i++)
+					{
+						for (int j = 0; j < 6; j++)
+						{
+							if (fixBlockData[i][j] == eraseBlockCount)
+							{
+								for (size_t k = 0; k < blocks.size(); k++)
+								{
+									if (blocks[k].GetRow() == j && blocks[k].GetColumn() + 1 == i)
+									{
+										if (blocks[k].GetColor() != 7)
+										{
+											regularEffects[_pn].GenerateParticle(blocks[k].GetRow(), blocks[k].GetColumn(), blocks[k].GetColor());
+										}
+										blocks[k].SetIsExist(false);
+									}
+								}
+							}
+						}
+					}
+
+					eraseBlockCount++;
+				}
+				if (eraseBlockCount == 9)
+				{
+					Block dummy;
+					dummy.SetIsExist(false);
+					blocks.fill(dummy);
+					regularBlockManager[0].gameResultState++;
+					regularBlockManager[1].gameResultState++;
+				}
+
+			}
+			else			//Win
+			{
+				// なにもしない
+			}
+		}
+		else if (sceneMultiGame.isGameover[1])
+		{
+			if (_pn == 0)	//Win
+			{
+				// なにもしない
+			}
+			else			//Lose
+			{
+				if (++breakCnt % 20 == 0)			// 1秒に一回上から壊す
+				{
+					for (int i = 0; i < 10; i++)
+					{
+						for (int j = 0; j < 6; j++)
+						{
+							if (fixBlockData[i][j] == eraseBlockCount)
+							{
+								for (size_t k = 0; k < blocks.size(); k++)
+								{
+									if (blocks[k].GetRow() == j && blocks[k].GetColumn() + 1 == i)
+									{
+										if (blocks[k].GetColor() != 7)
+										{
+											regularEffects[_pn].GenerateParticle(blocks[k].GetRow(), blocks[k].GetColumn(), blocks[k].GetColor());
+										}
+										blocks[k].SetIsExist(false);
+									}
+								}
+							}
+						}
+					}
+
+					eraseBlockCount++;
+				}
+				if (eraseBlockCount == 9)
+				{
+					Block dummy;
+					dummy.SetIsExist(false);
+					blocks.fill(dummy);
+					regularBlockManager[0].gameResultState++;
+					regularBlockManager[1].gameResultState++;
+				}
+			}
+		}
+
+		break;
+	case GameResultMulti::m_DisplayResult:
+		if (sceneMultiGame.isGameover[0])
+		{
+			if (resultDisplayTimer <= 10)
+			{
+				resultDisplayAlpha += 0.1f;
+			}
+			if (resultDisplayAlpha == 0.1f)
+			{
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::RESULT].get());
+			}
+
+			resultDisplayPos.y = easing::OutExp((float)resultDisplayTimer, 60.0f, 378.0f, 378.0f + 57.0f);
+			++resultDisplayTimer;
+
+			if (resultDisplayTimer >= 60)
+			{
+				gameResultState++;
+				resultDisplayTimer = 0;
+			}
+		}
+		else if (sceneMultiGame.isGameover[1])
+		{
+			if (resultDisplayTimer <= 10) {
+				resultDisplayAlpha += 0.1f;
+			}
+			if (resultDisplayAlpha == 0.1f) {
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::RESULT].get());
+			}
+			resultDisplayPos.y = easing::OutExp((float)resultDisplayTimer, 60.0f, 387.0f, 387.0f + 57.0f);
+			++resultDisplayTimer;
+
+			if (resultDisplayTimer >= 60)
+			{
+				gameResultState++;
+				resultDisplayTimer = 0;
+			}
+		}
+		break;
+	case GameResultMulti::m_ChoiceBehavior:
+		if (pad[0].bLEFTt)
+		{
+			if (++resultCnt[0] == 1)
+			{
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+				isResultSelectLeft = true;
+			}
+		}
+		else
+		{
+			resultCnt[0] = 0;
+		}
+
+		if (pad[0].bRIGHTt)
+		{
+			if (++resultCnt[1] == 1)
+			{
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+				isResultSelectLeft = false;
+			}
+		}
+		else
+		{
+			resultCnt[1] = 0;
+		}
+
+		if (pad[0].bAt)
+		{
+			if (++resultCnt[2] == 1)
+			{
+				if (isResultSelectLeft)
+				{
+					//リトライ
+					pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
+					if (!PRODUCTION->CheckFlag(GO_MULTIGAME)) {
+						PRODUCTION->SetOn(GO_MULTIGAME);
+						PRODUCTION->Start();
+					}
+				}
+				else
+				{
+					//タイトル
+					pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
+					if (!PRODUCTION->CheckFlag(GO_TITLE)) {
+						PRODUCTION->SetOn(GO_TITLE);
+						PRODUCTION->Start();
+					}
+				}
+			}
+		}
+		else
+		{
+			resultCnt[2] = 0;
+		}
+		break;
+	}
 }
 
 /*-------------------------------------------*/
@@ -926,7 +1531,7 @@ void BlockManager::PushUpProcess(int _pn)
 {
 	if (!isPushing)
 	{
-		PreparationPushUp();
+		PreparationPushUp(_pn);
 	}
 	else
 	{
@@ -1515,16 +2120,25 @@ bool BlockManager::RagisterUpComboBlock()
 /*------------------------------------------*/
 // ブロックを上げる前の準備
 /*------------------------------------------*/
-void BlockManager::PreparationPushUp()
+void BlockManager::PreparationPushUp(int _pn)
 {
 	for (auto& it : blocks)
 	{
 		if (0 == it.GetColumn())
 		{
 			// TODO :  Go to GameOver
+#if 0 
 			if (PRODUCTION->CheckFlag(GO_TITLE)) continue;
 			PRODUCTION->SetOn(GO_TITLE);
 			PRODUCTION->Start();
+#else
+			if (IF_SINGLE_NOW) {
+				sceneSingleGame.isGameover = true;
+			}
+			else if (IF_MULTI_NOW) {
+				sceneMultiGame.isGameover[_pn] = true;
+			}
+#endif
 		}
 		it.SetColumn(it.GetColumn() - 1);
 	}
@@ -1923,7 +2537,6 @@ void BlockManager::AddObstacleByBreakNum(int _pn)
 		break;
 	}
 }
-
 
 
 
