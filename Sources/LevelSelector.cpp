@@ -24,7 +24,7 @@ void LevelSelector::Init(ISelector* selector)
 	CharacterSelector* characterSelector = static_cast<CharacterSelector*>(selector);
 	gameMode = characterSelector->GetSelectGameMode();
 	selectMode = SelectMode::CharacterSelect;
-	thisSelectMode = SelectMode::CharacterSelect;
+	thisSelectMode = SelectMode::LevelSelect;
 	updateState = UpdateState::BeginMove;
 
 	switch (gameMode)
@@ -59,7 +59,13 @@ void LevelSelector::Init(ISelector* selector)
 	cpuPoworNum = cpuPoworDefault;
 	cpuPoworDecision = false;
 
+	stringPos = DirectX::XMFLOAT2(stringStartPosX, stringStartPosY);
+	stringMoveY = 0.0f;
+	stringMoveSpeed = 0.0f;
+
 	moveCnt = 0;
+
+	operationLock = false;
 
 	okPos[0] = DirectX::XMFLOAT2(okLeftPosX, okPosY);
 	okPos[1] = DirectX::XMFLOAT2(okRightPosX, okPosY);
@@ -71,6 +77,16 @@ void LevelSelector::Init(ISelector* selector)
 		okBegin[i] = false;
 		okEnd[i] = false;
 	}
+
+	accelerationCount[0] = DirectX::XMINT2(0, 0);
+	accelerationCount[1] = DirectX::XMINT2(0, 0);
+
+	animCnt = characterSelector->animCnt;
+	animFrame = characterSelector->animFrame;
+
+	changeCPUlevel = false;
+	changeCPUPowor = false;
+	changeCPUReturn = false;
 }
 
 bool LevelSelector::Update()
@@ -91,13 +107,22 @@ bool LevelSelector::Update()
 	default: break;
 	}
 
+	if (animCnt++ % 5 == 0 && animCnt != 0)
+	{
+		animFrame++;
+		if (CHARACTER_ANIMATION_MAX <= animFrame)
+		{
+			animFrame = 0;
+		}
+	}
+
 	return ch;
 }
 
 void LevelSelector::Draw()
 {
 	sprSelect->Begin();
-	sprSelect->Draw(240.0f, 72.0f, 1440.0f, 160.0f, 0.0f, 320.0f, 1440.0f, 160.0f, 0.0f, 0.0f, 0.0f);
+	sprSelect->Draw(stringPos.x, stringPos.y + stringMoveY, 1440.0f, 160.0f, 0.0f, 320.0f, 1440.0f, 160.0f, 0.0f, 0.0f, 0.0f);
 	sprSelect->End();
 
 	for (int i = 0; i < controllerCnt; i++)
@@ -105,13 +130,13 @@ void LevelSelector::Draw()
 		if (gameMode == SelectGameMode::CPU)
 		{
 			sprSelectCPU->Begin();
-			sprSelectCPU->Draw(pos[i].x, pos[i].y, levelSizeX, levelSizeY, levelSizeX * (levelNum[i] - 1), levelTexPosY + levelSizeY * i, levelSizeX, levelSizeY, 0.0f, 0.0f, 0.0f);
-			if (decision[i]) sprSelectCPU->Draw(pos[i].x, pos[i].y, levelSizeX, levelSizeY, levelSelectedTexPosX, levelSelectedTexPosY + levelSizeY * i, levelSizeX, levelSizeY, 0.0f, 0.0f, 0.0f);
 			if (i == 1)
 			{
 				sprSelectCPU->Draw(cpuPoworPos.x, cpuPoworPos.y, cpuPoworSizeX, cpuPoworSizeY, cpuPoworSizeX * (cpuPoworNum - 1), cpuPoworTexPosY, cpuPoworSizeX, cpuPoworSizeY, 0.0f, 0.0f, 0.0f);
 				if (cpuPoworDecision) sprSelectCPU->Draw(cpuPoworPos.x, cpuPoworPos.y, cpuPoworSizeX, cpuPoworSizeY, cpuPoworSelectedTexPosX, cpuPoworSelectedTexPosY, cpuPoworSizeX, cpuPoworSizeY, 0.0f, 0.0f, 0.0f);
 			}
+			sprSelectCPU->Draw(pos[i].x, pos[i].y, levelSizeX, levelSizeY, levelSizeX * (levelNum[i] - 1), levelTexPosY + levelSizeY * i, levelSizeX, levelSizeY, 0.0f, 0.0f, 0.0f);
+			if (decision[i]) sprSelectCPU->Draw(pos[i].x, pos[i].y, levelSizeX, levelSizeY, levelSelectedTexPosX, levelSelectedTexPosY + levelSizeY * i, levelSizeX, levelSizeY, 0.0f, 0.0f, 0.0f);
 			if (updateState == UpdateState::Choice) sprSelectCPU->Draw(okPos[i].x, okPos[i].y, okSizeX, okSizeY, okTexPosX + okSizeX * i, okTexPosY, okSizeX, okSizeY, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, okAlpha[i]);
 			sprSelectCPU->End();
 		}
@@ -128,7 +153,8 @@ void LevelSelector::Draw()
 		}
 
 		sprCharacters[charNum[i]]->Begin();
-		sprCharacters[charNum[i]]->Draw(characterPosX[i], characterPosY, i == 0 ? characterSizeX : -characterSizeX, characterSizeY, 0.0f, 0.0f, characterSizeX, characterSizeY, 0.0f, 0.0f, 0.0f);
+		if (charNum[i] != 7) sprCharacters[charNum[i]]->Draw(characterPosX[i], characterPosY, i == 0 ? characterSizeX : -characterSizeX, characterSizeY, characterSizeX * animFrame, 0.0f, characterSizeX, characterSizeY, 0.0f, 0.0f, 0.0f);
+		else sprCharacters[charNum[i]]->Draw(characterPosX[i], characterPosY, i == 0 ? characterSizeX : -characterSizeX, characterSizeY, 0.0f, 0.0f, characterSizeX, characterSizeY, 0.0f, 0.0f, 0.0f);
 		sprCharacters[charNum[i]]->End();
 	}
 }
@@ -166,7 +192,10 @@ void LevelSelector::BeginMove()
 		break;
 
 	case SelectGameMode::CPU:
-		cpuPoworPos.y = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), 912.0f, cpuPoworPosY);
+		pos[0].y = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), 330.0f, levelMulti01PosY);
+		//pos[1].y = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), 654.0f, levelMulti02PosY);
+		//cpuPoworPos.y = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), 912.0f, cpuPoworPosY);
+		break;
 
 	case SelectGameMode::Multi:
 		pos[0].y = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), 330.0f, levelMulti01PosY);
@@ -175,6 +204,8 @@ void LevelSelector::BeginMove()
 
 	default: break;
 	}
+
+	stringPos.y = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), stringEndPosY, stringStartPosY);
 }
 
 bool LevelSelector::EndMove()
@@ -223,6 +254,8 @@ bool LevelSelector::EndMove()
 	default: break;
 	}
 
+	stringPos.y = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), stringStartPosY, stringEndPosY);
+
 	return false;
 }
 
@@ -253,7 +286,12 @@ void LevelSelector::Choice()
 	}
 
 	OkMove();
+	CPULevelMove();
+	CPUPoworMove();
 	Operation();
+
+	stringMoveY = stringMaxMove * sinf(stringMoveSpeed);
+	stringMoveSpeed += stringSpeed;
 }
 
 void LevelSelector::OkMove()
@@ -413,8 +451,52 @@ void LevelSelector::OkMove()
 	}
 }
 
+void LevelSelector::CPULevelMove()
+{
+	if (!changeCPUlevel) return;
+
+	if (moveCntMax <= moveCnt++)
+	{
+		moveCnt = 0;
+		changeCPUlevel = false;
+		changeCPUReturn = false;
+		operationLock = false;
+		return;
+	}
+
+	if (!changeCPUReturn)
+	{
+		pos[1].y = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), 654.0f, levelCPUPosY);
+		cpuPoworPos.y = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), 912.0f - cpuPoworSizeY, cpuPoworPosY);
+	}
+	else
+	{
+		pos[1].y = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), levelCPUPosY, 654.0f);
+		cpuPoworPos.y = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), cpuPoworPosY, 912.0f - cpuPoworSizeY);
+	}
+}
+
+void LevelSelector::CPUPoworMove()
+{
+	if (!changeCPUPowor) return;
+
+	if (moveCntMax <= moveCnt++)
+	{
+		moveCnt = 0;
+		changeCPUPowor = false;
+		changeCPUReturn = false;
+		operationLock = false;
+		return;
+	}
+
+	if (!changeCPUReturn) cpuPoworPos.y = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), 912.0f, 912.0f - cpuPoworSizeY);
+	else cpuPoworPos.y = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), 912.0f - cpuPoworSizeY, 912.0f);
+}
+
 void LevelSelector::Operation()
 {
+	if (operationLock) return;
+
 	int index = decision[0] ? 1 : 0;
 
 	switch (gameMode)
@@ -427,6 +509,7 @@ void LevelSelector::Operation()
 			okAlpha[0] = 1.0f;
 
 			decision[0] = true;
+			operationLock = true;
 			pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
 		}
 		if (pad[0].bBt)
@@ -434,21 +517,51 @@ void LevelSelector::Operation()
 			okAlpha[0] = true;
 			decision[0] = false;
 		}
-		if (pad[0].bLEFTt)
+		if (pad[0].bLEFTs || pad[0].sLX < 0)
 		{
 			if (levelMin < levelNum[0])
 			{
-				levelNum[0]--;
+				if (++accelerationCount[0].x == 1)
+				{
+					levelNum[0]--;
+					pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+				}
+				if (accelerationCount[0].x >= ACCEL_START)
+				{
+					if (accelerationCount[0].x % ACCEL_MOVE_PER == 0)
+					{
+						levelNum[0]--;
+						pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+					}
+				}
 			}
-			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 		}
-		if (pad[0].bRIGHTt)
+		else
+		{
+			accelerationCount[0].x = 0;
+		}
+		if (pad[0].bRIGHTs || 0 < pad[0].sLX)
 		{
 			if (levelNum[0] < levelMax)
 			{
-				levelNum[0]++;
+				if (++accelerationCount[0].y == 1)
+				{
+					levelNum[0]++;
+					pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+				}
+				if (accelerationCount[0].y >= ACCEL_START)
+				{
+					if (accelerationCount[0].y % ACCEL_MOVE_PER == 0)
+					{
+						levelNum[0]++;
+						pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+					}
+				}
 			}
-			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+		}
+		else
+		{
+			accelerationCount[0].y = 0;
 		}
 		break;
 	case SelectGameMode::CPU:
@@ -457,27 +570,62 @@ void LevelSelector::Operation()
 			if (pad[0].bAt)
 			{
 				cpuPoworDecision = true;
+				operationLock = true;
 				pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
 			}
 			if (pad[0].bBt)
 			{
+				operationLock = true;
+				changeCPUPowor = true;
+				changeCPUReturn = true;
+
 				decision[1] = false;
 			}
-			if (pad[0].bLEFTt)
+			if (pad[0].bLEFTs || pad[0].sLX < 0)
 			{
 				if (cpuPoworMin < cpuPoworNum)
 				{
-					cpuPoworNum--;
+					if (++accelerationCount[0].x == 1)
+					{
+						cpuPoworNum--;
+						pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+					}
+					if (accelerationCount[0].x >= ACCEL_START)
+					{
+						if (accelerationCount[0].x % ACCEL_MOVE_PER == 0)
+						{
+							cpuPoworNum--;
+							pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+						}
+					}
 				}
-				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			}
-			if (pad[0].bRIGHTt)
+			else
+			{
+				accelerationCount[0].x = 0;
+			}
+			if (pad[0].bRIGHTs || 0 < pad[0].sLX)
 			{
 				if (cpuPoworNum < cpuPoworMax)
 				{
-					cpuPoworNum++;
+					if (++accelerationCount[0].y == 1)
+					{
+						cpuPoworNum++;
+						pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+					}
+					if (accelerationCount[0].y >= ACCEL_START)
+					{
+						if (accelerationCount[0].y % ACCEL_MOVE_PER == 0)
+						{
+							cpuPoworNum++;
+							pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+						}
+					}
 				}
-				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+			}
+			else
+			{
+				accelerationCount[0].y = 0;
 			}
 		}
 		else
@@ -489,31 +637,68 @@ void LevelSelector::Operation()
 				okAlpha[index] = 1.0f;
 
 				decision[index] = true;
+				operationLock = true;
+				if (index == 0) changeCPUlevel = true;
+				if (index == 1) changeCPUPowor = true;
 				pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
 			}
 			if (pad[0].bBt)
 			{
 				if (0 < index)
 				{
+					operationLock = true;
+					changeCPUlevel = true;
+					changeCPUReturn = true;
+
 					okAlpha[index - 1] = true;
 					decision[index - 1] = false;
 				}
 			}
-			if (pad[0].bLEFTt)
+			if (pad[0].bLEFTs || pad[0].sLX < 0)
 			{
 				if (levelMin < levelNum[index])
 				{
-					levelNum[index]--;
+					if (++accelerationCount[index].x == 1)
+					{
+						levelNum[index]--;
+						pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+					}
+					if (accelerationCount[index].x >= ACCEL_START)
+					{
+						if (accelerationCount[index].x % ACCEL_MOVE_PER == 0)
+						{
+							levelNum[index]--;
+							pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+						}
+					}
 				}
-				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			}
-			if (pad[0].bRIGHTt)
+			else
+			{
+				accelerationCount[index].x = 0;
+			}
+			if (pad[0].bRIGHTs || 0 < pad[0].sLX)
 			{
 				if (levelNum[index] < levelMax)
 				{
-					levelNum[index]++;
+					if (++accelerationCount[index].y == 1)
+					{
+						levelNum[index]++;
+						pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+					}
+					if (accelerationCount[index].y >= ACCEL_START)
+					{
+						if (accelerationCount[index].y % ACCEL_MOVE_PER == 0)
+						{
+							levelNum[index]++;
+							pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+						}
+					}
 				}
-				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+			}
+			else
+			{
+				accelerationCount[index].y = 0;
 			}
 		}
 		break;
@@ -527,6 +712,7 @@ void LevelSelector::Operation()
 				okAlpha[i] = 1.0f;
 
 				decision[i] = true;
+				if (i = 1) operationLock = true;
 				pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
 			}
 			if (pad[i].bBt)
@@ -539,21 +725,51 @@ void LevelSelector::Operation()
 
 				decision[i] = false;
 			}
-			if (pad[i].bLEFTt)
+			if (pad[i].bLEFTs || pad[i].sLX < 0)
 			{
 				if (levelMin < levelNum[i])
 				{
-					levelNum[i]--;
+					if (++accelerationCount[i].x == 1)
+					{
+						levelNum[i]--;
+						pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+					}
+					if (accelerationCount[i].x >= ACCEL_START)
+					{
+						if (accelerationCount[i].x % ACCEL_MOVE_PER == 0)
+						{
+							levelNum[i]--;
+							pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+						}
+					}
 				}
-				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			}
-			if (pad[i].bRIGHTt)
+			else
+			{
+				accelerationCount[i].x = 0;
+			}
+			if (pad[i].bRIGHTs || 0 < pad[i].sLX)
 			{
 				if (levelNum[i] < levelMax)
 				{
-					levelNum[i]++;
+					if (++accelerationCount[i].y == 1)
+					{
+						levelNum[i]++;
+						pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+					}
+					if (accelerationCount[i].y >= ACCEL_START)
+					{
+						if (accelerationCount[i].y % ACCEL_MOVE_PER == 0)
+						{
+							levelNum[i]++;
+							pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+						}
+					}
 				}
-				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+			}
+			else
+			{
+				accelerationCount[i].y = 0;
 			}
 		}
 		break;

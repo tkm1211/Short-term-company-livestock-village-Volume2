@@ -12,7 +12,7 @@
 #include <imgui.h>
 #include "Player.h"
 
-//#define DEBUG_BLOCKS
+#define DEBUG_BLOCKS
 
 class Player;
 /*--------------------------------------*/
