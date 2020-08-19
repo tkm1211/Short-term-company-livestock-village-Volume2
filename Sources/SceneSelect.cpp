@@ -118,12 +118,17 @@ void SceneSelect::Update()
 				selectors[selectorIndex]->Init(selectors[previousSelectorIndex].get());
 			}
 
-			if (selectorIndex == static_cast<int>(SelectMode::CharacterSelect))
+			if (selectorIndex == static_cast<int>(SelectMode::CharacterSelect) && previousSelectorIndex == static_cast<int>(SelectMode::PlayStyle))
 			{
 				changeSceneIndex = selectorIndex;
 				selectorIndex = previousSelectorIndex;
 				PRODUCTION->SetOn(GO_PLAYERSELECT);
 				PRODUCTION->Start();
+			}
+			else if (selectorIndex == static_cast<int>(SelectMode::PlayStyle))
+			{
+				changeSceneIndex = selectorIndex;
+				selectorIndex = previousSelectorIndex;
 			}
 		}
 	}

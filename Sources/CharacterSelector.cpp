@@ -62,8 +62,17 @@ void CharacterSelector::Init(ISelector* selector)
 	//characterFrameOriginPos = DirectX::XMFLOAT2(characterFrameOriginPosX, characterFrameOriginPosY);
 	characterFrameOriginPos = DirectX::XMFLOAT2(characterFrameOriginPosX, characterFrameStartOriginPosY);
 	characterFrameSize = DirectX::XMFLOAT2(characterFrameSizeX, characterFrameSizeY);
-	characterPick[0] = DirectX::XMFLOAT2(characterFrameOriginPosX, characterFrameStartOriginPosY);
-	characterPick[1] = DirectX::XMFLOAT2(characterFrameOriginPosX + characterFrameSizeX, characterFrameStartOriginPosY);
+	//characterPick[0] = DirectX::XMFLOAT2(characterFrameOriginPosX, characterFrameStartOriginPosY);
+	//characterPick[1] = DirectX::XMFLOAT2(characterFrameOriginPosX + characterFrameSizeX, characterFrameStartOriginPosY);
+	for (int i = 0; i < 2; i++)
+	{
+		characterPick[i].x = selectCharacterNum[i] < 4 ? characterFrameOriginPosX + characterFrameSizeX * selectCharacterNum[i] : characterFrameOriginPosX + characterFrameSizeX * (selectCharacterNum[i] - 4);
+		characterPick[i].y = selectCharacterNum[i] < 4 ? characterFrameStartOriginPosY : characterFrameStartOriginPosY + characterFrameSizeY;
+	}
+
+	stringPos = DirectX::XMFLOAT2(stringStartPosX, stringStartPosY);
+	stringMoveY = 0.0f;
+	stringMoveSpeed = 0.0f;
 
 	characterDecision[0] = false;
 	characterDecision[1] = false;
@@ -88,6 +97,12 @@ void CharacterSelector::Init(ISelector* selector)
 	cpuCharacterMove = false;
 	cpuCharacterMoveReturn = false;
 	cpuCharacterMoveCnt = 0;
+
+	accelerationCount[0] = DirectX::XMINT2(0, 0);
+	accelerationCount[1] = DirectX::XMINT2(0, 0);
+
+	animCnt = 0;
+	animFrame = 0;
 }
 
 bool CharacterSelector::Update()
@@ -108,13 +123,22 @@ bool CharacterSelector::Update()
 	default: break;
 	}
 
+	if (animCnt++ % 5 == 0 && animCnt != 0)
+	{
+		animFrame++;
+		if (CHARACTER_ANIMATION_MAX <= animFrame)
+		{
+			animFrame = 0;
+		}
+	}
+
 	return ch;
 }
 
 void CharacterSelector::Draw()
 {
 	sprSelect->Begin();
-	sprSelect->Draw(240.0f, 72.0f, 1440.0f, 160.0f, 0.0f, 160.0f, 1440.0f, 160.0f, 0.0f, 0.0f, 0.0f);
+	sprSelect->Draw(stringPos.x, stringPos.y + stringMoveY, 1440.0f, 160.0f, 0.0f, 160.0f, 1440.0f, 160.0f, 0.0f, 0.0f, 0.0f);
 	sprSelect->End();
 
 	sprSelectCPU->Begin();
@@ -145,7 +169,8 @@ void CharacterSelector::Draw()
 		sprSelectCPU->End();
 
 		sprCharacters[selectCharacterNum[0]]->Begin();
-		sprCharacters[selectCharacterNum[0]]->Draw(characterPos[0].x, characterPos[0].y, characterSize[0].x, characterSize[0].y, 0.0f, 0.0f, characterSize[0].x, characterSize[0].y, 0.0f, 0.0f, 0.0f);
+		if (selectCharacterNum[0] != 7) sprCharacters[selectCharacterNum[0]]->Draw(characterPos[0].x, characterPos[0].y, characterSize[0].x, characterSize[0].y, characterSize[0].x * animFrame, 0.0f, characterSize[0].x, characterSize[0].y, 0.0f, 0.0f, 0.0f);
+		else sprCharacters[selectCharacterNum[0]]->Draw(characterPos[0].x, characterPos[0].y, characterSize[0].x, characterSize[0].y, 0.0f, 0.0f, characterSize[0].x, characterSize[0].y, 0.0f, 0.0f, 0.0f);
 		sprCharacters[selectCharacterNum[0]]->End();
 		break;
 	case SelectGameMode::CPU:
@@ -172,7 +197,8 @@ void CharacterSelector::Draw()
 			sprSelectCPU->End();
 
 			sprCharacters[selectCharacterNum[i]]->Begin();
-			sprCharacters[selectCharacterNum[i]]->Draw(characterPos[i].x, characterPos[i].y, i == 0 ? characterSize[i].x : -characterSize[i].x, characterSize[i].y, 0.0f, 0.0f, characterSize[i].x, characterSize[i].y, 0.0f, 0.0f, 0.0f);
+			if (selectCharacterNum[i] != 7) sprCharacters[selectCharacterNum[i]]->Draw(characterPos[i].x, characterPos[i].y, i == 0 ? characterSize[i].x : -characterSize[i].x, characterSize[i].y, characterSize[0].x * animFrame, 0.0f, characterSize[i].x, characterSize[i].y, 0.0f, 0.0f, 0.0f);
+			else sprCharacters[selectCharacterNum[i]]->Draw(characterPos[i].x, characterPos[i].y, i == 0 ? characterSize[i].x : -characterSize[i].x, characterSize[i].y, 0.0f, 0.0f, characterSize[i].x, characterSize[i].y, 0.0f, 0.0f, 0.0f);
 			sprCharacters[selectCharacterNum[i]]->End();
 		}
 		break;
@@ -192,7 +218,8 @@ void CharacterSelector::Draw()
 			sprSelect->End();
 
 			sprCharacters[selectCharacterNum[i]]->Begin();
-			sprCharacters[selectCharacterNum[i]]->Draw(characterPos[i].x, characterPos[i].y, i == 0 ? characterSize[i].x : -characterSize[i].x, characterSize[i].y, 0.0f, 0.0f, characterSize[i].x, characterSize[i].y, 0.0f, 0.0f, 0.0f);
+			if (selectCharacterNum[i] != 7) sprCharacters[selectCharacterNum[i]]->Draw(characterPos[i].x, characterPos[i].y, i == 0 ? characterSize[i].x : -characterSize[i].x, characterSize[i].y, characterSize[0].x * animFrame, 0.0f, characterSize[i].x, characterSize[i].y, 0.0f, 0.0f, 0.0f);
+			else sprCharacters[selectCharacterNum[i]]->Draw(characterPos[i].x, characterPos[i].y, i == 0 ? characterSize[i].x : -characterSize[i].x, characterSize[i].y, 0.0f, 0.0f, characterSize[i].x, characterSize[i].y, 0.0f, 0.0f, 0.0f);
 			sprCharacters[selectCharacterNum[i]]->End();
 		}
 		break;
@@ -228,6 +255,7 @@ void CharacterSelector::BeginMove()
 	characterFrameOriginPos.y = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), 508.0f, characterFrameStartOriginPosY);
 	characterPick[0].y = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), 508.0f, characterFrameStartOriginPosY);
 	characterPick[1].y = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), 508.0f, characterFrameStartOriginPosY);
+	stringPos.y = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), stringEndPosY, stringStartPosY);
 }
 
 bool CharacterSelector::EndMove()
@@ -243,10 +271,15 @@ bool CharacterSelector::EndMove()
 	if (endMoveReturn)
 	{
 		characterPos[0].x = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), -416.0f, 246.0f);
+		if (gameMode != SelectGameMode::CPU)
+		{
+			characterPos[1].x = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), 2336.0f, 1674.0f);
+		}
 	}
 	characterFrameOriginPos.y = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), characterFrameStartOriginPosY, 508.0f);
 	characterPick[0].y = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), characterFrameStartOriginPosY, 508.0f);
 	characterPick[1].y = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), characterFrameStartOriginPosY, 508.0f);
+	stringPos.y = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), stringStartPosY, stringEndPosY);
 
 	if (moveCntMax <= moveCnt++)
 	{
@@ -287,6 +320,9 @@ void CharacterSelector::Choice()
 	Operation();
 	CPUMove();
 	OkMove();
+
+	stringMoveY = stringMaxMove * sinf(stringMoveSpeed);
+	stringMoveSpeed += stringSpeed;
 }
 
 void CharacterSelector::CPUMove()
@@ -432,6 +468,7 @@ void CharacterSelector::Operation()
 			okAlpha[0] = 1.0f;
 
 			characterDecision[0] = true;
+			operationLock = true;
 			pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
 		}
 		if (pad[0].bBt)
@@ -439,23 +476,53 @@ void CharacterSelector::Operation()
 			okAlpha[0] = true;
 			characterDecision[0] = false;
 		}
-		if (pad[0].bLEFTt)
+		if (pad[0].bLEFTs || pad[0].sLX < 0)
 		{
 			if (0 < selectCharacterNum[0])
 			{
-				selectCharacterNum[0]--;
+				if (++accelerationCount[0].x == 1)
+				{
+					selectCharacterNum[0]--;
+					pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+				}
+				if (accelerationCount[0].x >= ACCEL_START)
+				{
+					if (accelerationCount[0].x % ACCEL_MOVE_PER == 0)
+					{
+						selectCharacterNum[0]--;
+						pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+					}
+				}
 			}
-			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 		}
-		if (pad[0].bRIGHTt)
+		else
+		{
+			accelerationCount[0].x = 0;
+		}
+		if (pad[0].bRIGHTs || 0 < pad[0].sLX)
 		{
 			if (selectCharacterNum[0] < characterMax)
 			{
-				selectCharacterNum[0]++;
+				if (++accelerationCount[0].y == 1)
+				{
+					selectCharacterNum[0]++;
+					pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+				}
+				if (accelerationCount[0].y >= ACCEL_START)
+				{
+					if (accelerationCount[0].y % ACCEL_MOVE_PER == 0)
+					{
+						selectCharacterNum[0]++;
+						pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+					}
+				}
 			}
-			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 		}
-		if (pad[0].bUPt)
+		else
+		{
+			accelerationCount[0].y = 0;
+		}
+		if (pad[0].bUPt || pad[0].sLY < 0)
 		{
 			if ((characterMax + 1) / 2 <= selectCharacterNum[0])
 			{
@@ -463,7 +530,7 @@ void CharacterSelector::Operation()
 			}
 			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 		}
-		if (pad[0].bDOWNt)
+		if (pad[0].bDOWNt || 0 < pad[0].sLY)
 		{
 			if (selectCharacterNum[0] < (characterMax + 1) / 2)
 			{
@@ -499,23 +566,53 @@ void CharacterSelector::Operation()
 			selectCPUCharacterState--;
 			okAlpha[selectCPUCharacterState] = true;
 		}
-		if (pad[0].bLEFTt)
+		if (pad[0].bLEFTs || pad[0].sLX < 0)
 		{
 			if (0 < selectCharacterNum[selectCPUCharacterState])
 			{
-				selectCharacterNum[selectCPUCharacterState]--;
+				if (++accelerationCount[selectCPUCharacterState].x == 1)
+				{
+					selectCharacterNum[selectCPUCharacterState]--;
+					pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+				}
+				if (accelerationCount[selectCPUCharacterState].x >= ACCEL_START)
+				{
+					if (accelerationCount[selectCPUCharacterState].x % ACCEL_MOVE_PER == 0)
+					{
+						selectCharacterNum[selectCPUCharacterState]--;
+						pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+					}
+				}
 			}
-			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 		}
-		if (pad[0].bRIGHTt)
+		else
+		{
+			accelerationCount[selectCPUCharacterState].x = 0;
+		}
+		if (pad[0].bRIGHTs || 0 < pad[0].sLX)
 		{
 			if (selectCharacterNum[selectCPUCharacterState] < characterMax)
 			{
-				selectCharacterNum[selectCPUCharacterState]++;
+				if (++accelerationCount[selectCPUCharacterState].y == 1)
+				{
+					selectCharacterNum[selectCPUCharacterState]++;
+					pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+				}
+				if (accelerationCount[selectCPUCharacterState].y >= ACCEL_START)
+				{
+					if (accelerationCount[selectCPUCharacterState].y % ACCEL_MOVE_PER == 0)
+					{
+						selectCharacterNum[selectCPUCharacterState]++;
+						pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+					}
+				}
 			}
-			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 		}
-		if (pad[0].bUPt)
+		else
+		{
+			accelerationCount[selectCPUCharacterState].y = 0;
+		}
+		if (pad[0].bUPt || pad[0].sLY < 0)
 		{
 			if ((characterMax + 1) / 2 <= selectCharacterNum[selectCPUCharacterState])
 			{
@@ -523,7 +620,7 @@ void CharacterSelector::Operation()
 			}
 			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 		}
-		if (pad[0].bDOWNt)
+		if (pad[0].bDOWNt || 0 < pad[0].sLY)
 		{
 			if (selectCharacterNum[selectCPUCharacterState] < (characterMax + 1) / 2)
 			{
@@ -542,6 +639,7 @@ void CharacterSelector::Operation()
 				okAlpha[i] = 1.0f;
 
 				characterDecision[i] = true;
+				if (i == 1) operationLock = true;
 				pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
 			}
 			if (pad[i].bBt)
@@ -549,23 +647,53 @@ void CharacterSelector::Operation()
 				okAlpha[i] = true;
 				characterDecision[i] = false;
 			}
-			if (pad[i].bLEFTt)
+			if (pad[i].bLEFTs || pad[i].sLX < 0)
 			{
 				if (0 < selectCharacterNum[i])
 				{
-					selectCharacterNum[i]--;
+					if (++accelerationCount[i].x == 1)
+					{
+						selectCharacterNum[i]--;
+						pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+					}
+					if (accelerationCount[i].x >= ACCEL_START)
+					{
+						if (accelerationCount[i].x % ACCEL_MOVE_PER == 0)
+						{
+							selectCharacterNum[i]--;
+							pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+						}
+					}
 				}
-				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			}
-			if (pad[i].bRIGHTt)
+			else
+			{
+				accelerationCount[i].x = 0;
+			}
+			if (pad[i].bRIGHTs || 0 < pad[i].sLX)
 			{
 				if (selectCharacterNum[i] < characterMax)
 				{
-					selectCharacterNum[i]++;
+					if (++accelerationCount[i].y == 1)
+					{
+						selectCharacterNum[i]++;
+						pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+					}
+					if (accelerationCount[i].y >= ACCEL_START)
+					{
+						if (accelerationCount[i].y % ACCEL_MOVE_PER == 0)
+						{
+							selectCharacterNum[i]++;
+							pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+						}
+					}
 				}
-				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			}
-			if (pad[i].bUPt)
+			else
+			{
+				accelerationCount[i].y = 0;
+			}
+			if (pad[i].bUPt || pad[i].sLY < 0)
 			{
 				if ((characterMax + 1) / 2 <= selectCharacterNum[i])
 				{
@@ -573,7 +701,7 @@ void CharacterSelector::Operation()
 				}
 				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			}
-			if (pad[i].bDOWNt)
+			if (pad[i].bDOWNt || 0 < pad[i].sLY)
 			{
 				if (selectCharacterNum[i] < (characterMax + 1) / 2)
 				{

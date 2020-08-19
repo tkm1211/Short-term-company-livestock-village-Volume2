@@ -2,6 +2,7 @@
 #include "SceneManager.h"
 #include "Production.h"
 #include "Sound.h"
+#include "Blender.h"
 
 #include "input_device.h"
 
@@ -34,6 +35,8 @@ void PlayStyleSelector::Construct()
 	for (int i = 0; i < 5; i++)
 	{
 		frameSPos[i] = DirectX::XMFLOAT2(774.0f + 78.0f * i, 164.0f);
+		frameMOriginPos[i] = DirectX::XMFLOAT2(0.0f, 0.0f);
+		frameMOriginSize[i] = DirectX::XMFLOAT2(0.0f, 0.0f);
 	}
 
 	styleNum = styleNumDefault;
@@ -149,7 +152,11 @@ bool PlayStyleSelector::EndMove()
 
 void PlayStyleSelector::Choice()
 {
+#if defined(DEBUG) | defined(_DEBUG)
 	if ((pad[0].bAt || GetAsyncKeyState('N') & 1) && !selectMoveLeft && !selectMoveRight)
+#else
+	if(pad[0].bAt && !selectMoveLeft && !selectMoveRight)
+#endif
 	{
 		pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
 		updateState = UpdateState::EndMove;
@@ -199,27 +206,45 @@ void PlayStyleSelector::Operation()
 
 		if (1920.0f <= frameMPos[rightFrameNum].x)
 		{
-			frameMPos[rightFrameNum].x = -424.0f - (frameMMoveX * (moveCntMax - moveCnt));
+			int rightFrameBackNum = rightFrameNum + 1;
+			if (rightFrameBackNum == styleNumMax + 1)
+			{
+				rightFrameBackNum = styleNumMin;
+			}
+			//frameMPos[rightFrameNum].x = -424.0f - (frameMMoveX * (moveCntMax - moveCnt));
+			//frameMPos[rightFrameNum].x = -424.0f - (frameMMoveX * (moveCntMax - moveCnt));
+			frameMOriginPos[rightFrameNum].x = frameMOriginPos[rightFrameBackNum].x - 519.0f;
 		}
 
-		frameMPos[styleNum].x += frameLToMMoveX;
-		frameMPos[styleNum].y -= frameLToMMoveY;
-		frameMPos[backNum].x += frameMToLMoveX;
-		frameMPos[backNum].y += frameMToLMoveY;
+		//frameMPos[styleNum].x += frameLToMMoveX;
+		//frameMPos[styleNum].y -= frameLToMMoveY;
+		//frameMPos[backNum].x += frameMToLMoveX;
+		//frameMPos[backNum].y += frameMToLMoveY;
 
-		frameMSize[styleNum].x += frameMScale;
-		frameMSize[styleNum].y += frameMScale;
-		frameMSize[backNum].x -= frameMScale;
-		frameMSize[backNum].y -= frameMScale;
+		//frameMSize[styleNum].x += frameMScale;
+		//frameMSize[styleNum].y += frameMScale;
+		//frameMSize[backNum].x -= frameMScale;
+		//frameMSize[backNum].y -= frameMScale;
 
+		frameMPos[styleNum].x = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), frameMOriginPos[styleNum].x + frameLToMMoveX, frameMOriginPos[styleNum].x);
+		frameMPos[styleNum].y = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), frameMOriginPos[styleNum].y - frameLToMMoveY, frameMOriginPos[styleNum].y);
+		frameMPos[backNum].x = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), frameMOriginPos[backNum].x + frameMToLMoveX, frameMOriginPos[backNum].x);
+		frameMPos[backNum].y = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), frameMOriginPos[backNum].y + frameMToLMoveY, frameMOriginPos[backNum].y);
+
+		frameMSize[styleNum].x = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), frameMOriginSize[styleNum].x + frameMScale, frameMOriginSize[styleNum].x);
+		frameMSize[styleNum].y = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), frameMOriginSize[styleNum].y + frameMScale, frameMOriginSize[styleNum].y);
+		frameMSize[backNum].x = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), frameMOriginSize[backNum].x - frameMScale, frameMOriginSize[backNum].x);
+		frameMSize[backNum].y = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), frameMOriginSize[backNum].y - frameMScale, frameMOriginSize[backNum].y);
+		
 		for (int i = 0; i < styleNumMax + 1; i++)
 		{
 			if (i == styleNum || i == backNum) continue;
-			frameMPos[i].x += frameMMoveX;
+			//frameMPos[i].x += frameMMoveX;
+			frameMPos[i].x = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), frameMOriginPos[i].x + frameMMoveX, frameMOriginPos[i].x);
 		}
 
 		moveCnt++;
-		if (moveCntMax <= moveCnt)
+		if (moveCntMax < moveCnt)
 		{
 			moveCnt = 0;
 			selectMoveLeft = false;
@@ -247,10 +272,11 @@ void PlayStyleSelector::Operation()
 				leftFrameBackNum = styleNumMax;
 			}
 
-			frameMPos[leftFrameNum].x = frameMPos[leftFrameBackNum].x + 519.0f;
+			//frameMPos[leftFrameNum].x = frameMPos[leftFrameBackNum].x + 519.0f;
+			frameMOriginPos[leftFrameNum].x = frameMOriginPos[leftFrameBackNum].x + 519.0f;
 		}
 
-		frameMPos[styleNum].x -= frameMToLMoveX;
+		/*frameMPos[styleNum].x -= frameMToLMoveX;
 		frameMPos[styleNum].y -= frameMToLMoveY;
 		frameMPos[backNum].x -= frameLToMMoveX;
 		frameMPos[backNum].y += frameLToMMoveY;
@@ -258,16 +284,27 @@ void PlayStyleSelector::Operation()
 		frameMSize[styleNum].x += frameMScale;
 		frameMSize[styleNum].y += frameMScale;
 		frameMSize[backNum].x -= frameMScale;
-		frameMSize[backNum].y -= frameMScale;
+		frameMSize[backNum].y -= frameMScale;*/
+
+		frameMPos[styleNum].x = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), frameMOriginPos[styleNum].x - frameMToLMoveX, frameMOriginPos[styleNum].x);
+		frameMPos[styleNum].y = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), frameMOriginPos[styleNum].y - frameMToLMoveY, frameMOriginPos[styleNum].y);
+		frameMPos[backNum].x = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), frameMOriginPos[backNum].x - frameLToMMoveX, frameMOriginPos[backNum].x);
+		frameMPos[backNum].y = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), frameMOriginPos[backNum].y + frameLToMMoveY, frameMOriginPos[backNum].y);
+
+		frameMSize[styleNum].x = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), frameMOriginSize[styleNum].x + frameMScale, frameMOriginSize[styleNum].x);
+		frameMSize[styleNum].y = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), frameMOriginSize[styleNum].y + frameMScale, frameMOriginSize[styleNum].y);
+		frameMSize[backNum].x = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), frameMOriginSize[backNum].x - frameMScale, frameMOriginSize[backNum].x);
+		frameMSize[backNum].y = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), frameMOriginSize[backNum].y - frameMScale, frameMOriginSize[backNum].y);
 
 		for (int i = 0; i < styleNumMax + 1; i++)
 		{
 			if (i == styleNum || i == backNum) continue;
-			frameMPos[i].x -= frameMMoveX;
+			//frameMPos[i].x -= frameMMoveX;
+			frameMPos[i].x = easing::OutExp(static_cast<float>(moveCnt), static_cast<float>(moveCntMax), frameMOriginPos[i].x - frameMMoveX, frameMOriginPos[i].x);
 		}
 
 		moveCnt++;
-		if (moveCntMax <= moveCnt)
+		if (moveCntMax < moveCnt)
 		{
 			moveCnt = 0;
 			selectMoveRight = false;
@@ -275,7 +312,7 @@ void PlayStyleSelector::Operation()
 	}
 	else
 	{
-		if (pad[0].bLEFTt)
+		if (pad[0].bLEFTt || pad[0].sLX < 0)
 		{
 			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			styleNum--;
@@ -285,8 +322,14 @@ void PlayStyleSelector::Operation()
 			{
 				styleNum = styleNumMax;
 			}
+
+			for (int i = 0; i < 5; i++)
+			{
+				frameMOriginPos[i] = frameMPos[i];
+				frameMOriginSize[i] = frameMSize[i];
+			}
 		}
-		if (pad[0].bRIGHTt)
+		if (pad[0].bRIGHTt || 0 < pad[0].sLX)
 		{
 			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			styleNum++;
@@ -296,12 +339,54 @@ void PlayStyleSelector::Operation()
 			{
 				styleNum = styleNumMin;
 			}
+
+			for (int i = 0; i < 5; i++)
+			{
+				frameMOriginPos[i] = frameMPos[i];
+				frameMOriginSize[i] = frameMSize[i];
+			}
 		}
 	}
 }
 
 void PlayStyleSelector::Draw()
 {
+	if (selectMoveLeft)
+	{
+		SetDrawBlendMode(BLEND_MODE::ADD);
+		{
+			sprSelectArrow->Begin();
+			sprSelectArrow->Draw(arrowPos[0].x, arrowPos[0].y, 54.0f, 138.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0);
+			sprSelectArrow->Draw(arrowPos[0].x, arrowPos[0].y, 54.0f, 138.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0);
+			sprSelectArrow->End();
+		}
+		SetDrawBlendMode(BLEND_MODE::ALPHA);
+	}
+	else
+	{
+		sprSelectArrow->Begin();
+		sprSelectArrow->Draw(arrowPos[0].x, arrowPos[0].y, 54.0f, 138.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0);
+		sprSelectArrow->End();
+	}
+
+	if (selectMoveRight)
+	{
+		SetDrawBlendMode(BLEND_MODE::ADD);
+		{
+			sprSelectArrow->Begin();
+			sprSelectArrow->Draw(arrowPos[1].x, arrowPos[1].y, 54.0f, 138.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1);
+			sprSelectArrow->Draw(arrowPos[1].x, arrowPos[1].y, 54.0f, 138.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1);
+			sprSelectArrow->End();
+		}
+		SetDrawBlendMode(BLEND_MODE::ALPHA);
+	}
+	else
+	{
+		sprSelectArrow->Begin();
+		sprSelectArrow->Draw(arrowPos[1].x, arrowPos[1].y, 54.0f, 138.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1);
+		sprSelectArrow->End();
+	}
+
 	sprSelectFrameM->Begin();
 	for (int i = 0; i < styleNumMax + 1; i++)
 	{
@@ -323,9 +408,4 @@ void PlayStyleSelector::Draw()
 		sprSelectFrameS->Draw(frameSPos[i].x, frameSPos[i].y, 60.0f, 60.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, styleNum == i ? 1 : 0);
 	}
 	sprSelectFrameS->End();
-
-	sprSelectArrow->Begin();
-	sprSelectArrow->Draw(arrowPos[0].x, arrowPos[0].y, 54.0f, 138.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0);
-	sprSelectArrow->Draw(arrowPos[1].x, arrowPos[1].y, 54.0f, 138.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1);
-	sprSelectArrow->End();
 }
