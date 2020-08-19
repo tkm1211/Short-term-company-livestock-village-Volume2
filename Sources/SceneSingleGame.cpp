@@ -77,13 +77,11 @@ void SceneSingleGame::Update()
 
 	if (PRODUCTION->CheckFlag(GO_SINGLEGAME) || PRODUCTION->CheckFlag(GO_TITLE)) return;
 
-#if defined(DEBUG) | defined(_DEBUG)
 	if (GetAsyncKeyState('N') & 1 || pad[0].bYt)
 	{
 		PRODUCTION->SetOn(GO_TITLE);
 		PRODUCTION->Start();
 	}
-#endif
 }
 
 void SceneSingleGame::Draw()

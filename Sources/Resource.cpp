@@ -161,7 +161,8 @@ void Resource::Init()
 	
 	if (!sprMiniCharacter)
 	{
-		sprMiniCharacter = std::make_shared<SpriteBatch>(L"Data/MiniPlayer.png", 10, DirectX::XMFLOAT2(96.0f, 240.0f));
+		sprMiniCharacter = std::make_shared<SpriteBatch>(L"Data/newMiniPlayer.png", 100, DirectX::XMFLOAT2(32.0f, 64.0f));
+		//sprMiniCharacter = std::make_shared<SpriteBatch>(L"Data/MiniPlayer.png", 100, DirectX::XMFLOAT2(96.0f, 240.0f));
 		assert(sprMiniCharacter && "Misstake load texture data <sprMiniCharacter>");
 	}
 	if (!sprMiniBlock)

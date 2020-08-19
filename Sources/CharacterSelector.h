@@ -30,13 +30,6 @@ private:
 	const float characterPickSizeX = 150.0f;
 	const float characterPickSizeY = 150.0f;
 
-	const float stringStartPosX = 240.0f;
-	const float stringStartPosY = -160.0f;
-	const float stringEndPosX = 240.0f;
-	const float stringEndPosY = 72.0f;
-	const float stringMaxMove = 10.0f;
-	const float stringSpeed = 0.1f;
-
 	const int moveCntMax = 60;
 	const float moveSpeedX = 11.0333f;
 	const float moveSpeedY = 9.53333f;
@@ -55,10 +48,6 @@ private:
 	const float okMoveSpeedY = 4.6666f;
 	const float okAlphaSpeedY = 0.0666f;
 
-	static constexpr int CHARACTER_ANIMATION_MAX = 6;
-	static constexpr int ACCEL_START = 15;
-	static constexpr int ACCEL_MOVE_PER = 7;
-
 private:
 	std::shared_ptr<SpriteBatch> sprSelect;
 	std::shared_ptr<SpriteBatch> sprSelectCPU;
@@ -69,10 +58,6 @@ private:
 	DirectX::XMFLOAT2 characterFrameOriginPos;
 	DirectX::XMFLOAT2 characterFrameSize;
 	DirectX::XMFLOAT2 characterPick[2];
-
-	DirectX::XMFLOAT2 stringPos;
-	float stringMoveY;
-	float stringMoveSpeed;
 
 	bool endMoveReturn;
 	bool operationLock;
@@ -95,12 +80,6 @@ private:
 	bool okEnd[2];
 
 	SelectMode previousSelectorMode;
-
-	DirectX::XMINT2 accelerationCount[2];
-
-public:
-	int animCnt;
-	int animFrame;
 
 public:
 	CharacterSelector() {}

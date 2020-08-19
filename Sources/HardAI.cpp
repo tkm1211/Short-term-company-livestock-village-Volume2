@@ -282,7 +282,7 @@ void HardAI::CheckBlockToBreak(int& row, int& column)
 	int hitIndex = -1;
 	{
 		int breakPoint = 0;
-		for (int i = 0; i < cheakBlocksNum/*BlockManager::BLOCK_BOARD_MAX * 3*/; i++)
+		for (int i = 0; i < BlockManager::BLOCK_BOARD_MAX * 3; i++)
 		{
 			if (breakPoint < cheakBlocks[i].breakBlock.breakPoint)
 			{

@@ -40,6 +40,7 @@ void Player::Update(int _pn)
 	if (sceneSelect.gameMode == SelectGameMode::Single && sceneSingleGame.GetIsGameReady()) return;
 	if (sceneSelect.gameMode == SelectGameMode::Multi && sceneMultiGame.GetIsGameReady()) return;
 	if (sceneSelect.gameMode == SelectGameMode::CPU && sceneCPUGame.GetIsGameReady()) return;
+	if (sceneSingleGame.isGameover || sceneMultiGame.isGameover[0] || sceneMultiGame.isGameover[1]) return;
 
 	OperatePlayer(_pn);
 

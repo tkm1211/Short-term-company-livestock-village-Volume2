@@ -34,6 +34,7 @@ public:
 		TITLE,
 		SELECT,
 		GAME,
+		GAME2,
 		BGM_END,
 	};
 

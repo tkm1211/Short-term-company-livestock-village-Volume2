@@ -27,6 +27,7 @@ const wchar_t* address_of_bgm[] =
 	L"Data/Sound/BGM/title.wav",
 	L"Data/Sound/BGM/select.wav",
 	L"Data/Sound/BGM/game.wav",
+	L"Data/Sound/BGM/game2.wav",
 };
 
 Sound* Sound::instance;

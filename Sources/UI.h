@@ -55,9 +55,9 @@ private:
 	float	gaugeTexPosY;
 	float	gaugeTexSizeY;
 	float	gaugePosY;
-
-	bool	isTimerStop;
 	bool	isGaugeMax;
+public:
+	bool	isTimerStop;
 #pragma endregion
 
 #pragma region Speedä÷åW
@@ -78,6 +78,12 @@ private:
 	int		readyTimer;
 	float	readyAlpha;
 	float	readyPosY;
+#pragma endregion
+
+#pragma region Resultä÷åW
+	int rankingScore[3];
+	float winLoseAlpha;
+	bool  isWinLoseUp;
 #pragma endregion
 
 public:
@@ -113,7 +119,10 @@ public:
 		readyState(0),
 		readyTimer(0),
 		readyAlpha(0.0f),
-		readyPosY(0.0f)
+		readyPosY(0.0f),
+		rankingScore{0,0,0},
+		isWinLoseUp(false),
+		winLoseAlpha(0.0f)
 	{}
 	~GameUI() {}
 
@@ -158,6 +167,13 @@ private:
 
 #pragma region Readyån
 	void UpdateOfGameReady();
+#pragma endregion
+
+public:
+#pragma region Fileä«óù
+	void FileRead();
+	void FileWrite();
+	void RankingSort();
 #pragma endregion
 
 #pragma region Getter and Setter

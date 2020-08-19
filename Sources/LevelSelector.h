@@ -20,7 +20,6 @@ private:
 	const float levelSinglePosY = 1080.0f;
 	const float levelMulti01PosY = 1080.0f;
 	const float levelMulti02PosY = 1404.0f;
-	const float levelCPUPosY = 1080.0f;
 	const float levelSizeX = 840.0f;
 	const float levelSizeY = 258.0f;
 	const float levelTexPosY = 1534.0f;
@@ -28,7 +27,7 @@ private:
 	const float levelSelectedTexPosY = 2050.0f;
 
 	const float cpuPoworPosX = 544.0f;
-	const float cpuPoworPosY = 1080.0f + 258.0f - 78.0f; // 1662.0f
+	const float cpuPoworPosY = 1662.0f;
 	const float cpuPoworSizeX = 606.0f;
 	const float cpuPoworSizeY = 78.0f;
 	const float cpuPoworTexPosX = 0.0f;
@@ -47,13 +46,6 @@ private:
 	float multiMoveSpeedY = 12.5f;
 	const float cpuCharacterMoveSpeedX = 11.0333f;
 
-	const float stringStartPosX = 240.0f;
-	const float stringStartPosY = -160.0f;
-	const float stringEndPosX = 240.0f;
-	const float stringEndPosY = 72.0f;
-	const float stringMaxMove = 10.0f;
-	const float stringSpeed = 0.1f;
-
 	const int okMoveCntMax = 30;
 	const int okAlphaCntMax = 15;
 	const int okWaitCntMax = 20;
@@ -68,10 +60,6 @@ private:
 	const float okMoveSpeedY = 4.6666f;
 	const float okAlphaSpeedY = 0.0666f;
 
-	static constexpr int CHARACTER_ANIMATION_MAX = 6;
-	static constexpr int ACCEL_START = 15;
-	static constexpr int ACCEL_MOVE_PER = 7;
-
 private:
 	std::shared_ptr<SpriteBatch> sprSelect;
 	std::shared_ptr<SpriteBatch> sprSelectCPU;
@@ -80,10 +68,6 @@ private:
 	DirectX::XMFLOAT2 pos[2];
 	DirectX::XMFLOAT2 cpuPoworPos;
 	float characterPosX[2];
-
-	DirectX::XMFLOAT2 stringPos;
-	float stringMoveY;
-	float stringMoveSpeed;
 
 	int controllerCnt;
 
@@ -96,24 +80,12 @@ private:
 
 	int moveCnt;
 
-	bool operationLock;
-
 	DirectX::XMFLOAT2 okPos[2];
 	int okMoveCnt[2];
 	float okAlpha[2];
 	bool okAlphaFlg[2];
 	bool okBegin[2];
 	bool okEnd[2];
-
-	DirectX::XMINT2 accelerationCount[2];
-
-	bool changeCPUlevel;
-	bool changeCPUPowor;
-	bool changeCPUReturn;
-
-public:
-	int animCnt;
-	int animFrame;
 
 public:
 	LevelSelector() {}
@@ -133,8 +105,6 @@ private:
 	void BeginMove();
 	bool EndMove();
 	void OkMove();
-	void CPULevelMove();
-	void CPUPoworMove();
 	void Choice();
 	void Operation();
 };

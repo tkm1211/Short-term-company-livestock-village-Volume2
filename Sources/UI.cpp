@@ -10,6 +10,9 @@
 #include "Player.h"
 #include "Sound.h"
 
+#include <fstream>
+#include <sstream>
+
 /*--------------------------------------*/
 //	Global area
 /*--------------------------------------*/
@@ -225,6 +228,7 @@ void GameUI::Init(int _pn)
 		}
 		else if (nowGameMode == SelectGameMode::Multi || nowGameMode == SelectGameMode::CPU)
 		{
+#if 0
 			switch (_pn)
 			{
 			case 0:
@@ -239,6 +243,22 @@ void GameUI::Init(int _pn)
 				charTex.size = DirectX::XMFLOAT2(-160.0f, 208.0f);
 				break;
 			}
+#else
+			switch (_pn)
+			{
+			case 0:
+				charTex.pos = DirectX::XMFLOAT2(948.0f - 6.0f, 609.0f);
+				charTex.tex = DirectX::XMFLOAT2(0.0f, 0.0f);
+				charTex.size = DirectX::XMFLOAT2(-160.0f, 208.0f);
+				break;
+
+			case 1:
+				charTex.pos = DirectX::XMFLOAT2(970.0f + 6.0f, 81.0f);
+				charTex.tex = DirectX::XMFLOAT2(0.0f, 0.0f);
+				charTex.size = DirectX::XMFLOAT2(160.0f, 208.0f);
+				break;
+			}
+#endif
 		}
 		
 		charAnimCount = 0;
@@ -264,8 +284,10 @@ void GameUI::Update(int _pn)
 	/*ゲーム開始前で行う処理*/
 	
 	// 文字を表示する
-	if (_pn == 0)
-	{
+	if (IF_SINGLE_NOW) {
+		UpdateOfGameReady();
+	}
+	else if (IF_MULTI_NOW && _pn == 1) {
 		UpdateOfGameReady();
 	}
 
@@ -461,7 +483,7 @@ void GameUI::DrawOfSingle()
 			using namespace DirectX;
 			auto it = drawBlockStatus[i];
 			sprGameUI->Draw(
-				XMFLOAT2(it.pos.x, it.pos.y), it.size,
+				XMFLOAT2(it.pos.x, it.pos.y + regularBlockManager[0].shakePos.y), it.size,
 				drawBlockStatus[nextBlockColors[i]].tex, it.size,
 				XMFLOAT2(0.0f, 0.0f), 0.0f,
 				XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -558,6 +580,79 @@ void GameUI::DrawOfSingle()
 
 		sprCharacter->End();
 	}
+
+
+	// GameResultの描画
+	{
+		sprGameUI->Begin();
+		DirectX::XMFLOAT2 tex(0, 816);
+		DirectX::XMFLOAT2 size(36, 60);
+
+		if (regularBlockManager[0].resultDisplayAlpha != 0.0f)
+		{
+			// Result
+			sprGameUI->Draw(regularBlockManager[0].resultDisplayPos.x, regularBlockManager[0].resultDisplayPos.y - 129, 680, 150, 
+				0, 2667, 680, 150, 0.0f, 0.0f, 
+				0.0f, 1.0f, 1.0f, 1.0f, regularBlockManager[0].resultDisplayAlpha);
+			// score
+			sprGameUI->Draw(669, regularBlockManager[0].addResultPosY - 129, 160, 64, 0, 2667 + 150, 160, 64, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, regularBlockManager[0].resultDisplayAlpha);
+		}
+		if (regularBlockManager[0].scoreDisplayAlpha != 0.0f)
+		{
+			int hundredThousand = totalScore % 1000000 / 100000;
+			int tenThousand = totalScore % 100000 / 10000;
+			int thousand = totalScore % 10000 / 1000;
+			int hundred = totalScore % 1000 / 100;
+			int ten = totalScore % 100 / 10;
+			int one = totalScore % 10 / 1;
+			sprGameUI->Draw(DirectX::XMFLOAT2(850 + 0 * 72, regularBlockManager[0].scoreDisplayPosY - 129 - 15), DirectX::XMFLOAT2(36 * 2, 60 * 2), DirectX::XMFLOAT2(tex.x + 36 * hundredThousand, 816), size, DirectX::XMFLOAT2(0, 0), 0.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, regularBlockManager[0].scoreDisplayAlpha));
+			sprGameUI->Draw(DirectX::XMFLOAT2(850 + 1 * 72, regularBlockManager[0].scoreDisplayPosY - 129 - 15), DirectX::XMFLOAT2(36 * 2, 60 * 2), DirectX::XMFLOAT2(tex.x + 36 * tenThousand, 816), size, DirectX::XMFLOAT2(0, 0), 0.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, regularBlockManager[0].scoreDisplayAlpha));
+			sprGameUI->Draw(DirectX::XMFLOAT2(850 + 2 * 72, regularBlockManager[0].scoreDisplayPosY - 129 - 15), DirectX::XMFLOAT2(36 * 2, 60 * 2), DirectX::XMFLOAT2(tex.x + 36 * thousand, 816), size, DirectX::XMFLOAT2(0, 0), 0.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, regularBlockManager[0].scoreDisplayAlpha));
+			sprGameUI->Draw(DirectX::XMFLOAT2(850 + 3 * 72, regularBlockManager[0].scoreDisplayPosY - 129 - 15), DirectX::XMFLOAT2(36 * 2, 60 * 2), DirectX::XMFLOAT2(tex.x + 36 * hundred, 816), size, DirectX::XMFLOAT2(0, 0), 0.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, regularBlockManager[0].scoreDisplayAlpha));
+			sprGameUI->Draw(DirectX::XMFLOAT2(850 + 4 * 72, regularBlockManager[0].scoreDisplayPosY - 129 - 15), DirectX::XMFLOAT2(36 * 2, 60 * 2), DirectX::XMFLOAT2(tex.x + 36 * ten, 816), size, DirectX::XMFLOAT2(0, 0), 0.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, regularBlockManager[0].scoreDisplayAlpha));
+			sprGameUI->Draw(DirectX::XMFLOAT2(850 + 5 * 72, regularBlockManager[0].scoreDisplayPosY - 129 - 15), DirectX::XMFLOAT2(36 * 2, 60 * 2), DirectX::XMFLOAT2(tex.x + 36 * one, 816), size, DirectX::XMFLOAT2(0, 0), 0.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, regularBlockManager[0].scoreDisplayAlpha));
+
+		}
+		if (regularBlockManager[0].rankingLogoDisplayAlpha != 0.0f)
+		{
+			// Result
+			sprGameUI->Draw(regularBlockManager[0].resultDisplayPos.x + 50, regularBlockManager[0].rankingLogoDisplayPosY - 129, 680, 150, 0, 2881, 680, 150, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, regularBlockManager[0].rankingLogoDisplayAlpha);
+		}
+		for (int i = 0; i < 3; i++)
+		{
+			if (regularBlockManager[0].rankingScoreDisplayAlpha[i] != 0.0f)
+			{
+				int hundredThousand = rankingScore[i] % 1000000 / 100000;
+				int tenThousand = rankingScore[i] % 100000 / 10000;
+				int thousand = rankingScore[i] % 10000 / 1000;
+				int hundred = rankingScore[i] % 1000 / 100;
+				int ten = rankingScore[i] % 100 / 10;
+				int one = rankingScore[i] % 10 / 1;
+				sprGameUI->Draw(DirectX::XMFLOAT2(690, regularBlockManager[0].rankingScoreDisplayPosY[i] - 129 - 10), DirectX::XMFLOAT2(160, 96), DirectX::XMFLOAT2(160 * i, 2881 + 150), DirectX::XMFLOAT2(160, 96), DirectX::XMFLOAT2(0, 0), 0.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, regularBlockManager[0].rankingScoreDisplayAlpha[i]));
+				sprGameUI->Draw(DirectX::XMFLOAT2(900 + 0 * 36 * 1.5f, regularBlockManager[0].rankingScoreDisplayPosY[i] - 129 - 5), DirectX::XMFLOAT2(36 * 1.5f, 60 * 1.5f), DirectX::XMFLOAT2(tex.x + 36 * hundredThousand, 816), size, DirectX::XMFLOAT2(0, 0), 0.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, regularBlockManager[0].rankingScoreDisplayAlpha[i]));
+				sprGameUI->Draw(DirectX::XMFLOAT2(900 + 1 * 36 * 1.5f, regularBlockManager[0].rankingScoreDisplayPosY[i] - 129 - 5), DirectX::XMFLOAT2(36 * 1.5f, 60 * 1.5f), DirectX::XMFLOAT2(tex.x + 36 * tenThousand, 816), size, DirectX::XMFLOAT2(0, 0), 0.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, regularBlockManager[0].rankingScoreDisplayAlpha[i]));
+				sprGameUI->Draw(DirectX::XMFLOAT2(900 + 2 * 36 * 1.5f, regularBlockManager[0].rankingScoreDisplayPosY[i] - 129 - 5), DirectX::XMFLOAT2(36 * 1.5f, 60 * 1.5f), DirectX::XMFLOAT2(tex.x + 36 * thousand, 816), size, DirectX::XMFLOAT2(0, 0), 0.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, regularBlockManager[0].rankingScoreDisplayAlpha[i]));
+				sprGameUI->Draw(DirectX::XMFLOAT2(900 + 3 * 36 * 1.5f, regularBlockManager[0].rankingScoreDisplayPosY[i] - 129 - 5), DirectX::XMFLOAT2(36 * 1.5f, 60 * 1.5f), DirectX::XMFLOAT2(tex.x + 36 * hundred, 816), size, DirectX::XMFLOAT2(0, 0), 0.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, regularBlockManager[0].rankingScoreDisplayAlpha[i]));
+				sprGameUI->Draw(DirectX::XMFLOAT2(900 + 4 * 36 * 1.5f, regularBlockManager[0].rankingScoreDisplayPosY[i] - 129 - 5), DirectX::XMFLOAT2(36 * 1.5f, 60 * 1.5f), DirectX::XMFLOAT2(tex.x + 36 * ten, 816), size, DirectX::XMFLOAT2(0, 0), 0.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, regularBlockManager[0].rankingScoreDisplayAlpha[i]));
+				sprGameUI->Draw(DirectX::XMFLOAT2(900 + 5 * 36 * 1.5f, regularBlockManager[0].rankingScoreDisplayPosY[i] - 129 - 5), DirectX::XMFLOAT2(36 * 1.5f, 60 * 1.5f), DirectX::XMFLOAT2(tex.x + 36 * one, 816), size, DirectX::XMFLOAT2(0, 0), 0.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, regularBlockManager[0].rankingScoreDisplayAlpha[i]));
+			}
+		}
+
+		if (regularBlockManager[0].gameResultState == 9/*NEXT_BEHAVIOR*/)
+		{
+			if (regularBlockManager[0].isResultSelectLeft)
+			{
+				sprGameUI->Draw(618, 900/*tryPosX, tryPosY*/, 312, 114, 0, 3136, 312, 114, 0, 0, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+				sprGameUI->Draw(990, 900/*tryPosX + 312, tryPosY*/, 312, 114, 312, 3136 + 114, 312, 114, 0, 0, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+			}
+			else
+			{
+				sprGameUI->Draw(618, 900/*tryPosX, tryPosY*/, 312, 114, 312, 3136, 312, 114, 0, 0, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+				sprGameUI->Draw(990, 900/*tryPosX, tryPosY*/, 312, 114, 0, 3136 + 114, 312, 114, 0, 0, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+			}
+		}
+		sprGameUI->End();
+	}
 }
 
 void GameUI::DrawOfMulti(int _pn)
@@ -581,7 +676,7 @@ void GameUI::DrawOfMulti(int _pn)
 			using namespace DirectX;
 			auto it = drawBlockStatus[i];
 			sprGameUI->Draw(
-				XMFLOAT2(it.pos.x, it.pos.y), it.size,
+				XMFLOAT2(it.pos.x, it.pos.y + regularBlockManager[_pn].shakePos.y), it.size,
 				drawBlockStatus[nextBlockColors[i]].tex, it.size,
 				XMFLOAT2(0.0f, 0.0f), 0.0f,
 				XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -707,15 +802,15 @@ void GameUI::DrawOfMulti(int _pn)
 
 	// Ready Go
 	{
-		if (sceneMultiGame.GetIsGameReady() && _pn == 0)
+		if (sceneMultiGame.GetIsGameReady() && _pn == 1)
 		{
-			if (regularGameUI[0].readyState < 1)
+			if (regularGameUI[1].readyState < 1)
 			{
-				sprGameUI->Draw(660.0f, regularGameUI[0].readyPosY, 576, 150, 0, 3364, 576, 150, 0, 0, 0.0f, 1.0f, 1.0f, 1.0f, regularGameUI[0].readyAlpha);
+				sprGameUI->Draw(660.0f, regularGameUI[1].readyPosY, 576, 150, 0, 3364, 576, 150, 0, 0, 0.0f, 1.0f, 1.0f, 1.0f, regularGameUI[1].readyAlpha);
 			}
 			else
 			{
-				sprGameUI->Draw(660.0f, regularGameUI[0].readyPosY, 576, 158, 0, 3364 + 158, 576, 158, 0, 0, 0.0, 1.0f, 1.0f, 1.0f, regularGameUI[0].readyAlpha);
+				sprGameUI->Draw(660.0f, regularGameUI[1].readyPosY, 576, 158, 0, 3364 + 158, 576, 158, 0, 0, 0.0, 1.0f, 1.0f, 1.0f, regularGameUI[1].readyAlpha);
 			}
 		}
 
@@ -733,6 +828,125 @@ void GameUI::DrawOfMulti(int _pn)
 			DirectX::XMFLOAT2(0.0f, 0.0f), 0.0f, DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
 
 		sprCharacter->End();
+	}
+
+
+	// Resultの描画
+	{
+		sprGameUI->Begin();
+		if (regularBlockManager[0].resultDisplayAlpha != 0.0f)
+		{
+			if (sceneMultiGame.isGameover[0])
+			{
+				if (_pn == 0)
+				{
+					switch (isWinLoseUp)
+					{
+					case true:
+						regularGameUI[0].winLoseAlpha += 0.01f;
+						if (regularGameUI[0].winLoseAlpha >= 1.5f)
+						{
+							isWinLoseUp = false;
+						}
+						break;
+					case false:
+						regularGameUI[0].winLoseAlpha -= 0.01f;
+						if (regularGameUI[0].winLoseAlpha <= 1.0f)
+						{
+							isWinLoseUp = true;
+						}
+						break;
+					}
+				}
+				switch (_pn)
+				{
+				case 0:
+					//Win
+					sprGameUI->Draw(1251, regularBlockManager[0].resultDisplayPos.y, 618, 159, 0, 2348, 618, 159, 0, 0, 0.0, 1.0f, 1.0f, 1.0f, regularBlockManager[0].resultDisplayAlpha);
+					SetDrawBlendMode(BLEND_MODE::ADD);
+					sprGameUI->Draw(1251, regularBlockManager[0].resultDisplayPos.y, 618, 159, 0, 2348, 618, 159, 0, 0, 0.0, regularGameUI[0].winLoseAlpha, regularGameUI[0].winLoseAlpha, regularGameUI[0].winLoseAlpha, regularGameUI[0].winLoseAlpha);
+					SetDrawBlendMode(BLEND_MODE::ALPHA);
+					//Lose
+					sprGameUI->Draw(39, regularBlockManager[1].resultDisplayPos.y, 618, 159, 0, 2348 + 159, 618, 159, 0, 0, 0.0, 1.0f, 1.0f, 1.0f, regularBlockManager[1].resultDisplayAlpha);
+					SetDrawBlendMode(BLEND_MODE::ADD);
+					sprGameUI->Draw(39, regularBlockManager[1].resultDisplayPos.y, 618, 159, 0, 2348 + 159, 618, 159, 0, 0, 0.0, regularGameUI[0].winLoseAlpha, regularGameUI[0].winLoseAlpha, regularGameUI[0].winLoseAlpha, regularGameUI[0].winLoseAlpha);
+					SetDrawBlendMode(BLEND_MODE::ALPHA);
+					break;
+				case 1:
+					break;
+				}
+			}
+			else if (sceneMultiGame.isGameover[1])
+			{
+				if (_pn == 0)
+				{
+					switch (isWinLoseUp)
+					{
+					case true:
+						regularGameUI[0].winLoseAlpha += 0.01f;
+						if (regularGameUI[0].winLoseAlpha >= 1.5f)
+						{
+							isWinLoseUp = false;
+						}
+						break;
+					case false:
+						regularGameUI[0].winLoseAlpha -= 0.01f;
+						if (regularGameUI[0].winLoseAlpha <= 1.0f)
+						{
+							isWinLoseUp = true;
+						}
+						break;
+					}
+				}
+				switch (_pn)
+				{
+				case 0:
+					//Win
+					sprGameUI->Draw(39, regularBlockManager[0].resultDisplayPos.y, 618, 159, 0, 2348, 618, 159, 0, 0, 0.0, 1.0f, 1.0f, 1.0f, regularBlockManager[0].resultDisplayAlpha);
+					SetDrawBlendMode(BLEND_MODE::ADD);
+					sprGameUI->Draw(39, regularBlockManager[0].resultDisplayPos.y, 618, 159, 0, 2348, 618, 159, 0, 0, 0.0, regularGameUI[0].winLoseAlpha, regularGameUI[0].winLoseAlpha, regularGameUI[0].winLoseAlpha, regularGameUI[0].winLoseAlpha);
+					SetDrawBlendMode(BLEND_MODE::ALPHA);
+					break;
+				case 1:
+					//Lose
+					sprGameUI->Draw(1251, regularBlockManager[1].resultDisplayPos.y, 618, 159, 0, 2348 + 159, 618, 159, 0, 0, 0.0, 1.0f, 1.0f, 1.0f, regularBlockManager[1].resultDisplayAlpha);
+					SetDrawBlendMode(BLEND_MODE::ADD);
+					sprGameUI->Draw(1251, regularBlockManager[1].resultDisplayPos.y, 618, 159, 0, 2348 + 159, 618, 159, 0, 0, 0.0, regularGameUI[0].winLoseAlpha, regularGameUI[0].winLoseAlpha, regularGameUI[0].winLoseAlpha, regularGameUI[0].winLoseAlpha);
+					SetDrawBlendMode(BLEND_MODE::ALPHA);
+					break;
+				}
+			}
+		}
+		if (regularBlockManager[0].gameResultState == 5/*NEXT_BEHAVIOR*/ || regularBlockManager[1].gameResultState == 5)
+		{
+			if (sceneMultiGame.isGameover[1])
+			{
+				if (regularBlockManager[0].isResultSelectLeft)
+				{
+					sprGameUI->Draw(618 - 591, 628/*tryPosX, tryPosY*/, 312, 114, 0, 3136, 312, 114, 0, 0, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+					sprGameUI->Draw(990 - 591, 628/*tryPosX + 312, tryPosY*/, 312, 114, 312, 3136 + 114, 312, 114, 0, 0, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+				}
+				else
+				{
+					sprGameUI->Draw(618 - 591, 628/*tryPosX, tryPosY*/, 312, 114, 312, 3136, 312, 114, 0, 0, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+					sprGameUI->Draw(990 - 591, 628/*tryPosX, tryPosY*/, 312, 114, 0, 3136 + 114, 312, 114, 0, 0, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+				}
+			}
+			else if (sceneMultiGame.isGameover[0])
+			{
+				if (regularBlockManager[1].isResultSelectLeft)
+				{
+					sprGameUI->Draw(618 - 591, 628/*tryPosX, tryPosY*/, 312, 114, 0, 3136, 312, 114, 0, 0, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+					sprGameUI->Draw(990 - 591, 628/*tryPosX + 312, tryPosY*/, 312, 114, 312, 3136 + 114, 312, 114, 0, 0, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+				}
+				else
+				{
+					sprGameUI->Draw(618 - 591, 628/*tryPosX, tryPosY*/, 312, 114, 312, 3136, 312, 114, 0, 0, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+					sprGameUI->Draw(990 - 591, 628/*tryPosX, tryPosY*/, 312, 114, 0, 3136 + 114, 312, 114, 0, 0, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+				}
+			}
+		}
+		sprGameUI->End();
 	}
 }
 
@@ -1085,5 +1299,60 @@ void GameUI::UpdateOfGameReady()
 				sceneCPUGame.SetIsGameReady(false);
 		}
 		break;
+	}
+}
+
+
+/*------------------------------------------*/
+// ファイル読み込み関数
+/*------------------------------------------*/
+void GameUI::FileRead()
+{
+	wchar_t filename[] = L"Data/Document/Ranking.txt";
+
+	std::ifstream fin(filename);
+	int numCnt = 0;
+
+	while (fin) {
+		fin >> rankingScore[0] >> rankingScore[1] >> rankingScore[2];
+	}
+	fin.close();
+}
+
+/*------------------------------------------*/
+// ファイル書き込み関数
+/*------------------------------------------*/
+void GameUI::FileWrite()
+{
+	wchar_t filename[] = L"Data/Document/Ranking.txt";
+
+	std::wifstream ifs(filename);
+
+	std::wofstream writeFile;
+	writeFile.open(filename, std::wios::out);
+
+	writeFile << rankingScore[0] << " " << rankingScore[1] << " " << rankingScore[2] << std::endl;
+
+	writeFile.close();
+}
+
+/*------------------------------------------*/
+// ファイルの中身のソート
+/*------------------------------------------*/
+void GameUI::RankingSort()
+{
+	if (rankingScore[2] <= totalScore)
+	{
+		rankingScore[2] = totalScore;
+	}
+	if (rankingScore[1] <= totalScore)
+	{
+		rankingScore[2] = rankingScore[1];
+		rankingScore[1] = totalScore;
+	}
+	if (rankingScore[0] <= totalScore)
+	{
+		rankingScore[1] = rankingScore[0];
+		rankingScore[0] = totalScore;
 	}
 }

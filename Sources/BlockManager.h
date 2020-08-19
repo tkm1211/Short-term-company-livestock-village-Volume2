@@ -58,6 +58,30 @@ public:
 	State status;
 	State lastStatus;
 
+	enum GameResultSingle
+	{
+		Start,
+		Shake,
+		BreakBlocks,
+		DisplayResult,
+		DisplayScore,
+		DisplayRanking,
+		DisplayFirst,
+		DisplaySecond,
+		DisplayThird,
+		ChoiceBehavior,
+	};
+
+	enum GameResultMulti
+	{
+		m_Start,
+		m_Shake,
+		m_RagisterBreakBlock,
+		m_BreakBlock,
+		m_DisplayResult,
+		m_ChoiceBehavior,
+	};
+
 private:
 	std::shared_ptr<SpriteBatch> sprBlock;
 
@@ -72,7 +96,6 @@ private:
 	int pushingCount;
 	int eraseBlockCount;
 	int colorMax = 5;
-	std::array<bool, 2> isGameover;
 
 	// Relation of Obstacle
 	int obstacleNum;		// お邪魔ブロックの数
@@ -86,7 +109,33 @@ private:
 	
 	bool isObstacleKeeping;		// お邪魔をキープ中
 	bool fallObstacleNow;		// お邪魔が降っている最中か
-		
+	
+
+	public:
+	// Relation of GameResult
+	int gameResultState;
+	int fixBlockData[10][6];
+	int breakCnt;
+	int eraseBlockCnt;
+	float resultDisplayAlpha;
+	DirectX::XMFLOAT2 resultDisplayPos;
+	float addResultPosY;
+	DirectX::XMFLOAT2 resultDisplayPosFirst;
+	DirectX::XMFLOAT2 addResultDisplayPosFirst;
+	float scoreDisplayAlpha;
+	float scoreDisplayPosY;
+	float rankingLogoDisplayAlpha;
+	float rankingLogoDisplayPosY;
+	float rankingScoreDisplayAlpha[3];
+	float rankingScoreDisplayPosY[3];
+	float resultDisplayMultiAlpha;
+	int resultDisplayTimer;
+	bool isInitBreak;
+	bool isResultSelectLeft;
+	int resultCnt[3];
+	DirectX::XMFLOAT2	shakePos;
+	DirectX::XMFLOAT2	shakePos2;
+	int					shakeTimer;
 
 public:
 	BlockManager(){}
@@ -105,6 +154,10 @@ public:
 	void ProcessOfSingleGame();
 	// 二人プレイ用の更新
 	void ProcessOfMultiGame(int _pn);
+
+	// ゲームオーバー更新
+	void ProcessOfGameResultOnePlayer();
+	void ProcessOfGameResultTwoPlayer(int _pn);
 
 
 	// ブロックの生成系
@@ -128,7 +181,7 @@ public:
 
 
 	// ブロックのPush Up系
-	void PreparationPushUp();
+	void PreparationPushUp(int _pn);
 	void MovePushUpBoard(int _pn);
 
 	

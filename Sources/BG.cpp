@@ -76,12 +76,12 @@ void BG::DrawOfMulti()
 	sprBG->End();
 
 	// Draw Frame
-	sprRedFrame->Begin();
-	sprRedFrame->Draw(GameUI::MULTIPLAY_ONE_ORIJIN_X - 30, 12 - 48, 750, 1128, 0.0f); // グリッド線と外枠の大きさの差分 / 2
-	sprRedFrame->End();
 	sprBlueFrame->Begin();
-	sprBlueFrame->Draw(GameUI::MULTIPLAY_TWO_ORIJIN_X - 30, 12 - 48, 750, 1128, 0.0f);
+	sprBlueFrame->Draw(GameUI::MULTIPLAY_ONE_ORIJIN_X - 30, 12 - 48, 750, 1128, 0.0f); // グリッド線と外枠の大きさの差分 / 2
 	sprBlueFrame->End();
+	sprRedFrame->Begin();
+	sprRedFrame->Draw(GameUI::MULTIPLAY_TWO_ORIJIN_X - 30, 12 - 48, 750, 1128, 0.0f);
+	sprRedFrame->End();
 
 	// Draw Grid line.
 	sprGrid->Begin();

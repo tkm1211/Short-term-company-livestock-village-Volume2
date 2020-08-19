@@ -452,6 +452,8 @@ void Effect::DrawMiniChar(int _pn)
 
 	constexpr float preExRate = 3.0f;
 
+	int charNum = sceneSelect.GetCharacterNumber(_pn);
+
 	sprMiniChar->Begin();
 	switch (_pn)
 	{
@@ -460,7 +462,7 @@ void Effect::DrawMiniChar(int _pn)
 		sprMiniChar->Draw(
 			miniChar.pos.x + GameUI::MULTIPLAY_ONE_ORIJIN_X, miniChar.pos.y + GameUI::MULTI_CORRECTION_Y, 
 			32 * preExRate, 80 * preExRate, 0.0f,
-			1.0f, 1.0f, 1.0f, 1.0f, miniChar.anmFrm
+			1.0f, 1.0f, 1.0f, 1.0f, charNum * 4 + miniChar.anmFrm
 		);
 		break;
 
@@ -469,7 +471,7 @@ void Effect::DrawMiniChar(int _pn)
 		sprMiniChar->Draw(
 			miniChar.pos.x + GameUI::MULTIPLAY_TWO_ORIJIN_X, miniChar.pos.y + GameUI::MULTI_CORRECTION_Y,
 			32.0f * preExRate, 80.0f * preExRate, 0.0f,
-			1.0f, 1.0f, 1.0f, 1.0f, miniChar.anmFrm
+			1.0f, 1.0f, 1.0f, 1.0f, charNum * 4 + miniChar.anmFrm
 		);
 		break;
 	}

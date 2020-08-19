@@ -26,23 +26,14 @@ void CPU::Init()
 {
 	// Init AI
 	{
-		int powor = sceneSelect.GetCPUPowor();
-		switch (powor)
-		{
-		case 0: // Make EasyAI
-			cpuAI = std::make_unique<EasyAI>();
-			break;
+		// Make EasyAI
+		//cpuAI = std::make_unique<EasyAI>();
 
-		case 1: // Make NormalAI
-			cpuAI = std::make_unique<NormalAI>();
-			break;
+		// Make NormalAI
+		//cpuAI = std::make_unique<NormalAI>();
 
-		case 2: // Make HardAI
-			cpuAI = std::make_unique<HardAI>();
-			break;
-
-		default: break;
-		}
+		// Make HardAI
+		cpuAI = std::make_unique<HardAI>();
 
 
 		cpuAI->Init();
@@ -87,7 +78,6 @@ void CPU::Update()
 	OperateCPU();
 	SetBreakBlock();
 
-#if defined(DEBUG) | defined(_DEBUG)
 	ImGui::Begin("AI Status");
 
 	switch (cpuAI->GetAIStatus())
@@ -125,7 +115,6 @@ void CPU::Update()
 	}
 
 	ImGui::End();
-#endif
 }
 
 void CPU::Draw()

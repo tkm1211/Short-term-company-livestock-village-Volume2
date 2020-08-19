@@ -2,6 +2,7 @@
 
 #include "Scene.h"
 #include "SceneSelect.h"
+#include <array>
 
 #pragma region Single Game
 class SceneSingleGame : public BaseScene
@@ -13,6 +14,8 @@ private:
 	int readyTimer;
 
 	bool isGameReady;
+public:
+	bool isGameover;
 
 public:
 	SceneSingleGame() { /*Init();*/ }
@@ -57,6 +60,7 @@ public:
 	SelectGameMode gameMode;
 
 	bool isGameReady;
+	std::array<bool, 2> isGameover;
 public:
 	SceneMultiGame() { /*Init();*/ }
 	void Init();
