@@ -73,7 +73,11 @@ void SceneTitle::Update()
 
 
 
+#if defined(DEBUG) | defined(_DEBUG)
 	if (GetAsyncKeyState('N') & 1 || pad[0].bAt)
+#else
+	if (pad[0].bAt)
+#endif
 	{
 		PRODUCTION->SetOn(GO_PLAYERSTILE);
 		PRODUCTION->Start();

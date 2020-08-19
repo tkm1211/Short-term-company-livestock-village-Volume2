@@ -269,7 +269,9 @@ void framework::update(float elapsed_time/*Elapsed seconds from last frame*/)
 		if (!isMause) isMause = TRUE;
 		else if (isMause) isMause = FALSE;
 	}*/
+#if defined(DEBUG) | defined(_DEBUG)
 	ShowCursor(isMause);
+#endif
 	if (GetAsyncKeyState(VK_F1) < 0)
 	{
 		PAD.InitInputDevice();
