@@ -12,7 +12,7 @@
 #include <imgui.h>
 #include "Player.h"
 
-#define DEBUG_BLOCKS
+//#define DEBUG_BLOCKS
 
 class Player;
 /*--------------------------------------*/
@@ -64,7 +64,7 @@ void BlockManager::Init(int _pn)
 	colorMax = difficultyColorNum[sceneSelect.GetLevel(_pn) - 1];
 
 	int lastRnd = rand() % colorMax;
-	GenerateBlock(0, 5, lastRnd);
+	GenerateBlock(0, 5, lastRnd, false);
 
 	for (int i = 1; i < 6; i++)
 	{
@@ -74,7 +74,7 @@ void BlockManager::Init(int _pn)
 			rnd = rand() % colorMax;
 		}
 		lastRnd = rnd;
-		GenerateBlock(i, 5, rnd);
+		GenerateBlock(i, 5, rnd, false);
 	}
 
 	SetStartBlocks();
@@ -1188,7 +1188,7 @@ void BlockManager::SetStartBlocks()
 				}
 			}
 			lastColor = color_;
-			GenerateBlock(j, i, color_);
+			GenerateBlock(j, i, color_, false);
 		}
 	}
 }
