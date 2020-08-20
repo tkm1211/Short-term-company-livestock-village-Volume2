@@ -12,7 +12,7 @@
 #include <imgui.h>
 #include "Player.h"
 
-#define DEBUG_BLOCKS
+//#define DEBUG_BLOCKS
 
 class Player;
 /*--------------------------------------*/
@@ -936,15 +936,17 @@ void BlockManager::SetStartBlocks()
 	{
 		int color;
 		int par;
+		NextBlock() :color(-1), par(-1) {}
 	};
-	for (int i = 6; i < 9; i++)
+	for (int i = 6; i < BOARD_COLUMN_MAX; i++)
 	{
 		NextBlock _nb;
+
 		int lastColor = -1;
 		bool isLeft = false;
 		for (int j = 0; j < ROW_MAX; j++)
 		{
-			NextBlock nextBlock[3];
+			NextBlock nextBlock[3]{};
 			bool inData[3] = { false };
 			for (size_t k = 0; k < blocks.size(); k++)
 			{
@@ -1188,7 +1190,7 @@ void BlockManager::SetStartBlocks()
 				}
 			}
 			lastColor = color_;
-			GenerateBlock(j, i, color_);
+			GenerateBlock(j, i, color_, false);
 		}
 	}
 }
