@@ -111,7 +111,9 @@ private:
 	bool fallObstacleNow;		// ‚¨×–‚‚ª~‚Á‚Ä‚¢‚éÅ’†‚©
 	
 
-	public:
+public:
+	bool isAleat;
+
 	// Relation of GameResult
 	int gameResultState;
 	int fixBlockData[10][6];
@@ -211,6 +213,7 @@ public:
 	void	SetStatus(State _n) { lastStatus = status; status = _n; }
 	void	SetIsPushUpByGauge(bool _n) { isPushUpByGauge = _n; }
 	std::array<Block, BLOCK_NUM_MAX> GetBlocks() { return blocks; } // 2020/03/19 : TAKUMA’Ç‰Á
+	bool	GetIsAleat() { return isAleat; }
 
 	int GetFallObstacleNum() {return fallObstacleNum;}
 

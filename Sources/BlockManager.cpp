@@ -298,10 +298,20 @@ void BlockManager::ProcessOfSingleGame()
 		isPushUpByGauge = false;
 	}
 
+	int aleatCnt = 0;
 	for (auto& it : blocks)
 	{
 		it.Update(0);
+		if (0 == it.GetColumn()) {
+			aleatCnt++;
+		}
 	}
+	//if (aleatCnt > 0) {
+	//	isAleat = true;
+	//}
+	//else{
+	//	isAleat = false;
+	//}
 }
 
 /*-------------------------------------------*/

@@ -1166,10 +1166,15 @@ void GameUI::UpdateOfTime()
 void GameUI::UpdateOfCharacter(int _pn)
 {
 	// ó‘Ô‚Ì¦‚·ƒLƒƒƒ‰‚Ì•Ï‰»
-	bool proGameOver = false;//TODO : ‰¼•Ï”
+	bool proGameOver = false;
 	bool proLose = false;
-	bool proAleat = false;
+	bool proAleat = regularBlockManager[_pn].GetIsAleat();
 
+	if (sceneMultiGame.isGameover[0] || sceneMultiGame.isGameover[1])
+	{
+		proGameOver = !sceneMultiGame.isGameover[_pn];
+		proLose = sceneMultiGame.isGameover[_pn];
+	}
 
 	//charTex.tex.y = 0.0f;
 
