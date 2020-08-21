@@ -10,7 +10,7 @@
 
 #include"easing.h"
 #include "SceneManager.h"
-#include "Audio.h"
+#include "Sound.h"
 #include "Resource.h"
 /*------------------------------------------------------*/
 
@@ -164,6 +164,7 @@ void Production::CSOH(int _setStageNum, bool _isDisplayTutorial)
 					{
 						tutorialState++;
 						tutorialTime = 0;
+						pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
 					}
 				}
 				break;

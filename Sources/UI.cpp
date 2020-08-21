@@ -31,6 +31,11 @@ void GameUI::Init(int _pn)
 		sprGameUI = RESOURCE->GetSpriteData(Resource::Texture::UI);
 		//int charNum = _pn;// TODO:仮変数
 		int charNum = sceneSelect.GetCharacterNumber(_pn);
+
+		if (charNum == 7) { // ランダムキャラクターが渡された
+			charNum = rand() % 7;
+		}
+
 		switch (charNum)
 		{
 		case 0:

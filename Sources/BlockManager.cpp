@@ -353,7 +353,6 @@ void BlockManager::ProcessOfMultiGame(int _pn)
 	{
 		it.Update(_pn);
 	}
-
 }
 
 /*-------------------------------------------*/
@@ -584,7 +583,7 @@ void BlockManager::ProcessOfGameResultOnePlayer()
 				if (isResultSelectLeft)
 				{
 					//リトライ
-					pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+					pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
 					//sceneGame.goGameInit = true;
 					//sceneGame.goTitle = false;
 					//sceneGame.isStartInit = true;
@@ -598,7 +597,7 @@ void BlockManager::ProcessOfGameResultOnePlayer()
 				else
 				{
 					//タイトル
-					pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
+					pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
 					//sceneGame.goTitle = true;
 					//sceneGame.goGameInit = false;
 					//sceneGame.isStartInit = true;
@@ -627,6 +626,7 @@ void BlockManager::ProcessOfGameResultTwoPlayer(int _pn)
 	switch (gameResultState)
 	{
 	case GameResultMulti::m_Start:
+		pAudio->Play(Sound::Get()->seHandle[Sound::SE::GAME_END].get());
 		regularGameUI[0].isTimerStop = true;
 		regularGameUI[1].isTimerStop = true;
 		gameResultState++;

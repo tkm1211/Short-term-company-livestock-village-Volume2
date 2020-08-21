@@ -16,6 +16,7 @@ private:
 
 	std::array<int, 2> pushCnt;
 	bool isPauseNow;
+	bool lastIsPauseNow;
 
 	enum SelectMenu
 	{
@@ -33,6 +34,7 @@ public:
 
 	void SetIsPauseNow(bool _n) { isPauseNow = _n; }
 	bool GetisPauseNow() { return isPauseNow; }
+	bool GetLastIsPauseNow() { return lastIsPauseNow; }
 };
 
 extern Pause pause;

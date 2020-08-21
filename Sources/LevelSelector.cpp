@@ -265,6 +265,7 @@ void LevelSelector::Choice()
 	{
 		updateState = UpdateState::EndMove;
 		selectMode = SelectMode::CharacterSelect;
+		pAudio->Play(Sound::Get()->seHandle[Sound::SE::BACK].get());
 	}
 	else
 	{
@@ -516,6 +517,7 @@ void LevelSelector::Operation()
 		{
 			okAlpha[0] = true;
 			decision[0] = false;
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::BACK].get());
 		}
 		if (pad[0].bLEFTs || pad[0].sLX < 0)
 		{
@@ -656,6 +658,7 @@ void LevelSelector::Operation()
 						decision[index - 1] = false;
 					}
 				}
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::BACK].get());
 			}
 			if (pad[0].bLEFTs || pad[0].sLX < 0) 
 			{
@@ -727,6 +730,7 @@ void LevelSelector::Operation()
 				}
 
 				decision[i] = false;
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::BACK].get());
 			}
 
 			if (decision[i]) continue;

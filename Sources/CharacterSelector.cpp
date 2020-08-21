@@ -297,6 +297,7 @@ void CharacterSelector::Choice()
 		updateState = UpdateState::EndMove;
 		selectMode = SelectMode::PlayStyle;
 		endMoveReturn = true;
+		pAudio->Play(Sound::Get()->seHandle[Sound::SE::BACK].get());
 	}
 	else
 	{
@@ -475,6 +476,7 @@ void CharacterSelector::Operation()
 		{
 			okAlpha[0] = true;
 			characterDecision[0] = false;
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::BACK].get());
 		}
 		if (pad[0].bLEFTs || pad[0].sLX < 0)
 		{
@@ -565,6 +567,7 @@ void CharacterSelector::Operation()
 			characterDecision[selectCPUCharacterState] = false;
 			selectCPUCharacterState--;
 			okAlpha[selectCPUCharacterState] = true;
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::BACK].get());
 		}
 		if (pad[0].bLEFTs || pad[0].sLX < 0)
 		{
@@ -646,6 +649,7 @@ void CharacterSelector::Operation()
 			{
 				okAlpha[i] = true;
 				characterDecision[i] = false;
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::BACK].get());
 			}
 			
 			if (characterDecision[i]) continue;

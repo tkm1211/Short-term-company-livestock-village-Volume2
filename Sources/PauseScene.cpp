@@ -5,6 +5,7 @@
 #include "Production.h"
 #include "SceneSelect.h"
 #include "SceneManager.h"
+#include "Sound.h"
 
 Pause pause;
 
@@ -29,6 +30,7 @@ void Pause::Init()
 	pushCnt[1] = 0;
 
 	isPauseNow = false;
+	lastIsPauseNow = false;
 	selectMenu = SelectMenu::BackGame;
 }
 
@@ -39,6 +41,8 @@ void Pause::Uninit()
 
 void Pause::Update()
 {
+	lastIsPauseNow = isPauseNow;
+
 	// êÿÇËë÷Ç¶èàóù
 	{
 		static int cnt = 0;
@@ -64,6 +68,7 @@ void Pause::Update()
 				if (SelectMenu::BackGame < selectMenu)
 				{
 					selectMenu--;
+					pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 				}
 			}
 			if (pushCnt[0] >= 15)
@@ -73,6 +78,7 @@ void Pause::Update()
 					if (SelectMenu::BackGame < selectMenu)
 					{
 						selectMenu--;
+						pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 					}
 				}
 			}
@@ -87,6 +93,7 @@ void Pause::Update()
 				if (selectMenu < SelectMenu::GoTitle)
 				{
 					selectMenu++;
+					pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 				}
 			}
 			if (pushCnt[1] >= 15)
@@ -96,6 +103,7 @@ void Pause::Update()
 					if (selectMenu < SelectMenu::GoTitle)
 					{
 						selectMenu++;
+						pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 					}
 				}
 			}
@@ -129,6 +137,7 @@ void Pause::Update()
 			default:
 				break;
 			}
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
 		}
 	}
 
@@ -137,6 +146,7 @@ void Pause::Update()
 		if (pad[0].bBt)
 		{
 			isPauseNow = false;
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::BACK].get());
 		}
 	}
 

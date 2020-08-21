@@ -7,6 +7,7 @@
 #include "BlockManager.h"
 #include "UI.h"
 #include "Sound.h"
+#include "PauseScene.h"
 
 class BlockManager;
 /*--------------------------------------*/
@@ -306,6 +307,7 @@ void Player::SetBreakBlock(int _pn)
 
 	if (pad[_pn].bAt || pad[_pn].bBt || pad[_pn].bXt || pad[_pn].bYt)
 	{
+		if (pause.GetLastIsPauseNow())return;// ポーズから復帰後すぐは反応しないように
 		animFrame = 1;
 		{
 			if (regularBlockManager[_pn].BreakBlock(row, column))
