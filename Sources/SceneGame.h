@@ -12,8 +12,9 @@ public:
 private:
 
 	int readyTimer;
-
 	bool isGameReady;
+
+	int bgmRnd;
 public:
 	bool isGameover;
 
@@ -40,6 +41,7 @@ public:
 private:
 	bool isGameReady;
 
+	int bgmRnd;
 public:
 	SceneCPUGame() { /*Init();*/ }
 	void Init();
@@ -56,6 +58,9 @@ public:
 #pragma region Multi Game
 class SceneMultiGame : public BaseScene
 {
+private:
+	int bgmRnd;
+
 public:
 	SelectGameMode gameMode;
 

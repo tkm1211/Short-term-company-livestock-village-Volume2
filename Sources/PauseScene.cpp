@@ -42,7 +42,7 @@ void Pause::Update()
 	// ‰¼‚Ì1Ø‚è‘Ö‚¦ˆ—
 	{
 		static int cnt = 0;
-		if (GetKeyState('P') < 0)
+		if (pad[0].bSTARTt)
 		{
 			if (++cnt == 1)
 			{
@@ -118,8 +118,10 @@ void Pause::Update()
 			case SelectMenu::Restart:
 				if (IF_SINGLE_NOW)
 					PRODUCTION->SetOn(GO_SINGLEGAME);
-				else
+				else if(sceneSelect.JudgeGameMode(SelectGameMode::Multi))
 					PRODUCTION->SetOn(GO_MULTIGAME);
+				else
+					PRODUCTION->SetOn(GO_CPUGAME);
 				break;
 			case SelectMenu::GoTitle:
 				PRODUCTION->SetOn(GO_TITLE);

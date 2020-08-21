@@ -7,7 +7,9 @@
 #include "Effect.h"
 #include "Production.h"
 #include "SceneManager.h"
+#include "PauseScene.h"
 #include "input_device.h"
+#include "Sound.h"
 
 
 /*--------------------------------------*/
@@ -33,9 +35,26 @@ void SceneCPUGame::Init()
 	{
 		regularEffects[i].Init(i);
 	}
+	pause.Init();
 
-
+	sceneMultiGame.isGameover[0] = sceneMultiGame.isGameover[1] = false;
 	isGameReady = true;
+
+	// Play BGM
+	bgmRnd = rand() % Sound::GAME_BGM_MAX;
+	switch (bgmRnd)
+	{
+	case 0:
+		pAudio->Play(Sound::Get()->bgmHandle[Sound::BGM::GAME].get(), true);
+		break;
+	case 1:
+		pAudio->Play(Sound::Get()->bgmHandle[Sound::BGM::GAME2].get(), true);
+		break;
+	case 2:
+		pAudio->Play(Sound::Get()->bgmHandle[Sound::BGM::GAME3].get(), true);
+		break;
+	}
+
 }
 
 void SceneCPUGame::Uninit()
@@ -49,6 +68,24 @@ void SceneCPUGame::Uninit()
 		regularGameUI[i].Uninit();
 		regularEffects[i].Uninit(i);
 	}
+	pause.Uninit();
+
+	// Stop BGM
+	switch (bgmRnd)
+	{
+	case 0:
+		pAudio->Stop(Sound::Get()->bgmHandle[Sound::BGM::GAME].get());
+		pAudio->DeleteSourceVoice(Sound::Get()->bgmHandle[Sound::BGM::GAME].get());
+		break;
+	case 1:
+		pAudio->Stop(Sound::Get()->bgmHandle[Sound::BGM::GAME2].get());
+		pAudio->DeleteSourceVoice(Sound::Get()->bgmHandle[Sound::BGM::GAME2].get());
+		break;
+	case 2:
+		pAudio->Stop(Sound::Get()->bgmHandle[Sound::BGM::GAME3].get());
+		pAudio->DeleteSourceVoice(Sound::Get()->bgmHandle[Sound::BGM::GAME3].get());
+		break;
+	}
 }
 
 void SceneCPUGame::Update()
@@ -60,22 +97,26 @@ void SceneCPUGame::Update()
 		PRODUCTION->CSOH(SCENE_MANAGER->TITLE);
 
 
-	BG_INSTANCE->Update();
-	for (int i = 0; i < 2; i++)
+	pause.Update();
+	if (!pause.GetisPauseNow())
 	{
-		regularGameUI[i].Update(i);
-	}
+		BG_INSTANCE->Update();
+		for (int i = 0; i < 2; i++)
+		{
+			regularGameUI[i].Update(i);
+		}
 
-	regularPlayer[0].Update(0);
-	regularCPU.Update();
+		regularPlayer[0].Update(0);
+		regularCPU.Update();
 
-	for (int i = 0; i < 2; i++)
-	{
-		regularBlockManager[i].Update(i);
-	}
-	for (int i = 0; i < 2; i++)
-	{
-		regularEffects[i].Update(i);
+		for (int i = 0; i < 2; i++)
+		{
+			regularBlockManager[i].Update(i);
+		}
+		for (int i = 0; i < 2; i++)
+		{
+			regularEffects[i].Update(i);
+		}
 	}
 
 
@@ -109,6 +150,8 @@ void SceneCPUGame::Draw()
 	{
 		regularEffects[i].DrawOfMulti(i);
 	}
+
+	pause.Draw();
 
 	if (PRODUCTION->CheckFlag(GO_CPUGAME) || PRODUCTION->CheckFlag(GO_TITLE))
 	{

@@ -44,7 +44,21 @@ void SceneMultiGame::Init()
 	isGameover[1] = false;
 
 	// Play BGM
-	pAudio->Play(Sound::Get()->bgmHandle[Sound::BGM::GAME2].get(), true);
+	bgmRnd = rand() % Sound::GAME_BGM_MAX;
+	switch (bgmRnd)
+	{
+	case 0:
+		pAudio->Play(Sound::Get()->bgmHandle[Sound::BGM::GAME].get(), true);
+		break;
+
+	case 1:
+		pAudio->Play(Sound::Get()->bgmHandle[Sound::BGM::GAME2].get(), true);
+		break;
+
+	case2:
+		pAudio->Play(Sound::Get()->bgmHandle[Sound::BGM::GAME3].get(), true);
+		break;
+	}
 }
 
 void SceneMultiGame::Uninit()
@@ -60,8 +74,23 @@ void SceneMultiGame::Uninit()
 	pause.Uninit();
 
 	// Stop BGM
-	pAudio->Stop(Sound::Get()->bgmHandle[Sound::BGM::GAME2].get());
-	pAudio->DeleteSourceVoice(Sound::Get()->bgmHandle[Sound::BGM::GAME2].get());
+	switch (bgmRnd)
+	{
+	case 0:
+		pAudio->Stop(Sound::Get()->bgmHandle[Sound::BGM::GAME].get());
+		pAudio->DeleteSourceVoice(Sound::Get()->bgmHandle[Sound::BGM::GAME].get());
+		break;
+
+	case 1:
+		pAudio->Stop(Sound::Get()->bgmHandle[Sound::BGM::GAME2].get());
+		pAudio->DeleteSourceVoice(Sound::Get()->bgmHandle[Sound::BGM::GAME2].get());
+		break;
+
+	case 2:
+		pAudio->Stop(Sound::Get()->bgmHandle[Sound::BGM::GAME3].get());
+		pAudio->DeleteSourceVoice(Sound::Get()->bgmHandle[Sound::BGM::GAME3].get());
+		break;
+	}
 }
 
 void SceneMultiGame::Update()

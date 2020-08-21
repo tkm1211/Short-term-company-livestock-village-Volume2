@@ -19,7 +19,8 @@ const wchar_t* address_of_se[] =
 	L"Data/Sound/SE/logo.wav",
 	L"Data/Sound/SE/logocan.wav",
 	L"Data/Sound/SE/LandingS.wav",
-	L"Data/Sound/SE/LandingL.wav"
+	L"Data/Sound/SE/LandingL.wav",
+	L"Data/Sound/SE/back.wav"
 };
 
 const wchar_t* address_of_bgm[] =
@@ -28,6 +29,7 @@ const wchar_t* address_of_bgm[] =
 	L"Data/Sound/BGM/select.wav",
 	L"Data/Sound/BGM/game.wav",
 	L"Data/Sound/BGM/game2.wav",
+	L"Data/Sound/BGM/game3.wav"
 };
 
 Sound* Sound::instance;

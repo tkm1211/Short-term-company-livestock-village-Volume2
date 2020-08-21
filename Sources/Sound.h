@@ -7,6 +7,8 @@
 class Sound
 {
 public:
+	static constexpr int GAME_BGM_MAX = 3;
+
 	enum SE
 	{
 		BREAK,
@@ -27,6 +29,7 @@ public:
 		LOGO_CAN,
 		LANDING_SMALL_OBSTACLE,
 		LANDING_LARGE_OBSTACLE,
+		BACK,
 		SE_END,
 	};
 	enum BGM
@@ -35,6 +38,7 @@ public:
 		SELECT,
 		GAME,
 		GAME2,
+		GAME3,
 		BGM_END,
 	};
 

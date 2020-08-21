@@ -888,9 +888,19 @@ void BlockManager::ProcessOfGameResultTwoPlayer(int _pn)
 				{
 					//ƒŠƒgƒ‰ƒC
 					pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
-					if (!PRODUCTION->CheckFlag(GO_MULTIGAME)) {
-						PRODUCTION->SetOn(GO_MULTIGAME);
-						PRODUCTION->Start();
+					if (sceneSelect.JudgeGameMode(SelectGameMode::CPU) && _pn == 0)
+					{
+						if (!PRODUCTION->CheckFlag(GO_CPUGAME)) {
+							PRODUCTION->SetOn(GO_CPUGAME);
+							PRODUCTION->Start();
+						}
+					}
+					else if(sceneSelect.JudgeGameMode(SelectGameMode::Multi))
+					{
+						if (!PRODUCTION->CheckFlag(GO_MULTIGAME)) {
+							PRODUCTION->SetOn(GO_MULTIGAME);
+							PRODUCTION->Start();
+						}
 					}
 				}
 				else

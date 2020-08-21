@@ -802,7 +802,7 @@ void GameUI::DrawOfMulti(int _pn)
 
 	// Ready Go
 	{
-		if (sceneMultiGame.GetIsGameReady() && _pn == 1)
+		if (sceneMultiGame.GetIsGameReady() && _pn == 1 || sceneCPUGame.GetIsGameReady() && _pn == 1)
 		{
 			if (regularGameUI[1].readyState < 1)
 			{
