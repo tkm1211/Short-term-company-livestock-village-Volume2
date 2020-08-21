@@ -18,10 +18,10 @@ std::array<Effect, 2> regularEffects;
 /*--------------------------------------*/
 void Effect::Init(int _pn)
 {
-	sprDeadLine = std::make_unique<SpriteBatch>(L"Data/effect.png", 1, DirectX::XMFLOAT2(684, 1032));
-	sprParticle = std::make_unique<SpriteBatch>(L"Data/particle.png", 200, DirectX::XMFLOAT2(24, 24));
-	sprSmokeS = std::make_unique<SpriteBatch>(L"Data/SmokeS.png", 10, DirectX::XMFLOAT2(276, 114));
-	sprSmokeL = std::make_unique<SpriteBatch>(L"Data/SmokeL.png", 10, DirectX::XMFLOAT2(582, 114));
+	sprDeadLine = std::make_unique<SpriteBatch>(L"Data/Image/Effect/effect.png", 1, DirectX::XMFLOAT2(684, 1032));
+	sprParticle = std::make_unique<SpriteBatch>(L"Data/Image/Effect/particle.png", 200, DirectX::XMFLOAT2(24, 24));
+	sprSmokeS = std::make_unique<SpriteBatch>(L"Data/Image/Effect/SmokeS.png", 10, DirectX::XMFLOAT2(276, 114));
+	sprSmokeL = std::make_unique<SpriteBatch>(L"Data/Image/Effect/SmokeL.png", 10, DirectX::XMFLOAT2(582, 114));
 	sprMiniChar = RESOURCE->GetSpriteData(Resource::Texture::MiniCharacter);
 	sprMiniBlock = RESOURCE->GetSpriteData(Resource::Texture::MiniBlock);
 #if 0

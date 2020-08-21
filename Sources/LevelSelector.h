@@ -42,7 +42,7 @@ private:
 	const float characterSizeX = 416.0f;
 	const float characterSizeY = 416.0f;
 
-	int moveCntMax = 60;
+	int moveCntMax = 40;
 	float singleMoveSpeedY = 9.53333f;
 	float multiMoveSpeedY = 12.5f;
 	const float cpuCharacterMoveSpeedX = 11.0333f;
@@ -59,7 +59,7 @@ private:
 	const int okWaitCntMax = 20;
 	const float okLeftPosX = 336.0f;
 	const float okRightPosX = 1446.0f;
-	const float okPosY = 508.0f;
+	const float okPosY = 535.0f;
 	const float okGoalPosY = 366.0f;
 	const float okSizeX = 138.0f;
 	const float okSizeY = 72.0f;

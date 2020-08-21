@@ -261,7 +261,7 @@ bool LevelSelector::EndMove()
 
 void LevelSelector::Choice()
 {
-	if (pad[0].bBt && !decision[0] && !decision[1] && !okEnd[0] && !okEnd[1])
+	if (pad[0].bBt && !decision[0] && !decision[1] && !okEnd[0] && !okEnd[1] && !okAlphaFlg[0] && !okAlphaFlg[1])
 	{
 		updateState = UpdateState::EndMove;
 		selectMode = SelectMode::CharacterSelect;
@@ -646,12 +646,15 @@ void LevelSelector::Operation()
 			{
 				if (0 < index)
 				{
-					operationLock = true;
-					changeCPUlevel = true;
-					changeCPUReturn = true;
+					//if (decision[index - 1])
+					{
+						operationLock = true;
+						changeCPUlevel = true;
+						changeCPUReturn = true;
 
-					okAlpha[index - 1] = true;
-					decision[index - 1] = false;
+						okAlpha[index - 1] = true;
+						decision[index - 1] = false;
+					}
 				}
 			}
 			if (pad[0].bLEFTs || pad[0].sLX < 0) 

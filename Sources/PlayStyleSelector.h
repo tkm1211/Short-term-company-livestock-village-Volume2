@@ -25,7 +25,7 @@ private:
 	static constexpr float frameMToLMoveY = (415.0f - 295.0f);
 	static constexpr float frameMScale = 120.0f;
 	const int moveCntMax = 20;
-	const int endMoveCntMax = 60;
+	const int endMoveCntMax = 40;
 
 	const float endMoveSpeedY = 15.0f;
 	const float frameSEndMoveSpeedY = 3.73333f;
