@@ -357,7 +357,7 @@ void PlayStyleSelector::Draw()
 		{
 			sprSelectArrow->Begin();
 			sprSelectArrow->Draw(arrowPos[0].x, arrowPos[0].y, 54.0f, 138.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0);
-			sprSelectArrow->Draw(arrowPos[0].x, arrowPos[0].y, 54.0f, 138.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0);
+			//sprSelectArrow->Draw(arrowPos[0].x, arrowPos[0].y, 54.0f, 138.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0);
 			sprSelectArrow->End();
 		}
 		SetDrawBlendMode(BLEND_MODE::ALPHA);
@@ -375,7 +375,7 @@ void PlayStyleSelector::Draw()
 		{
 			sprSelectArrow->Begin();
 			sprSelectArrow->Draw(arrowPos[1].x, arrowPos[1].y, 54.0f, 138.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1);
-			sprSelectArrow->Draw(arrowPos[1].x, arrowPos[1].y, 54.0f, 138.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1);
+			//sprSelectArrow->Draw(arrowPos[1].x, arrowPos[1].y, 54.0f, 138.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1);
 			sprSelectArrow->End();
 		}
 		SetDrawBlendMode(BLEND_MODE::ALPHA);
