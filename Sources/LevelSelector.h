@@ -52,7 +52,7 @@ private:
 	const float stringEndPosX = 240.0f;
 	const float stringEndPosY = 72.0f;
 	const float stringMaxMove = 10.0f;
-	const float stringSpeed = 0.1f;
+	const float stringSpeed = 0.05f;
 
 	const int okMoveCntMax = 30;
 	const int okAlphaCntMax = 15;
