@@ -306,13 +306,18 @@ void Player::SetBreakBlock(int _pn)
 
 	if (pad[_pn].bAt || pad[_pn].bBt || pad[_pn].bXt || pad[_pn].bYt)
 	{
-			// TODO : Correspond Multi Player
+		animFrame = 1;
 		{
 			if (regularBlockManager[_pn].BreakBlock(row, column))
 			{
+				animFrame = 2;
 				regularGameUI[_pn].SetIsTimerStop(true);
 				pAudio->Play(Sound::Get()->seHandle[Sound::SE::DESTRUCTION1].get());
 			}
 		}
+	}
+	else
+	{
+		animFrame = 0;
 	}
 }

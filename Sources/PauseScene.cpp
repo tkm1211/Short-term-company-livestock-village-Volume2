@@ -39,7 +39,7 @@ void Pause::Uninit()
 
 void Pause::Update()
 {
-	// ‰¼‚Ì1Ø‚è‘Ö‚¦ˆ—
+	// Ø‚è‘Ö‚¦ˆ—
 	{
 		static int cnt = 0;
 		if (pad[0].bSTARTt)
@@ -129,6 +129,14 @@ void Pause::Update()
 			default:
 				break;
 			}
+		}
+	}
+
+	// –ß‚é
+	{
+		if (pad[0].bBt)
+		{
+			isPauseNow = false;
 		}
 	}
 
