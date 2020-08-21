@@ -55,7 +55,7 @@ void SceneMultiGame::Init()
 		pAudio->Play(Sound::Get()->bgmHandle[Sound::BGM::GAME2].get(), true);
 		break;
 
-	case2:
+	case 2:
 		pAudio->Play(Sound::Get()->bgmHandle[Sound::BGM::GAME3].get(), true);
 		break;
 	}
