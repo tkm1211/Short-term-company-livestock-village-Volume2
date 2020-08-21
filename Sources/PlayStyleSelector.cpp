@@ -153,9 +153,9 @@ bool PlayStyleSelector::EndMove()
 void PlayStyleSelector::Choice()
 {
 #if defined(DEBUG) | defined(_DEBUG)
-	if ((pad[0].bAt || GetAsyncKeyState('N') & 1) && !selectMoveLeft && !selectMoveRight)
+	if ((pad[0].bAt || GetAsyncKeyState('N') & 1) && !selectMoveLeft && !selectMoveRight && styleNum < styleNumMax - 1)
 #else
-	if(pad[0].bAt && !selectMoveLeft && !selectMoveRight)
+	if(pad[0].bAt && !selectMoveLeft && !selectMoveRight && styleNum < styleNumMax - 1)
 #endif
 	{
 		pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
