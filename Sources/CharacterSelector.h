@@ -35,7 +35,7 @@ private:
 	const float stringEndPosX = 240.0f;
 	const float stringEndPosY = 72.0f;
 	const float stringMaxMove = 10.0f;
-	const float stringSpeed = 0.1f;
+	const float stringSpeed = 0.05f;
 
 	const int moveCntMax = 60;
 	const float moveSpeedX = 11.0333f;
@@ -46,7 +46,7 @@ private:
 	const int okWaitCntMax = 20;
 	const float okLeftPosX = 336.0f;
 	const float okRightPosX = 1446.0f;
-	const float okPosY = 508.0f;
+	const float okPosY = 515.0f;
 	const float okGoalPosY = 366.0f;
 	const float okSizeX = 138.0f;
 	const float okSizeY = 72.0f;

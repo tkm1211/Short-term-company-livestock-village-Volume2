@@ -632,21 +632,24 @@ void CharacterSelector::Operation()
 	case SelectGameMode::Multi:
 		for (int i = 0; i < 2; i++)
 		{
-			if (pad[i].bAt)
+			if (pad[i].bAt && !characterDecision[i])
 			{
 				okBegin[i] = true;
 				okPos[i].y = okPosY;
 				okAlpha[i] = 1.0f;
 
 				characterDecision[i] = true;
-				if (i == 1) operationLock = true;
+				if (characterDecision[0] && characterDecision[1]) operationLock = true;
 				pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
 			}
-			if (pad[i].bBt)
+			if (pad[i].bBt && characterDecision[i])
 			{
 				okAlpha[i] = true;
 				characterDecision[i] = false;
 			}
+			
+			if (characterDecision[i]) continue;
+
 			if (pad[i].bLEFTs || pad[i].sLX < 0)
 			{
 				if (0 < selectCharacterNum[i])

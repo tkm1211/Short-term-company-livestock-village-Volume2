@@ -129,6 +129,8 @@ void SceneSelect::Update()
 			{
 				changeSceneIndex = selectorIndex;
 				selectorIndex = previousSelectorIndex;
+				PRODUCTION->SetOn(GO_PLAYERSELECT);
+				PRODUCTION->Start();
 			}
 		}
 	}

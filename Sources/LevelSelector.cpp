@@ -705,17 +705,17 @@ void LevelSelector::Operation()
 	case SelectGameMode::Multi:
 		for (int i = 0; i < 2; i++)
 		{
-			if (pad[i].bAt)
+			if (pad[i].bAt && !decision[i])
 			{
 				okBegin[i] = true;
 				okPos[i].y = okPosY;
 				okAlpha[i] = 1.0f;
 
 				decision[i] = true;
-				if (i = 1) operationLock = true;
+				if (decision[0] && decision[1]) operationLock = true;
 				pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
 			}
-			if (pad[i].bBt)
+			if (pad[i].bBt && decision[i])
 			{
 				if (0 < i)
 				{
@@ -725,6 +725,9 @@ void LevelSelector::Operation()
 
 				decision[i] = false;
 			}
+
+			if (decision[i]) continue;
+
 			if (pad[i].bLEFTs || pad[i].sLX < 0) 
 			{
 				if (levelMin < levelNum[i])
