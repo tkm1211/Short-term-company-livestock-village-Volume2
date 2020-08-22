@@ -21,6 +21,7 @@ public:
 		Grid,
 		RedFrame,
 		BlueFrame,
+		CPUFrame,
 		UI,
 		CPU_UI,
 		Block,
@@ -58,6 +59,7 @@ private:
 	std::shared_ptr<SpriteBatch> sprGrid;
 	std::shared_ptr<SpriteBatch> sprRedFrame;
 	std::shared_ptr<SpriteBatch> sprBlueFrame;
+	std::shared_ptr<SpriteBatch> sprCPUFrame;
 	std::shared_ptr<SpriteBatch> sprUI;
 	std::shared_ptr<SpriteBatch> sprCPUUI;
 	std::shared_ptr<SpriteBatch> sprBlock;

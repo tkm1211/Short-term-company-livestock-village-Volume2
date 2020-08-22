@@ -2,6 +2,7 @@
 
 #include "UI.h"
 #include "Resource.h"
+#include "SceneManager.h"
 /*--------------------------------------*/
 //	Global area
 /*--------------------------------------*/
@@ -17,8 +18,14 @@ void BG::Init()
 	sprBG = RESOURCE->GetSpriteData(Resource::Texture::BG);
 	sprPlayerBack = RESOURCE->GetSpriteData(Resource::Texture::PlayerBack);
 	sprGrid = RESOURCE->GetSpriteData(Resource::Texture::Grid);
-	sprRedFrame = RESOURCE->GetSpriteData(Resource::Texture::RedFrame);
 	sprBlueFrame = RESOURCE->GetSpriteData(Resource::Texture::BlueFrame);
+
+	if (sceneSelect.JudgeGameMode(SelectGameMode::CPU)) {
+		sprRedFrame = RESOURCE->GetSpriteData(Resource::Texture::CPUFrame);
+	}
+	else {
+		sprRedFrame = RESOURCE->GetSpriteData(Resource::Texture::RedFrame);
+	}
 }
 
 void BG::Uninit()

@@ -28,7 +28,12 @@ void GameUI::Init(int _pn)
 {
 	// 画像データのロード
 	{
-		sprGameUI = RESOURCE->GetSpriteData(Resource::Texture::UI);
+		if (sceneSelect.JudgeGameMode(SelectGameMode::CPU) && _pn) {
+			sprGameUI = RESOURCE->GetSpriteData(Resource::Texture::CPU_UI);
+		}
+		else {
+			sprGameUI = RESOURCE->GetSpriteData(Resource::Texture::UI);
+		}
 		//int charNum = _pn;// TODO:仮変数
 		charNum = sceneSelect.GetCharacterNumber(_pn);
 
