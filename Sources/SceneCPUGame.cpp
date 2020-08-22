@@ -46,12 +46,15 @@ void SceneCPUGame::Init()
 	{
 	case 0:
 		pAudio->Play(Sound::Get()->bgmHandle[Sound::BGM::GAME].get(), true);
+		pAudio->SetVolume(Sound::Get()->bgmHandle[Sound::BGM::GAME].get(), 1.2f);
 		break;
 	case 1:
 		pAudio->Play(Sound::Get()->bgmHandle[Sound::BGM::GAME2].get(), true);
+		pAudio->SetVolume(Sound::Get()->bgmHandle[Sound::BGM::GAME2].get(), 1.2f);
 		break;
 	case 2:
 		pAudio->Play(Sound::Get()->bgmHandle[Sound::BGM::GAME3].get(), true);
+		pAudio->SetVolume(Sound::Get()->bgmHandle[Sound::BGM::GAME3].get(), 1.2f);
 		break;
 	}
 

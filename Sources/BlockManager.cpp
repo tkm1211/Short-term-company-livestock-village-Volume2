@@ -146,7 +146,6 @@ void BlockManager::InitializeVariables(int _pn)
 		rankingScoreDisplayAlpha[i] = 0.0f;
 		rankingScoreDisplayPosY[i] = 0.0f;
 	}
-
 }
 
 
@@ -593,7 +592,6 @@ void BlockManager::ProcessOfGameResultOnePlayer()
 				if (isResultSelectLeft)
 				{
 					//リトライ
-					pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
 					//sceneGame.goGameInit = true;
 					//sceneGame.goTitle = false;
 					//sceneGame.isStartInit = true;
@@ -601,13 +599,13 @@ void BlockManager::ProcessOfGameResultOnePlayer()
 					if (!PRODUCTION->CheckFlag(GO_SINGLEGAME)) {
 						PRODUCTION->SetOn(GO_SINGLEGAME);
 						PRODUCTION->Start();
+						pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
 					}
 
 				}
 				else
 				{
 					//タイトル
-					pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
 					//sceneGame.goTitle = true;
 					//sceneGame.goGameInit = false;
 					//sceneGame.isStartInit = true;
@@ -615,6 +613,7 @@ void BlockManager::ProcessOfGameResultOnePlayer()
 					if (!PRODUCTION->CheckFlag(GO_TITLE)) {
 						PRODUCTION->SetOn(GO_TITLE);
 						PRODUCTION->Start();
+						pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
 					}
 
 				}
@@ -897,12 +896,12 @@ void BlockManager::ProcessOfGameResultTwoPlayer(int _pn)
 				if (isResultSelectLeft)
 				{
 					//リトライ
-					pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
 					if (sceneSelect.JudgeGameMode(SelectGameMode::CPU) && _pn == 0)
 					{
 						if (!PRODUCTION->CheckFlag(GO_CPUGAME)) {
 							PRODUCTION->SetOn(GO_CPUGAME);
 							PRODUCTION->Start();
+						pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
 						}
 					}
 					else if(sceneSelect.JudgeGameMode(SelectGameMode::Multi))
@@ -916,10 +915,10 @@ void BlockManager::ProcessOfGameResultTwoPlayer(int _pn)
 				else
 				{
 					//タイトル
-					pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
 					if (!PRODUCTION->CheckFlag(GO_TITLE)) {
 						PRODUCTION->SetOn(GO_TITLE);
 						PRODUCTION->Start();
+						pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
 					}
 				}
 			}

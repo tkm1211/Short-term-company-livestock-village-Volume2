@@ -452,7 +452,7 @@ void Effect::DrawMiniChar(int _pn)
 
 	constexpr float preExRate = 3.0f;
 
-	int charNum = sceneSelect.GetCharacterNumber(_pn);
+	int charNum = regularGameUI[_pn].GetCharNum();
 
 	sprMiniChar->Begin();
 	switch (_pn)

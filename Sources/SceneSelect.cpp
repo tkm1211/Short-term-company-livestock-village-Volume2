@@ -59,6 +59,7 @@ void SceneSelect::Init()
 
 	// Play BGM
 	pAudio->Play(Sound::Get()->bgmHandle[Sound::BGM::SELECT].get(), true);
+	pAudio->SetVolume(Sound::Get()->bgmHandle[Sound::BGM::SELECT].get(), 1.2f);
 }
 
 template<class T>

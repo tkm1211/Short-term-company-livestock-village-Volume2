@@ -71,6 +71,7 @@ public:
 	TexData charTex;
 	int		charAnimCount;
 	int		charAnimFrame;
+	int		charNum;
 #pragma endregion
 
 #pragma region ReadyŠÖŒW
@@ -189,6 +190,7 @@ public:
 	void				SetIsTimerStop(bool _n) { isTimerStop = _n; }
 	bool				GetIsGaugeMax() { return isGaugeMax; }
 	void				SetIsGaugeMax(bool _n) { isGaugeMax = _n; }
+	int					GetCharNum() { return charNum; }
 #pragma endregion
 };
 

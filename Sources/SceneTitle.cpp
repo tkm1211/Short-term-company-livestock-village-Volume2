@@ -54,6 +54,7 @@ void SceneTitle::Init()
 
 	// Play BGM
 	pAudio->Play(Sound::Get()->bgmHandle[Sound::BGM::TITLE].get(), true);
+	pAudio->SetVolume(Sound::Get()->bgmHandle[Sound::BGM::TITLE].get(), 1.2f);
 
 	// ‰¼‚É‚±‚±‚Å‰Šú‰»‚·‚é
 	sceneSingleGame.isGameover = false;
