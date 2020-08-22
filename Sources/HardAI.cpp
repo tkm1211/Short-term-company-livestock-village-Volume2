@@ -354,8 +354,32 @@ void HardAI::CheckBlockToBreak(int& row, int& column)
 	// トップにブロックが到達していた場合、ブロック変更
 	if (searchHit)
 	{
+		searchHit = false;
 		row = searchHitRow;
-		column = 8;
+
+		auto blocks = regularBlockManager[1].GetBlocks();
+		for (int i = 0; i < regularBlockManager[1].BLOCK_NUM_MAX; i++)
+		{
+			if (7 <= blocks[i].GetRow()) continue;
+			if (blocks[i].GetColumn() == -1) continue;
+			if (searchHitRow != blocks[i].GetRow()) continue;
+			if (blocks[i].GetColor() == BlockManager::Color::Obstacle) continue;
+
+			for (int j = 0; j < regularBlockManager[1].BLOCK_NUM_MAX; j++)
+			{
+				if (i == j) continue;
+				if (blocks[j].GetColumn() == -1) continue;
+				if (searchHitRow != blocks[j].GetRow()) continue;
+				if (blocks[i].GetColumn() + 2 == blocks[j].GetColumn() && blocks[i].GetColor() == blocks[j].GetColor())
+				{
+					searchHit = true;
+					column = blocks[i].GetColumn() + 1;
+					break;
+				}
+			}
+
+			if (searchHit) break;
+		}
 	}
 }
 
