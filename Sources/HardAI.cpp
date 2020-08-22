@@ -278,6 +278,39 @@ void HardAI::CheckBlockToBreak(int& row, int& column)
 		}
 	}
 
+	//// トップにブロックが到達していたらRow番号だけ取得
+	//bool searchHit = false;
+	//int searchHitRow[6] = { -1, -1, -1, -1, -1, -1 };
+	//{
+	//	for (auto blocks : regularBlockManager[1].GetBlocks())
+	//	{
+	//		int comlumn = blocks.GetColumn();
+
+	//		if (comlumn == 0)
+	//		{
+	//			searchHit = true;
+	//			searchHitRow[blocks.GetRow()] = blocks.GetRow();
+	//		}
+	//	}
+	//}
+
+	//// トップにブロックが到達していた場合、縦一列のブロック全てのブロックポイント+５
+	//if (searchHit)
+	//{
+	//	for (int i = 0; i < cheakBlocksNum; i++)
+	//	{
+	//		for (int j = 0; j < 6; j++)
+	//		{
+	//			if (searchHitRow[j] == -1) continue;
+
+	//			if (cheakBlocks[i].breakBlock.block->GetRow() == searchHitRow[j])
+	//			{
+	//				cheakBlocks[i].breakBlock.breakPoint += 5;
+	//			}
+	//		}
+	//	}
+	//}
+
 	// ブレイクポイント数が多いブロックを検索
 	int hitIndex = -1;
 	{
@@ -299,6 +332,30 @@ void HardAI::CheckBlockToBreak(int& row, int& column)
 			row = cheakBlocks[hitIndex].breakBlock.block->GetRow();
 			column = cheakBlocks[hitIndex].breakBlock.block->GetColumn();
 		}
+	}
+
+	// トップにブロックが到達していたらRow番号だけ取得
+	bool searchHit = false;
+	int searchHitRow = -1;
+	int searchHitComlumn = -1;
+	{
+		for (auto blocks : regularBlockManager[1].GetBlocks())
+		{
+			searchHitComlumn = blocks.GetColumn();
+
+			if (searchHitComlumn == 0)
+			{
+				searchHit = true;
+				searchHitRow = blocks.GetRow();
+			}
+		}
+	}
+
+	// トップにブロックが到達していた場合、ブロック変更
+	if (searchHit)
+	{
+		row = searchHitRow;
+		column = 8;
 	}
 }
 
