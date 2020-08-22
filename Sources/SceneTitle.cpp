@@ -69,6 +69,10 @@ void SceneTitle::Update()
 	if (PRODUCTION->CheckFlag(GO_TITLE))
 		PRODUCTION->CSOH(SCENE_MANAGER->TITLE);
 
+
+	Animation();
+
+
 	if (PRODUCTION->CheckFlag(GO_PLAYERSTILE) || PRODUCTION->CheckFlag(GO_TITLE)) return;
 
 
@@ -84,7 +88,6 @@ void SceneTitle::Update()
 		pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
 	}
 
-	Animation();
 }
 
 void SceneTitle::Draw()

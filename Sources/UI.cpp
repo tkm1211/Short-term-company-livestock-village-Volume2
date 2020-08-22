@@ -1170,11 +1170,19 @@ void GameUI::UpdateOfCharacter(int _pn)
 	bool proLose = false;
 	bool proAleat = regularBlockManager[_pn].GetIsAleat();
 
-	if (sceneMultiGame.isGameover[0] || sceneMultiGame.isGameover[1])
+	if (IF_SINGLE_NOW)
 	{
-		proGameOver = !sceneMultiGame.isGameover[_pn];
-		proLose = sceneMultiGame.isGameover[_pn];
+		proGameOver = sceneSingleGame.isGameover;
 	}
+	else if (IF_MULTI_NOW)
+	{
+		if (sceneMultiGame.isGameover[0] || sceneMultiGame.isGameover[1])
+		{
+			proGameOver = !sceneMultiGame.isGameover[_pn];
+			proLose = sceneMultiGame.isGameover[_pn];
+		}
+	}
+
 
 	//charTex.tex.y = 0.0f;
 

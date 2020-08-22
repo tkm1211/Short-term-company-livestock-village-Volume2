@@ -23,7 +23,7 @@ void SceneMultiGame::Init()
 	BG_INSTANCE->Init();
 	for (int i = 0; i < 2; i++)
 	{
-		regularPlayer[i].Init();
+		regularPlayer[i].Init(i);
 	}
 	for (int i = 0; i < 2; i++)
 	{

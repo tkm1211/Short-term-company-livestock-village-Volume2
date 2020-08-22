@@ -28,7 +28,7 @@ public:
 public:
 	Player() { Init(); }
 	~Player() { Uninit(); }
-	void Init();
+	void Init(int _pn = 0);
 	void Uninit();
 	void Update(int _pn = 0);
 	void Draw();

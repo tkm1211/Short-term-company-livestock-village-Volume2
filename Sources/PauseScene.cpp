@@ -43,6 +43,13 @@ void Pause::Update()
 {
 	lastIsPauseNow = isPauseNow;
 
+	// ƒQ[ƒ€’†ˆÈŠO‚Íì—p‚µ‚È‚¢
+	if (sceneMultiGame.isGameover[0] || sceneMultiGame.isGameover[1] || sceneSingleGame.isGameover)return;
+	if (sceneSelect.gameMode == SelectGameMode::Single && sceneSingleGame.GetIsGameReady()) return;
+	if (sceneSelect.gameMode == SelectGameMode::Multi && sceneMultiGame.GetIsGameReady()) return;
+	if (sceneSelect.gameMode == SelectGameMode::CPU && sceneCPUGame.GetIsGameReady()) return;
+
+
 	// Ø‚è‘Ö‚¦ˆ—
 	{
 		static int cnt = 0;
@@ -51,6 +58,7 @@ void Pause::Update()
 			if (++cnt == 1)
 			{
 				isPauseNow = !isPauseNow;
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::OK].get());
 			}
 		}
 		else

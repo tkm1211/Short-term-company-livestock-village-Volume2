@@ -74,6 +74,11 @@ void Resource::Init()
 		sprUI = std::make_shared<SpriteBatch>(L"Data/Image/UI/UI.png", 100, DirectX::XMFLOAT2(114, 114));
 		assert(sprUI && "Misstake load texture data <sprUI>");
 	}
+	if (!sprCPUUI)
+	{
+		sprCPUUI = std::make_shared<SpriteBatch>(L"Data/Image/UI/UI_CPU.png", 100, DirectX::XMFLOAT2(114, 114));
+		assert(sprCPUUI && "Misstake load texture data <sprCPUUI>");
+	}
 	if (!sprBlock)
 	{
 		sprBlock = std::make_shared<SpriteBatch>(L"Data/Image/UI/block.png", BlockManager::BLOCK_NUM_MAX, DirectX::XMFLOAT2(114, 114));
@@ -216,6 +221,8 @@ std::shared_ptr<SpriteBatch>& Resource::GetSpriteData(Resource::Texture _texture
 		return sprBlueFrame;			// break;
 	case Texture::UI:
 		return sprUI;					// break;
+	case Texture::CPU_UI:
+		return sprCPUUI;				// break;
 	case Texture::Block:
 		return sprBlock;				// break;
 	case Texture::Character01:

@@ -7,7 +7,7 @@
 #include "BlockManager.h"
 #include "SceneManager.h"
 #include "imgui.h"
-
+#include "Sound.h"
 
 CPU regularCPU;
 
@@ -61,7 +61,7 @@ void CPU::Init()
 
 	// Sprite Data Init
 	{
-		sprPickel = RESOURCE->GetSpriteData(Resource::Texture::UI);
+		sprPickel = RESOURCE->GetSpriteData(Resource::Texture::CPU_UI);
 		pos = DirectX::XMFLOAT2(static_cast<float>(row * 114), static_cast<float>(column * 114));
 		animFrame = 0;
 	}
@@ -143,6 +143,7 @@ void CPU::OperateCPU()
 		{
 			--column;
 			pos.y -= MOVING;
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 		}
 		if (accelerationCount[0] >= ACCEL_START)
 		{
@@ -150,6 +151,7 @@ void CPU::OperateCPU()
 			{
 				--column;
 				pos.y -= MOVING;
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			}
 		}
 	}
@@ -164,6 +166,7 @@ void CPU::OperateCPU()
 		{
 			++row;
 			pos.x += MOVING;
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 		}
 		if (accelerationCount[1] >= ACCEL_START)
 		{
@@ -171,6 +174,7 @@ void CPU::OperateCPU()
 			{
 				++row;
 				pos.x += MOVING;
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			}
 		}
 	}
@@ -185,6 +189,7 @@ void CPU::OperateCPU()
 		{
 			++column;
 			pos.y += MOVING;
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 		}
 		if (accelerationCount[2] >= ACCEL_START)
 		{
@@ -192,6 +197,7 @@ void CPU::OperateCPU()
 			{
 				++column;
 				pos.y += MOVING;
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			}
 		}
 	}
@@ -206,6 +212,7 @@ void CPU::OperateCPU()
 		{
 			--row;
 			pos.x -= MOVING;
+			pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 		}
 		if (accelerationCount[3] >= ACCEL_START)
 		{
@@ -213,6 +220,7 @@ void CPU::OperateCPU()
 			{
 				--row;
 				pos.x -= MOVING;
+				pAudio->Play(Sound::Get()->seHandle[Sound::SE::MOVE].get());
 			}
 		}
 	}
@@ -255,6 +263,7 @@ void CPU::SetBreakBlock()
 
 	if (cpuAI->GetInput(AIInput::BreakInput))
 	{
+		pAudio->Play(Sound::Get()->seHandle[Sound::SE::DESTRUCTION1].get());
 		if (regularBlockManager[1].BreakBlock(row, column))
 		{
 			regularGameUI[1].SetIsTimerStop(true);

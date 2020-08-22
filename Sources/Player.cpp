@@ -21,7 +21,7 @@ std::array<Player, 2> regularPlayer;
 //	Menber function
 /*--------------------------------------*/
 
-void Player::Init()
+void Player::Init(int _pn)
 {
 	sprPickel = RESOURCE->GetSpriteData(Resource::Texture::UI);
 
